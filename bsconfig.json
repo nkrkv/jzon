@@ -5,6 +5,11 @@
     {
       "dir": "src",
       "subdirs": true
+    },
+    {
+      "dir": "tests",
+      "subdirs": true,
+      "type": "dev"
     }
   ],
   "package-specs": [
@@ -16,6 +21,9 @@
   "suffix": ".bs.js",
   "namespace": true,
   "bs-dependencies": [],
+  "bs-dev-dependencies": [
+    "rescript-test"
+   ],
   "ppx-flags": [],
   "refmt": 3
 }

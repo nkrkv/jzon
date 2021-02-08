@@ -3,7 +3,14 @@
   "version": "0.0.0",
   "main": "index.js",
   "license": "MIT",
+  "scripts": {
+    "build": "bsb -make-world -clean-world",
+    "dev": "bsb -make-world -clean-world -w",
+    "test": "retest tests/*.bs.js",
+    "prettify": "find src/ tests/ -name \\*.res -o -name \\*.resi | xargs -I{} -n1 bash -c \"bsc -format {} > {}\""
+  },
   "devDependencies": {
-    "bs-platform": "^8.4.2"
+    "bs-platform": "^8.4.2",
+    "rescript-test": "^0.6.3"
   }
 }
