@@ -1,0 +1,9 @@
+{
+  "name": "rescript-jzon",
+  "version": "0.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "devDependencies": {
+    "bs-platform": "^8.4.2"
+  }
+}
