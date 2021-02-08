@@ -1,6 +1,6 @@
 {
   "name": "rescript-jzon",
-  "bsc-flags": ["-bs-super-errors"],
+  "bsc-flags": ["-bs-super-errors", "-open Belt"],
   "sources": [
     {
       "dir": "src",
