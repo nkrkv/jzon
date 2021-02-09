@@ -69,12 +69,25 @@ test("JSON with missing field", () => {
   // `size` is missing
   let json = `{"color": "#09a"}`
   let result = Jzon.decodeString(json, JsonCodecs.look)
-  result->Assert.errorString(`Missing field "size" at .`, ~message="returns Result.Error")
+  result->Assert.errorString(`Missing field "size" at .`, ~message="returns #MissingField error")
 })
 
 test("JSON with missing nested field", () => {
   // `look.size` is missing
   let json = `{"x": 10, "y": 20, "look": {"color": "#09a"}}`
   let result = Jzon.decodeString(json, JsonCodecs.vertex)
-  result->Assert.errorString(`Missing field "size" at ."look"`, ~message="returns Result.Error")
+  result->Assert.errorString(
+    `Missing field "size" at ."look"`,
+    ~message="returns #MissingField error with proper path",
+  )
+})
+
+test("JSON with unexpected type", () => {
+  // `size` should be a number
+  let json = `{"x": 10, "y": 20, "look": {"color": "#09a", "size": "laaaarge"}}`
+  let result = Jzon.decodeString(json, JsonCodecs.vertex)
+  result->Assert.errorString(
+    `Expected number, got string at ."look"."size"`,
+    ~message="returns #UnexpectedJsonType error",
+  )
 })
