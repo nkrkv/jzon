@@ -8,7 +8,8 @@ module Error = {
 
   let location = ({location}) => location
   let message = ({message}) => message
-  let toString = err => err->location->Js.Array2.joinWith(" -> ") ++ " " ++ err->message
+  let toString = err =>
+    (err->location->Js.Array2.joinWith(" -> ") ++ " " ++ err->message)->Js.String2.trim
 }
 
 module Codec = {
@@ -138,8 +139,18 @@ let record3 = (construct, destruct, field1, field2, field3) =>
     },
   )
 
-let decodeString = (str, codec) =>
-  switch codec->Codec.decode(Js.Json.parseExn(str)) {
-  | Ok(_) as ok => ok
-  | Error(message) => Error(Error.make(message))
+let decodeString = (str, codec) => {
+  let maybeJson = switch Js.Json.parseExn(str) {
+  | json => Ok(json)
+  | exception Js.Exn.Error(obj) =>
+    let message = Js.Exn.message(obj)
+    Error(Error.make(message->Option.getWithDefault("Syntax error")))
   }
+
+  maybeJson->Result.flatMap(json =>
+    switch codec->Codec.decode(json) {
+    | Ok(_) as ok => ok
+    | Error(message) => Error(Error.make(message))
+    }
+  )
+}

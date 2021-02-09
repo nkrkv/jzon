@@ -10,14 +10,12 @@ module Assert = {
       ~message?,
     )
 
-  let errorOf = (~message=?, left, right) =>
-    assertion(
-      (left, right) => left == Error(right),
-      left,
-      right,
-      ~operator="left == Error(right)",
-      ~message?,
-    )
+  let errorString = (~message=?, left, right) => assertion((left, right) => {
+      switch left {
+      | Ok(_) => false
+      | Error(err) => err->Jzon.Error.toString == right
+      }
+    }, left, right, ~operator="error string of left == right", ~message?)
 }
 
 type look = {
@@ -54,5 +52,15 @@ test("Vertex decode (nested record)", () => {
   result->Assert.okOf(
     {x: 10.0, y: 20.0, look: {color: "#09a", size: 5.0}},
     ~message="decodes correctly",
+  )
+})
+
+test("JSON with syntax error", () => {
+  // Quotes around `size` are missing
+  let json = `{"color": "#09a", size: 5.0}`
+  let result = Jzon.decodeString(json, JsonCodecs.look)
+  result->Assert.errorString(
+    "Unexpected token s in JSON at position 18",
+    ~message="returns Result.Error",
   )
 })
