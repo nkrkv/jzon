@@ -52,39 +52,30 @@ let float = Codec.make(Js.Json.number, json =>
 
 let field = Field.make
 
+let encodeField = (field, val) => (field->Field.key, field->Field.codec->Codec.encode(val))
+
+let decodeField = (jsonObject, field) =>
+  switch jsonObject->Js.Dict.get(field->Field.key) {
+  | Some(childJson) => field->Field.codec->Codec.decode(childJson)
+  | None => Error(j`Expected field "${field->Field.key}"`)
+  }
+
+let jsonObject = keyVals => Js.Json.object_(Js.Dict.fromArray(keyVals))
+
 let record2 = (construct, destruct, field1, field2) =>
   Codec.make(
     // encode
     value => {
       let (val1, val2) = destruct(value)
-      Js.Json.object_(
-        Js.Dict.fromArray([
-          (field1->Field.key, field1->Field.codec->Codec.encode(val1)),
-          (field2->Field.key, field2->Field.codec->Codec.encode(val2)),
-        ]),
-      )
+      jsonObject([encodeField(field1, val1), encodeField(field2, val2)])
     },
     // decode
     json => {
       switch json->Js.Json.classify {
       | JSONObject(children) =>
         Ok()
-        ->Result.flatMap(_ => {
-          let val = switch children->Js.Dict.get(field1->Field.key) {
-          | Some(childJson) => field1->Field.codec->Codec.decode(childJson)
-          | None => Error(j`Expected field "${field1->Field.key}"`)
-          }
-
-          val
-        })
-        ->Result.flatMap(val1 => {
-          let val = switch children->Js.Dict.get(field2->Field.key) {
-          | Some(childJson) => field2->Field.codec->Codec.decode(childJson)
-          | None => Error(j`Expected field "${field2->Field.key}"`)
-          }
-
-          val->Result.map(val2 => (val1, val2))
-        })
+        ->Result.flatMap(_ => decodeField(children, field1))
+        ->Result.flatMap(val1 => decodeField(children, field2)->Result.map(val2 => (val1, val2)))
         ->Result.map(construct)
       | _ => Error("Expected JSON object")
       }
@@ -96,43 +87,18 @@ let record3 = (construct, destruct, field1, field2, field3) =>
     // encode
     value => {
       let (val1, val2, val3) = destruct(value)
-      Js.Json.object_(
-        Js.Dict.fromArray([
-          (field1->Field.key, field1->Field.codec->Codec.encode(val1)),
-          (field2->Field.key, field2->Field.codec->Codec.encode(val2)),
-          (field3->Field.key, field3->Field.codec->Codec.encode(val3)),
-        ]),
-      )
+      jsonObject([encodeField(field1, val1), encodeField(field2, val2), encodeField(field3, val3)])
     },
     // decode
     json => {
       switch json->Js.Json.classify {
       | JSONObject(children) =>
         Ok()
-        ->Result.flatMap(_ => {
-          let val = switch children->Js.Dict.get(field1->Field.key) {
-          | Some(childJson) => field1->Field.codec->Codec.decode(childJson)
-          | None => Error(j`Expected field "${field1->Field.key}"`)
-          }
-
-          val
-        })
-        ->Result.flatMap(val1 => {
-          let val = switch children->Js.Dict.get(field2->Field.key) {
-          | Some(childJson) => field2->Field.codec->Codec.decode(childJson)
-          | None => Error(j`Expected field "${field2->Field.key}"`)
-          }
-
-          val->Result.map(val2 => (val1, val2))
-        })
-        ->Result.flatMap(((val1, val2)) => {
-          let val = switch children->Js.Dict.get(field3->Field.key) {
-          | Some(childJson) => field3->Field.codec->Codec.decode(childJson)
-          | None => Error(j`Expected field "${field3->Field.key}"`)
-          }
-
-          val->Result.map(val3 => (val1, val2, val3))
-        })
+        ->Result.flatMap(_ => decodeField(children, field1))
+        ->Result.flatMap(val1 => decodeField(children, field2)->Result.map(val2 => (val1, val2)))
+        ->Result.flatMap(((val1, val2)) =>
+          decodeField(children, field3)->Result.map(val3 => (val1, val2, val3))
+        )
         ->Result.map(construct)
       | _ => Error("Expected JSON object")
       }
