@@ -13,7 +13,9 @@ module Assert = {
   let errorString = (~message=?, left, right) => assertion((left, right) => {
       switch left {
       | Ok(_) => false
-      | Error(err) => err->Jzon.Error.toString == right
+      | Error(err) =>
+        Js.log(err->Jzon.DecodingError.toString)
+        err->Jzon.DecodingError.toString == right
       }
     }, left, right, ~operator="error string of left == right", ~message?)
 }
@@ -63,4 +65,18 @@ test("JSON with syntax error", () => {
     "Unexpected token s in JSON at position 18",
     ~message="returns Result.Error",
   )
+})
+
+test("JSON with missing field", () => {
+  // `size` is missing
+  let json = `{"color": "#09a"}`
+  let result = Jzon.decodeString(json, JsonCodecs.look)
+  result->Assert.errorString(`Missing field "size" at .`, ~message="returns Result.Error")
+})
+
+test("JSON with missing nested field", () => {
+  // `look.size` is missing
+  let json = `{"x": 10, "y": 20, "look": {"color": "#09a"}}`
+  let result = Jzon.decodeString(json, JsonCodecs.vertex)
+  result->Assert.errorString(`Missing field "size" at .`, ~message="returns Result.Error")
 })

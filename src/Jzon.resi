@@ -1,15 +1,21 @@
-module Error: {
-  type t
+module DecodingError: {
+  type locationComponent = Field(string)
 
-  let location: t => array<string>
-  let message: t => string
+  type location = array<locationComponent>
+
+  type t = [
+    | #SyntaxError(string)
+    | #MissingField(location, string)
+    | #UnexpectedJsonType(location, string, Js.Json.t)
+  ]
+
   let toString: t => string
 }
 
 module Codec: {
   type t<'v>
   type encode<'v> = 'v => Js.Json.t
-  type decode<'v> = Js.Json.t => result<'v, string>
+  type decode<'v> = Js.Json.t => result<'v, DecodingError.t>
 
   let make: (encode<'v>, decode<'v>) => t<'v>
 }
@@ -34,4 +40,4 @@ let record3: (
   Field.t<'c>,
 ) => Codec.t<'r>
 
-let decodeString: (string, Codec.t<'v>) => result<'v, Error.t>
+let decodeString: (string, Codec.t<'v>) => result<'v, DecodingError.t>

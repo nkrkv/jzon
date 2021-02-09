@@ -1,20 +1,46 @@
-module Error = {
-  type t = {
-    location: array<string>,
-    message: string,
-  }
+module DecodingError = {
+  type locationComponent = Field(string)
 
-  let make = message => {location: [], message: message}
+  type location = array<locationComponent>
 
-  let location = ({location}) => location
-  let message = ({message}) => message
+  type t = [
+    | #SyntaxError(string)
+    | #MissingField(location, string)
+    | #UnexpectedJsonType(location, string, Js.Json.t)
+  ]
+
+  let formatLocation = location =>
+    "." ++
+    location
+    ->Array.map(s =>
+      switch s {
+      | Field(field) => `"` ++ field ++ `"`
+      }
+    )
+    ->Js.Array2.joinWith(".")
+
   let toString = err =>
-    (err->location->Js.Array2.joinWith(" -> ") ++ " " ++ err->message)->Js.String2.trim
+    switch err {
+    | #SyntaxError(err) => err
+    | #MissingField(location, key) => `Missing field "${key}" at ${location->formatLocation}`
+    | #UnexpectedJsonType(location, expectation, actualJson) =>
+      let actualType = switch actualJson->Js.Json.classify {
+      | JSONFalse
+      | JSONTrue => "boolean"
+      | JSONNull => "null"
+      | JSONString(_) => "string"
+      | JSONNumber(_) => "number"
+      | JSONObject(_) => "object"
+      | JSONArray(_) => "array"
+      }
+
+      `Expected ${expectation}, got ${actualType} at ${location->formatLocation}`
+    }
 }
 
 module Codec = {
   type encode<'v> = 'v => Js.Json.t
-  type decode<'v> = Js.Json.t => result<'v, string>
+  type decode<'v> = Js.Json.t => result<'v, DecodingError.t>
   type t<'v> = {
     encode: encode<'v>,
     decode: decode<'v>,
@@ -39,14 +65,14 @@ module Field = {
 let string = Codec.make(Js.Json.string, json =>
   switch json->Js.Json.decodeString {
   | Some(x) => Ok(x)
-  | None => Error("Expected string")
+  | None => Error(#UnexpectedJsonType([], "string", json))
   }
 )
 
 let float = Codec.make(Js.Json.number, json =>
   switch json->Js.Json.decodeNumber {
   | Some(x) => Ok(x)
-  | None => Error("Expected float number")
+  | None => Error(#UnexpectedJsonType([], "number", json))
   }
 )
 
@@ -57,7 +83,7 @@ let encodeField = (field, val) => (field->Field.key, field->Field.codec->Codec.e
 let decodeField = (jsonObject, field) =>
   switch jsonObject->Js.Dict.get(field->Field.key) {
   | Some(childJson) => field->Field.codec->Codec.decode(childJson)
-  | None => Error(j`Expected field "${field->Field.key}"`)
+  | None => Error(#MissingField([], field->Field.key))
   }
 
 let jsonObject = keyVals => Js.Json.object_(Js.Dict.fromArray(keyVals))
@@ -77,7 +103,7 @@ let record2 = (construct, destruct, field1, field2) =>
         ->Result.flatMap(_ => decodeField(children, field1))
         ->Result.flatMap(val1 => decodeField(children, field2)->Result.map(val2 => (val1, val2)))
         ->Result.map(construct)
-      | _ => Error("Expected JSON object")
+      | _ => Error(#UnexpectedJsonType([], "object", json))
       }
     },
   )
@@ -100,7 +126,7 @@ let record3 = (construct, destruct, field1, field2, field3) =>
           decodeField(children, field3)->Result.map(val3 => (val1, val2, val3))
         )
         ->Result.map(construct)
-      | _ => Error("Expected JSON object")
+      | _ => Error(#UnexpectedJsonType([], "object", json))
       }
     },
   )
@@ -110,13 +136,8 @@ let decodeString = (str, codec) => {
   | json => Ok(json)
   | exception Js.Exn.Error(obj) =>
     let message = Js.Exn.message(obj)
-    Error(Error.make(message->Option.getWithDefault("Syntax error")))
+    Error(#SyntaxError(message->Option.getWithDefault("Syntax error")))
   }
 
-  maybeJson->Result.flatMap(json =>
-    switch codec->Codec.decode(json) {
-    | Ok(_) as ok => ok
-    | Error(message) => Error(Error.make(message))
-    }
-  )
+  maybeJson->Result.flatMap(json => codec->Codec.decode(json))
 }
