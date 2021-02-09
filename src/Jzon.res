@@ -1,3 +1,11 @@
+module ResultX = {
+  let mapError = (result, fn) =>
+    switch result {
+    | Ok(_) as ok => ok
+    | Error(err) => Error(fn(err))
+    }
+}
+
 module DecodingError = {
   type locationComponent = Field(string)
 
@@ -18,6 +26,17 @@ module DecodingError = {
       }
     )
     ->Js.Array2.joinWith(".")
+
+  let prependLocation = (err, loc) =>
+    switch err {
+    | #SyntaxError(_) as err => err
+    | #MissingField(location, key) =>
+      let location' = [loc]->Array.concat(location)
+      #MissingField(location', key)
+    | #UnexpectedJsonType(location, expectation, actualJson) =>
+      let location' = [loc]->Array.concat(location)
+      #UnexpectedJsonType(location', expectation, actualJson)
+    }
 
   let toString = err =>
     switch err {
@@ -82,7 +101,11 @@ let encodeField = (field, val) => (field->Field.key, field->Field.codec->Codec.e
 
 let decodeField = (jsonObject, field) =>
   switch jsonObject->Js.Dict.get(field->Field.key) {
-  | Some(childJson) => field->Field.codec->Codec.decode(childJson)
+  | Some(childJson) =>
+    field
+    ->Field.codec
+    ->Codec.decode(childJson)
+    ->ResultX.mapError(DecodingError.prependLocation(_, Field(field->Field.key)))
   | None => Error(#MissingField([], field->Field.key))
   }
 
