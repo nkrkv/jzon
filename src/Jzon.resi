@@ -5,8 +5,9 @@ module DecodingError: {
 
   type t = [
     | #SyntaxError(string)
-    | #MissingField(location, string)
-    | #UnexpectedJsonType(location, string, Js.Json.t)
+    | #MissingField(location, string /* key */)
+    | #UnexpectedJsonType(location, string /* expected */, Js.Json.t)
+    | #UnexpectedJsonValue(location, string /* found */)
   ]
 
   let toString: t => string
@@ -18,22 +19,24 @@ module Codec: {
   type decode<'v> = Js.Json.t => result<'v, DecodingError.t>
 
   let make: (encode<'v>, decode<'v>) => t<'v>
+  let encode: (t<'v>, 'v) => Js.Json.t
+  let decode: (t<'v>, Js.Json.t) => result<'v, DecodingError.t>
 }
 
 module Field: {
   type t<'v>
-
-  let key: t<'v> => string
-  let codec: t<'v> => Codec.t<'v>
 }
 
 let string: Codec.t<string>
 let float: Codec.t<float>
 
 let field: (string, Codec.t<'v>) => Field.t<'v>
-let record2: ((('a, 'b)) => 'r, 'r => ('a, 'b), Field.t<'a>, Field.t<'b>) => Codec.t<'r>
+let self: Field.t<Js.Json.t>
+
+let record1: ('a => result<'r, DecodingError.t>, 'r => 'a, Field.t<'a>) => Codec.t<'r>
+let record2: ((('a, 'b)) => result<'r, DecodingError.t>, 'r => ('a, 'b), Field.t<'a>, Field.t<'b>) => Codec.t<'r>
 let record3: (
-  (('a, 'b, 'c)) => 'r,
+  (('a, 'b, 'c)) => result<'r, DecodingError.t>,
   'r => ('a, 'b, 'c),
   Field.t<'a>,
   Field.t<'b>,
