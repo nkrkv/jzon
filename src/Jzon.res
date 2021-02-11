@@ -151,7 +151,7 @@ let asObject = json =>
   | _ => Error(#UnexpectedJsonType([], "object", json))
   }
 
-let record1 = (construct, destruct, field1) =>
+let record1 = (destruct, construct, field1) =>
   Codec.make(
     // encode
     value => {
@@ -165,7 +165,7 @@ let record1 = (construct, destruct, field1) =>
       ->Result.flatMap(fieldset => field1->Field.dfmap(fieldset, val1 => construct(val1))),
   )
 
-let record2 = (construct, destruct, field1, field2) =>
+let record2 = (destruct, construct, field1, field2) =>
   Codec.make(
     // encode
     value => {
@@ -183,7 +183,7 @@ let record2 = (construct, destruct, field1, field2) =>
       ),
   )
 
-let record3 = (construct, destruct, field1, field2, field3) =>
+let record3 = (destruct, construct, field1, field2, field3) =>
   Codec.make(
     // encode
     value => {
@@ -207,7 +207,7 @@ let record3 = (construct, destruct, field1, field2, field3) =>
       ),
   )
 
-let decodeString = (str, codec) => {
+let decodeString = (codec, str) => {
   let maybeJson = switch Js.Json.parseExn(str) {
   | json => Ok(json)
   | exception Js.Exn.Error(obj) =>
