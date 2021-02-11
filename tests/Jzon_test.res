@@ -35,16 +35,16 @@ type vertex = {
 }
 
 module JsonCodecs = {
-  let radius = Jzon.record1(r => r, r => r->Ok, Jzon.field("r", Jzon.float))
+  let radius = Jzon.object1(r => r, r => r->Ok, Jzon.field("r", Jzon.float))
 
-  let widthHeight = Jzon.record2(
+  let widthHeight = Jzon.object2(
     ((w, h)) => (w, h),
     ((w, h)) => (w, h)->Ok,
     Jzon.field("width", Jzon.float),
     Jzon.field("height", Jzon.float),
   )
 
-  let shape = Jzon.record2(
+  let shape = Jzon.object2(
     shape =>
       switch shape {
       | Circle(r) => ("circle", radius->Jzon.Codec.encode(r))
@@ -62,14 +62,14 @@ module JsonCodecs = {
     Jzon.self,
   )
 
-  let look = Jzon.record2(
+  let look = Jzon.object2(
     ({color, size}) => (color, size),
     ((color, size)) => {color: color, size: size}->Ok,
     Jzon.field("color", Jzon.string),
     Jzon.field("size", Jzon.float),
   )
 
-  let vertex = Jzon.record3(
+  let vertex = Jzon.object3(
     ({x, y, look}) => (x, y, look),
     ((x, y, look)) => {x: x, y: y, look: look}->Ok,
     Jzon.field("x", Jzon.float),

@@ -33,14 +33,14 @@ let float: Codec.t<float>
 let field: (string, Codec.t<'v>) => Field.t<'v>
 let self: Field.t<Js.Json.t>
 
-let record1: ('r => 'a, 'a => result<'r, DecodingError.t>, Field.t<'a>) => Codec.t<'r>
-let record2: (
+let object1: ('r => 'a, 'a => result<'r, DecodingError.t>, Field.t<'a>) => Codec.t<'r>
+let object2: (
   'r => ('a, 'b),
   (('a, 'b)) => result<'r, DecodingError.t>,
   Field.t<'a>,
   Field.t<'b>,
 ) => Codec.t<'r>
-let record3: (
+let object3: (
   'r => ('a, 'b, 'c),
   (('a, 'b, 'c)) => result<'r, DecodingError.t>,
   Field.t<'a>,
