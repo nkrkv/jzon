@@ -5,9 +5,9 @@ module DecodingError: {
 
   type t = [
     | #SyntaxError(string)
-    | #MissingField(location, string /* key */)
-    | #UnexpectedJsonType(location, string /* expected */, Js.Json.t)
-    | #UnexpectedJsonValue(location, string /* found */)
+    | #MissingField(location, string)
+    | #UnexpectedJsonType(location, string, Js.Json.t)
+    | #UnexpectedJsonValue(location, string)
   ]
 
   let toString: t => string
@@ -34,7 +34,12 @@ let field: (string, Codec.t<'v>) => Field.t<'v>
 let self: Field.t<Js.Json.t>
 
 let record1: ('a => result<'r, DecodingError.t>, 'r => 'a, Field.t<'a>) => Codec.t<'r>
-let record2: ((('a, 'b)) => result<'r, DecodingError.t>, 'r => ('a, 'b), Field.t<'a>, Field.t<'b>) => Codec.t<'r>
+let record2: (
+  (('a, 'b)) => result<'r, DecodingError.t>,
+  'r => ('a, 'b),
+  Field.t<'a>,
+  Field.t<'b>,
+) => Codec.t<'r>
 let record3: (
   (('a, 'b, 'c)) => result<'r, DecodingError.t>,
   'r => ('a, 'b, 'c),

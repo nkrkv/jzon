@@ -19,9 +19,9 @@ module Assert = {
 }
 
 type shape =
-    | Circle(float)
-    | Rectangle(float, float)
-    | Ellipse(float, float);
+  | Circle(float)
+  | Rectangle(float, float)
+  | Ellipse(float, float)
 
 type look = {
   color: string,
@@ -35,42 +35,32 @@ type vertex = {
 }
 
 module JsonCodecs = {
-  let radius = Jzon.record1(
-    r => r->Ok,
-    r => r,
-    Jzon.field("r", Jzon.float)
-  );
+  let radius = Jzon.record1(r => r->Ok, r => r, Jzon.field("r", Jzon.float))
 
   let widthHeight = Jzon.record2(
     ((w, h)) => (w, h)->Ok,
     ((w, h)) => (w, h),
     Jzon.field("width", Jzon.float),
     Jzon.field("height", Jzon.float),
-  );
+  )
 
   let shape = Jzon.record2(
     ((kind, json)) =>
       switch kind {
-      | "circle" =>
-        radius->Jzon.Codec.decode(json)->Result.map(r => Circle(r))
-      | "rectangle" =>
-        widthHeight->Jzon.Codec.decode(json)->Result.map(((w, h)) => Rectangle(w, h))
-      | "ellipse" =>
-        widthHeight->Jzon.Codec.decode(json)->Result.map(((w, h)) => Ellipse(w, h))
+      | "circle" => radius->Jzon.Codec.decode(json)->Result.map(r => Circle(r))
+      | "rectangle" => widthHeight->Jzon.Codec.decode(json)->Result.map(((w, h)) => Rectangle(w, h))
+      | "ellipse" => widthHeight->Jzon.Codec.decode(json)->Result.map(((w, h)) => Ellipse(w, h))
       | x => Error(#UnexpectedJsonValue([Field("kind")], x))
       },
     shape =>
       switch shape {
-      | Circle(r) =>
-        ("circle", radius->Jzon.Codec.encode(r))
-      | Rectangle(width, height) =>
-        ("rectangle", widthHeight->Jzon.Codec.encode((width, height)))
-      | Ellipse(width, height) =>
-        ("ellipse", widthHeight->Jzon.Codec.encode((width, height)))
+      | Circle(r) => ("circle", radius->Jzon.Codec.encode(r))
+      | Rectangle(width, height) => ("rectangle", widthHeight->Jzon.Codec.encode((width, height)))
+      | Ellipse(width, height) => ("ellipse", widthHeight->Jzon.Codec.encode((width, height)))
       },
     Jzon.field("kind", Jzon.string),
     Jzon.self,
-  );
+  )
 
   let look = Jzon.record2(
     ((color, size)) => {color: color, size: size}->Ok,
@@ -98,13 +88,10 @@ test("Vertex decode (nested record)", () => {
 })
 
 test("Vertex roundtrip (nested record)", () => {
-  let data = {x: 10.0, y: 20.0, look: {color: "#09a", size: 5.0}};
+  let data = {x: 10.0, y: 20.0, look: {color: "#09a", size: 5.0}}
   let json = JsonCodecs.vertex->Jzon.Codec.encode(data)
-  let result = JsonCodecs.vertex->Jzon.Codec.decode(json);
-  result->Assert.okOf(
-    data,
-    ~message="preserves data",
-  )
+  let result = JsonCodecs.vertex->Jzon.Codec.decode(json)
+  result->Assert.okOf(data, ~message="preserves data")
 })
 
 test("Shape decode (tagged union)", () => {
@@ -112,23 +99,17 @@ test("Shape decode (tagged union)", () => {
     "kind": "rectangle",
     "width": 3,
     "height": 4
-  }`;
+  }`
 
   let result = Jzon.decodeString(json, JsonCodecs.shape)
-  result->Assert.okOf(
-    Rectangle(3.0, 4.0),
-    ~message="decodes correctly",
-  )
+  result->Assert.okOf(Rectangle(3.0, 4.0), ~message="decodes correctly")
 })
 
 test("Shape roundtrip (tagged union)", () => {
-  let data = Rectangle(3.0, 4.0);
+  let data = Rectangle(3.0, 4.0)
   let json = JsonCodecs.shape->Jzon.Codec.encode(data)
-  let result = JsonCodecs.shape->Jzon.Codec.decode(json);
-  result->Assert.okOf(
-    data,
-    ~message="preserves data",
-  )
+  let result = JsonCodecs.shape->Jzon.Codec.decode(json)
+  result->Assert.okOf(data, ~message="preserves data")
 })
 
 test("JSON with syntax error", () => {

@@ -13,9 +13,9 @@ module DecodingError = {
 
   type t = [
     | #SyntaxError(string)
-    | #MissingField(location, string /* key */)
-    | #UnexpectedJsonType(location, string /* expected */, Js.Json.t)
-    | #UnexpectedJsonValue(location, string /* found */)
+    | #MissingField(location, string)
+    | #UnexpectedJsonType(location, string, Js.Json.t)
+    | #UnexpectedJsonValue(location, string)
   ]
 
   let formatLocation = location =>
@@ -75,7 +75,7 @@ module Codec = {
   let encode = codec => codec.encode
   let decode = codec => codec.decode
 
-  let identity = make(x => x, x => Ok(x));
+  let identity = make(x => x, x => Ok(x))
 }
 
 module Field = {
@@ -103,15 +103,16 @@ module Field = {
       | JSONNull
       | JSONString(_)
       | JSONNumber(_)
-      | JSONArray(_) => failwith("Field `self` must be encoded as object")
+      | JSONArray(_) =>
+        failwith("Field `self` must be encoded as object")
       }
     }
 
-  let decode = (objDict, field) =>
+  let decode = (field, fieldset) =>
     switch field->path {
-    | Self => field->codec->Codec.decode(Js.Json.object_(objDict))
+    | Self => field->codec->Codec.decode(Js.Json.object_(fieldset))
     | Key(key) =>
-      switch objDict->Js.Dict.get(key) {
+      switch fieldset->Js.Dict.get(key) {
       | Some(childJson) =>
         field
         ->codec
@@ -120,6 +121,9 @@ module Field = {
       | None => Error(#MissingField([], key))
       }
     }
+
+  // decode + flatMap the result
+  let dfmap = (field, fieldset, fmapFn) => field->decode(fieldset)->Result.flatMap(fmapFn)
 }
 
 let string = Codec.make(Js.Json.string, json =>
@@ -136,10 +140,16 @@ let float = Codec.make(Js.Json.number, json =>
   }
 )
 
-let field = (key, codec) => Field.make(Key(key), codec);
-let self = Field.make(Self, Codec.identity);
+let field = (key, codec) => Field.make(Key(key), codec)
+let self = Field.make(Self, Codec.identity)
 
 let jsonObject = keyVals => Js.Json.object_(Js.Dict.fromArray(keyVals->Array.concatMany))
+
+let asObject = json =>
+  switch json->Js.Json.classify {
+  | JSONObject(fieldset) => Ok(fieldset)
+  | _ => Error(#UnexpectedJsonType([], "object", json))
+  }
 
 let record1 = (construct, destruct, field1) =>
   Codec.make(
@@ -149,15 +159,10 @@ let record1 = (construct, destruct, field1) =>
       jsonObject([Field.encode(field1, val1)])
     },
     // decode
-    json => {
-      switch json->Js.Json.classify {
-      | JSONObject(children) =>
-        Ok()
-        ->Result.flatMap(_ => Field.decode(children, field1))
-        ->Result.flatMap(construct)
-      | _ => Error(#UnexpectedJsonType([], "object", json))
-      }
-    },
+    json =>
+      json
+      ->asObject
+      ->Result.flatMap(fieldset => field1->Field.dfmap(fieldset, val1 => construct(val1))),
   )
 
 let record2 = (construct, destruct, field1, field2) =>
@@ -168,16 +173,14 @@ let record2 = (construct, destruct, field1, field2) =>
       jsonObject([Field.encode(field1, val1), Field.encode(field2, val2)])
     },
     // decode
-    json => {
-      switch json->Js.Json.classify {
-      | JSONObject(children) =>
-        Ok()
-        ->Result.flatMap(_ => Field.decode(children, field1))
-        ->Result.flatMap(val1 => Field.decode(children, field2)->Result.map(val2 => (val1, val2)))
-        ->Result.flatMap(construct)
-      | _ => Error(#UnexpectedJsonType([], "object", json))
-      }
-    },
+    json =>
+      json
+      ->asObject
+      ->Result.flatMap(fieldset =>
+        field1->Field.dfmap(fieldset, val1 =>
+          field2->Field.dfmap(fieldset, val2 => construct((val1, val2)))
+        )
+      ),
   )
 
 let record3 = (construct, destruct, field1, field2, field3) =>
@@ -185,22 +188,23 @@ let record3 = (construct, destruct, field1, field2, field3) =>
     // encode
     value => {
       let (val1, val2, val3) = destruct(value)
-      jsonObject([Field.encode(field1, val1), Field.encode(field2, val2), Field.encode(field3, val3)])
+      jsonObject([
+        Field.encode(field1, val1),
+        Field.encode(field2, val2),
+        Field.encode(field3, val3),
+      ])
     },
     // decode
-    json => {
-      switch json->Js.Json.classify {
-      | JSONObject(children) =>
-        Ok()
-        ->Result.flatMap(_ => Field.decode(children, field1))
-        ->Result.flatMap(val1 => Field.decode(children, field2)->Result.map(val2 => (val1, val2)))
-        ->Result.flatMap(((val1, val2)) =>
-          Field.decode(children, field3)->Result.map(val3 => (val1, val2, val3))
+    json =>
+      json
+      ->asObject
+      ->Result.flatMap(fieldset =>
+        field1->Field.dfmap(fieldset, val1 =>
+          field2->Field.dfmap(fieldset, val2 =>
+            field3->Field.dfmap(fieldset, val3 => construct((val1, val2, val3)))
+          )
         )
-        ->Result.flatMap(construct)
-      | _ => Error(#UnexpectedJsonType([], "object", json))
-      }
-    },
+      ),
   )
 
 let decodeString = (str, codec) => {
