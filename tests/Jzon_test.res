@@ -92,6 +92,16 @@ test("Scalar types", () => {
   Assert.roundtrips(Js.Json.number(42.), Jzon.json, ~message="Raw JSON does roundtrip")
 })
 
+test("Int codec", () => {
+  Jzon.int
+  ->Jzon.decodeString("42.5")
+  ->Assert.errorString("Unexpected value 42.5 at .", ~message="barks on fractional numbers")
+
+  Jzon.int
+  ->Jzon.decodeString("9111222333")
+  ->Assert.errorString("Unexpected value 9111222333 at .", ~message="barks on out-of-range numbers")
+})
+
 test("Vertex decode (nested record)", () => {
   let json = `{"x": 10, "y": 20, "look": {"color": "#09a", "size": 5.0}}`
   let result = JsonCodecs.vertex->Jzon.decodeString(json)

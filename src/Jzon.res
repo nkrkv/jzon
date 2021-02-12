@@ -160,7 +160,14 @@ let float = Codec.make(Js.Json.number, json =>
 
 let int = Codec.make(
   x => float->encode(x->Int.toFloat),
-  json => float->decode(json)->Result.map(Js.Math.floor_int),
+  json =>
+    float
+    ->decode(json)
+    ->Result.flatMap(x =>
+      x == x->Js.Math.trunc && x >= -2147483648. && x <= 2147483647.
+        ? Ok(x->Js.Math.unsafe_trunc)
+        : Error(#UnexpectedJsonValue([], x->Float.toString))
+    ),
 )
 
 let bool = Codec.make(Js.Json.boolean, json =>
