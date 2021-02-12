@@ -84,9 +84,9 @@ test("Object field default value", () => {
   ->Jzon.decodeString(`{"start": 0, "end": 1}`)
   ->Assert.okOf({start: 0, end: 1, weight: 1.0}, ~message="Used if absent")
 
-  Codecs.vertex
-  ->Jzon.decodeString(`{"x": 10, "y": 20, "look": null}`)
-  ->Assert.okOf({x: 10.0, y: 20.0, look: None}, ~message="Used if null")
+  Codecs.link
+  ->Jzon.decodeString(`{"start": 0, "end": 1, "weight": null}`)
+  ->Assert.okOf({start: 0, end: 1, weight: 1.0}, ~message="Used if null")
 })
 
 test("Object JSON with missing field", () => {

@@ -31,6 +31,13 @@ test("Nullable", () => {
   ->Assert.equals(Js.Json.null, ~message="Encodes as `null`")
 })
 
+test("Null as", () => {
+  Jzon.int
+  ->Jzon.nullAs(100)
+  ->Jzon.decodeString("null")
+  ->Assert.okOf(100, ~message="Decodes null as value provided")
+})
+
 test("Array", () => {
   Assert.roundtrips(
     [4, 8, 15, 16, 23, 42],

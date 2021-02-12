@@ -146,6 +146,12 @@ let nullable = payloadCodec =>
     json => json == Js.Json.null ? Ok(None) : payloadCodec->decode(json)->Result.map(v => Some(v)),
   )
 
+let nullAs = (payloadCodec, fallbackValue) =>
+  Codec.make(
+    value => payloadCodec->encode(value),
+    json => json == Js.Json.null ? Ok(fallbackValue) : payloadCodec->decode(json),
+  )
+
 let array = elementCodec =>
   Codec.make(
     xs => xs->Array.map(elementCodec->encode(_))->Js.Json.array,
@@ -180,8 +186,13 @@ module Field = {
   }
 
   let make = (path, codec) => {path: path, codec: codec, claim: Required}
-  let makeOptional = ({path, codec}) => {path: path, codec: nullable(codec), claim: Optional}
-  let assignDefault = (field, value) => {...field, claim: OptionalWithDefault(value)}
+  let makeOptional = ({path, codec}) => {path: path, codec: codec->nullable, claim: Optional}
+  let assignDefault = ({path, codec}, value) => {
+    path: path,
+    codec: codec->nullAs(value),
+    claim: OptionalWithDefault(value),
+  }
+
   let path = ({path}) => path
   let codec = ({codec}) => codec
   let claim = ({claim}) => claim

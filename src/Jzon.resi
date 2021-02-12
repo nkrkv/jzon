@@ -27,6 +27,7 @@ let bool: codec<bool>
 let json: codec<Js.Json.t>
 
 let nullable: codec<'v> => codec<option<'v>>
+let nullAs: (codec<'v>, 'v) => codec<'v>
 let array: codec<'v> => codec<array<'v>>
 
 let field: (string, codec<'v>) => field<'v>
