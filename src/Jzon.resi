@@ -31,6 +31,7 @@ let array: codec<'v> => codec<array<'v>>
 
 let field: (string, codec<'v>) => field<'v>
 let self: field<Js.Json.t>
+let optional: field<'v> => field<option<'v>>
 
 let object1: ('r => 'f1, 'f1 => result<'r, DecodingError.t>, field<'f1>) => codec<'r>
 

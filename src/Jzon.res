@@ -101,56 +101,6 @@ let encode = Codec.encode
 let decode = Codec.decode
 let decodeString = Codec.decodeString
 
-module Field = {
-  type path =
-    | Self
-    | Key(string)
-
-  type t<'v> = {
-    path: path,
-    codec: Codec.t<'v>,
-  }
-
-  let make = (path, codec) => {path: path, codec: codec}
-  let path = ({path}) => path
-  let codec = ({codec}) => codec
-
-  let encode = (field, val) =>
-    switch field->path {
-    | Key(key) => [(key, field->codec->Codec.encode(val))]
-    | Self =>
-      switch field->codec->Codec.encode(val)->Js.Json.classify {
-      | JSONObject(objDict) => objDict->Js.Dict.entries
-      | JSONFalse
-      | JSONTrue
-      | JSONNull
-      | JSONString(_)
-      | JSONNumber(_)
-      | JSONArray(_) =>
-        failwith("Field `self` must be encoded as object")
-      }
-    }
-
-  let decode = (field, fieldset) =>
-    switch field->path {
-    | Self => field->codec->Codec.decode(Js.Json.object_(fieldset))
-    | Key(key) =>
-      switch fieldset->Js.Dict.get(key) {
-      | Some(childJson) =>
-        field
-        ->codec
-        ->Codec.decode(childJson)
-        ->ResultX.mapError(DecodingError.prependLocation(_, Field(key)))
-      | None => Error(#MissingField([], key))
-      }
-    }
-
-  // decode + flatMap the result
-  let dfmap = (field, fieldset, fmapFn) => field->decode(fieldset)->Result.flatMap(fmapFn)
-}
-
-type field<'v> = Field.t<'v>
-
 let string = Codec.make(Js.Json.string, json =>
   switch json->Js.Json.decodeString {
   | Some(x) => Ok(x)
@@ -213,8 +163,70 @@ let array = elementCodec =>
       },
   )
 
+module Field = {
+  type path =
+    | Self
+    | Key(string)
+
+  type claim =
+    | Required
+    | Optional
+
+  type t<'v> = {
+    path: path,
+    codec: Codec.t<'v>,
+    claim: claim,
+  }
+
+  let make = (path, codec) => {path: path, codec: codec, claim: Required}
+  let makeOptional = ({path, codec}) => {path: path, codec: nullable(codec), claim: Optional}
+  let path = ({path}) => path
+  let codec = ({codec}) => codec
+  let claim = ({claim}) => claim
+
+  let encode = (field, val) =>
+    switch field->path {
+    | Key(key) => [(key, field->codec->Codec.encode(val))]
+    | Self =>
+      switch field->codec->Codec.encode(val)->Js.Json.classify {
+      | JSONObject(objDict) => objDict->Js.Dict.entries
+      | JSONFalse
+      | JSONTrue
+      | JSONNull
+      | JSONString(_)
+      | JSONNumber(_)
+      | JSONArray(_) =>
+        failwith("Field `self` must be encoded as object")
+      }
+    }
+
+  let decode = (field, fieldset) =>
+    switch field->path {
+    | Self => field->codec->Codec.decode(Js.Json.object_(fieldset))
+    | Key(key) =>
+      let maybeChildJson = switch (fieldset->Js.Dict.get(key), field->claim) {
+      | (Some(childJson), _) => Ok(childJson)
+      | (None, Optional) => Ok(Js.Json.null)
+      | (None, Required) => Error(#MissingField([], key))
+      }
+
+      maybeChildJson->Result.flatMap(childJson =>
+        field
+        ->codec
+        ->Codec.decode(childJson)
+        ->ResultX.mapError(DecodingError.prependLocation(_, Field(key)))
+      )
+    }
+
+  // decode + flatMap the result
+  let dfmap = (field, fieldset, fmapFn) => field->decode(fieldset)->Result.flatMap(fmapFn)
+}
+
+type field<'v> = Field.t<'v>
+
 let field = (key, codec) => Field.make(Key(key), codec)
 let self = Field.make(Self, Codec.identity)
+let optional = Field.makeOptional
 
 let jsonObject = keyVals => Js.Json.object_(Js.Dict.fromArray(keyVals->Array.concatMany))
 

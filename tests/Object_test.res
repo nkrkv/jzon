@@ -8,7 +8,7 @@ type look = {
 type vertex = {
   x: float,
   y: float,
-  look: look,
+  look: option<look>,
 }
 
 module Codecs = {
@@ -24,11 +24,11 @@ module Codecs = {
     ((x, y, look)) => {x: x, y: y, look: look}->Ok,
     Jzon.field("x", Jzon.float),
     Jzon.field("y", Jzon.float),
-    Jzon.field("look", look),
+    Jzon.field("look", look)->Jzon.optional,
   )
 }
 
-test("Object", () => {
+test("Nested object", () => {
   Codecs.vertex
   ->Jzon.decodeString(`{
     "x": 10,
@@ -39,15 +39,21 @@ test("Object", () => {
     }
   }`)
   ->Assert.okOf(
-    {x: 10.0, y: 20.0, look: {color: "#09a", size: 5.0}},
-    ~message="Nested record decodes correctly",
+    {x: 10.0, y: 20.0, look: Some({color: "#09a", size: 5.0})},
+    ~message="Decodes correctly",
   )
 
   Assert.roundtrips(
-    {x: 10.0, y: 20.0, look: {color: "#09a", size: 5.0}},
+    {x: 10.0, y: 20.0, look: Some({color: "#09a", size: 5.0})},
     Codecs.vertex,
-    ~message="Nested record does roundtrip",
+    ~message="Does roundtrip",
   )
+})
+
+test("Nested object optional field", () => {
+  Codecs.vertex
+  ->Jzon.decodeString(`{"x": 10, "y": 20}`)
+  ->Assert.okOf({x: 10.0, y: 20.0, look: None}, ~message="Decodes to None")
 })
 
 test("Object JSON with missing field", () => {
