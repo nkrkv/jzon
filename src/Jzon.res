@@ -13,7 +13,7 @@ module ResultX = {
 }
 
 module DecodingError = {
-  type locationComponent = Field(string)
+  type locationComponent = Field(string) | Index(int)
 
   type location = array<locationComponent>
 
@@ -30,6 +30,7 @@ module DecodingError = {
     ->Array.map(s =>
       switch s {
       | Field(field) => `"` ++ field ++ `"`
+      | Index(index) => `[` ++ index->Int.toString ++ `]`
       }
     )
     ->Js.Array2.joinWith(".")
@@ -201,7 +202,13 @@ let array = elementCodec =>
     json =>
       switch json->Js.Json.classify {
       | JSONArray(elementJsons) =>
-        elementJsons->Array.map(elementCodec->decode(_))->ResultX.sequence
+        elementJsons
+        ->Array.mapWithIndex((i, elemJson) =>
+          elementCodec
+          ->decode(elemJson)
+          ->ResultX.mapError(DecodingError.prependLocation(_, Index(i)))
+        )
+        ->ResultX.sequence
       | _ => Error(#UnexpectedJsonType([], "array", json))
       },
   )

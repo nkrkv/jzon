@@ -124,6 +124,13 @@ test("Array", () => {
     Jzon.array(Jzon.int),
     ~message="array<int> does roundtrip",
   )
+
+  Jzon.array(Jzon.int)
+  ->Jzon.decodeString(`[1, 2, "three", 4]`)
+  ->Assert.errorString(
+    "Expected number, got string at .[2]",
+    ~message="Barks on unexpected type with proper path",
+  )
 })
 
 test("Vertex decode (nested record)", () => {

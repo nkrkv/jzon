@@ -1,5 +1,5 @@
 module DecodingError: {
-  type locationComponent = Field(string)
+  type locationComponent = Field(string) | Index(int)
 
   type location = array<locationComponent>
 
