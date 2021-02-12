@@ -207,6 +207,148 @@ let object3 = (destruct, construct, field1, field2, field3) =>
       ),
   )
 
+let object15 = (
+  destruct,
+  construct,
+  field1,
+  field2,
+  field3,
+  field4,
+  field5,
+  field6,
+  field7,
+  field8,
+  field9,
+  field10,
+  field11,
+  field12,
+  field13,
+  field14,
+  field15,
+) =>
+  Codec.make(
+    // encode
+    value => {
+      let (
+        val1,
+        val2,
+        val3,
+        val4,
+        val5,
+        val6,
+        val7,
+        val8,
+        val9,
+        val10,
+        val11,
+        val12,
+        val13,
+        val14,
+        val15,
+      ) = destruct(value)
+      jsonObject([
+        Field.encode(field1, val1),
+        Field.encode(field2, val2),
+        Field.encode(field3, val3),
+        Field.encode(field4, val4),
+        Field.encode(field5, val5),
+        Field.encode(field6, val6),
+        Field.encode(field7, val7),
+        Field.encode(field8, val8),
+        Field.encode(field9, val9),
+        Field.encode(field10, val10),
+        Field.encode(field11, val11),
+        Field.encode(field12, val12),
+        Field.encode(field13, val13),
+        Field.encode(field14, val14),
+        Field.encode(field15, val15),
+      ])
+    },
+    // decode
+    json =>
+      json
+      ->asObject
+      ->Result.flatMap(fieldset =>
+        switch field1->Field.decode(fieldset) {
+        | Ok(val1) =>
+          switch field2->Field.decode(fieldset) {
+          | Ok(val2) =>
+            switch field3->Field.decode(fieldset) {
+            | Ok(val3) =>
+              switch field4->Field.decode(fieldset) {
+              | Ok(val4) =>
+                switch field5->Field.decode(fieldset) {
+                | Ok(val5) =>
+                  switch field6->Field.decode(fieldset) {
+                  | Ok(val6) =>
+                    switch field7->Field.decode(fieldset) {
+                    | Ok(val7) =>
+                      switch field8->Field.decode(fieldset) {
+                      | Ok(val8) =>
+                        switch field9->Field.decode(fieldset) {
+                        | Ok(val9) =>
+                          switch field10->Field.decode(fieldset) {
+                          | Ok(val10) =>
+                            switch field11->Field.decode(fieldset) {
+                            | Ok(val11) =>
+                              switch field12->Field.decode(fieldset) {
+                              | Ok(val12) =>
+                                switch field13->Field.decode(fieldset) {
+                                | Ok(val13) =>
+                                  switch field14->Field.decode(fieldset) {
+                                  | Ok(val14) =>
+                                    switch field15->Field.decode(fieldset) {
+                                    | Ok(val15) =>
+                                      construct((
+                                        val1,
+                                        val2,
+                                        val3,
+                                        val4,
+                                        val5,
+                                        val6,
+                                        val7,
+                                        val8,
+                                        val9,
+                                        val10,
+                                        val11,
+                                        val12,
+                                        val13,
+                                        val14,
+                                        val15,
+                                      ))
+                                    | Error(_) as err => err
+                                    }
+                                  | Error(_) as err => err
+                                  }
+                                | Error(_) as err => err
+                                }
+                              | Error(_) as err => err
+                              }
+                            | Error(_) as err => err
+                            }
+                          | Error(_) as err => err
+                          }
+                        | Error(_) as err => err
+                        }
+                      | Error(_) as err => err
+                      }
+                    | Error(_) as err => err
+                    }
+                  | Error(_) as err => err
+                  }
+                | Error(_) as err => err
+                }
+              | Error(_) as err => err
+              }
+            | Error(_) as err => err
+            }
+          | Error(_) as err => err
+          }
+        | Error(_) as err => err
+        }
+      ),
+  )
+
 let decodeString = (codec, str) => {
   let maybeJson = switch Js.Json.parseExn(str) {
   | json => Ok(json)

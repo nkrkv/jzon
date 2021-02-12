@@ -47,5 +47,27 @@ let object3: (
   Field.t<'b>,
   Field.t<'c>,
 ) => Codec.t<'r>
+let object15: (
+  'r => ('f1, 'f2, 'f3, 'f4, 'f5, 'f6, 'f7, 'f8, 'f9, 'f10, 'f11, 'f12, 'f13, 'f14, 'f15),
+  (('f1, 'f2, 'f3, 'f4, 'f5, 'f6, 'f7, 'f8, 'f9, 'f10, 'f11, 'f12, 'f13, 'f14, 'f15)) => result<
+    'r,
+    DecodingError.t,
+  >,
+  Field.t<'f1>,
+  Field.t<'f2>,
+  Field.t<'f3>,
+  Field.t<'f4>,
+  Field.t<'f5>,
+  Field.t<'f6>,
+  Field.t<'f7>,
+  Field.t<'f8>,
+  Field.t<'f9>,
+  Field.t<'f10>,
+  Field.t<'f11>,
+  Field.t<'f12>,
+  Field.t<'f13>,
+  Field.t<'f14>,
+  Field.t<'f15>,
+) => Codec.t<'r>
 
 let decodeString: (Codec.t<'v>, string) => result<'v, DecodingError.t>
