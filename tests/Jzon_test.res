@@ -1,6 +1,9 @@
 open Test
 
 module Assert = {
+  let equals = (~message=?, left, right) =>
+    assertion((left, right) => left == right, left, right, ~operator="left == right", ~message?)
+
   let okOf = (~message=?, left, right) =>
     assertion(
       (left, right) => left == Ok(right),
@@ -95,11 +98,24 @@ test("Scalar types", () => {
 test("Int codec", () => {
   Jzon.int
   ->Jzon.decodeString("42.5")
-  ->Assert.errorString("Unexpected value 42.5 at .", ~message="barks on fractional numbers")
+  ->Assert.errorString("Unexpected value 42.5 at .", ~message="Barks on fractional numbers")
 
   Jzon.int
   ->Jzon.decodeString("9111222333")
-  ->Assert.errorString("Unexpected value 9111222333 at .", ~message="barks on out-of-range numbers")
+  ->Assert.errorString("Unexpected value 9111222333 at .", ~message="Barks on out-of-range numbers")
+})
+
+test("Nullable", () => {
+  Assert.roundtrips(
+    Some("Hello"),
+    Jzon.nullable(Jzon.string),
+    ~message="Some(string) does roundtrip",
+  )
+
+  Assert.roundtrips(None, Jzon.nullable(Jzon.string), ~message="None does roundtrip")
+  Jzon.nullable(Jzon.string)
+  ->Jzon.encode(None)
+  ->Assert.equals(Js.Json.null, ~message="Encodes as `null`")
 })
 
 test("Vertex decode (nested record)", () => {

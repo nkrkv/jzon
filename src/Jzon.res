@@ -179,6 +179,16 @@ let bool = Codec.make(Js.Json.boolean, json =>
 
 let json = Codec.identity
 
+let nullable = payloadCodec =>
+  Codec.make(
+    maybeValue =>
+      switch maybeValue {
+      | Some(value) => payloadCodec->encode(value)
+      | None => Js.Json.null
+      },
+    json => json == Js.Json.null ? Ok(None) : payloadCodec->decode(json)->Result.map(v => Some(v)),
+  )
+
 let field = (key, codec) => Field.make(Key(key), codec)
 let self = Field.make(Self, Codec.identity)
 
