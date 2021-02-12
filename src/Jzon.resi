@@ -13,61 +13,55 @@ module DecodingError: {
   let toString: t => string
 }
 
-module Codec: {
-  type t<'v>
-  type encode<'v> = 'v => Js.Json.t
-  type decode<'v> = Js.Json.t => result<'v, DecodingError.t>
+type codec<'v>
+type field<'v>
 
-  let make: (encode<'v>, decode<'v>) => t<'v>
-  let encode: (t<'v>, 'v) => Js.Json.t
-  let decode: (t<'v>, Js.Json.t) => result<'v, DecodingError.t>
-}
+let decode: (codec<'v>, Js.Json.t) => result<'v, DecodingError.t>
+let decodeString: (codec<'v>, string) => result<'v, DecodingError.t>
+let encode: (codec<'v>, 'v) => Js.Json.t
 
-module Field: {
-  type t<'v>
-}
+let string: codec<string>
+let float: codec<float>
 
-let string: Codec.t<string>
-let float: Codec.t<float>
+let field: (string, codec<'v>) => field<'v>
+let self: field<Js.Json.t>
 
-let field: (string, Codec.t<'v>) => Field.t<'v>
-let self: Field.t<Js.Json.t>
+let object1: ('r => 'f1, 'f1 => result<'r, DecodingError.t>, field<'f1>) => codec<'r>
 
-let object1: ('r => 'a, 'a => result<'r, DecodingError.t>, Field.t<'a>) => Codec.t<'r>
 let object2: (
-  'r => ('a, 'b),
-  (('a, 'b)) => result<'r, DecodingError.t>,
-  Field.t<'a>,
-  Field.t<'b>,
-) => Codec.t<'r>
+  'r => ('f1, 'f2),
+  (('f1, 'f2)) => result<'r, DecodingError.t>,
+  field<'f1>,
+  field<'f2>,
+) => codec<'r>
+
 let object3: (
-  'r => ('a, 'b, 'c),
-  (('a, 'b, 'c)) => result<'r, DecodingError.t>,
-  Field.t<'a>,
-  Field.t<'b>,
-  Field.t<'c>,
-) => Codec.t<'r>
+  'r => ('f1, 'f2, 'f3),
+  (('f1, 'f2, 'f3)) => result<'r, DecodingError.t>,
+  field<'f1>,
+  field<'f2>,
+  field<'f3>,
+) => codec<'r>
+
 let object15: (
   'r => ('f1, 'f2, 'f3, 'f4, 'f5, 'f6, 'f7, 'f8, 'f9, 'f10, 'f11, 'f12, 'f13, 'f14, 'f15),
   (('f1, 'f2, 'f3, 'f4, 'f5, 'f6, 'f7, 'f8, 'f9, 'f10, 'f11, 'f12, 'f13, 'f14, 'f15)) => result<
     'r,
     DecodingError.t,
   >,
-  Field.t<'f1>,
-  Field.t<'f2>,
-  Field.t<'f3>,
-  Field.t<'f4>,
-  Field.t<'f5>,
-  Field.t<'f6>,
-  Field.t<'f7>,
-  Field.t<'f8>,
-  Field.t<'f9>,
-  Field.t<'f10>,
-  Field.t<'f11>,
-  Field.t<'f12>,
-  Field.t<'f13>,
-  Field.t<'f14>,
-  Field.t<'f15>,
-) => Codec.t<'r>
-
-let decodeString: (Codec.t<'v>, string) => result<'v, DecodingError.t>
+  field<'f1>,
+  field<'f2>,
+  field<'f3>,
+  field<'f4>,
+  field<'f5>,
+  field<'f6>,
+  field<'f7>,
+  field<'f8>,
+  field<'f9>,
+  field<'f10>,
+  field<'f11>,
+  field<'f12>,
+  field<'f13>,
+  field<'f14>,
+  field<'f15>,
+) => codec<'r>

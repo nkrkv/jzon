@@ -47,15 +47,15 @@ module JsonCodecs = {
   let shape = Jzon.object2(
     shape =>
       switch shape {
-      | Circle(r) => ("circle", radius->Jzon.Codec.encode(r))
-      | Rectangle(width, height) => ("rectangle", widthHeight->Jzon.Codec.encode((width, height)))
-      | Ellipse(width, height) => ("ellipse", widthHeight->Jzon.Codec.encode((width, height)))
+      | Circle(r) => ("circle", radius->Jzon.encode(r))
+      | Rectangle(width, height) => ("rectangle", widthHeight->Jzon.encode((width, height)))
+      | Ellipse(width, height) => ("ellipse", widthHeight->Jzon.encode((width, height)))
       },
     ((kind, json)) =>
       switch kind {
-      | "circle" => radius->Jzon.Codec.decode(json)->Result.map(r => Circle(r))
-      | "rectangle" => widthHeight->Jzon.Codec.decode(json)->Result.map(((w, h)) => Rectangle(w, h))
-      | "ellipse" => widthHeight->Jzon.Codec.decode(json)->Result.map(((w, h)) => Ellipse(w, h))
+      | "circle" => radius->Jzon.decode(json)->Result.map(r => Circle(r))
+      | "rectangle" => widthHeight->Jzon.decode(json)->Result.map(((w, h)) => Rectangle(w, h))
+      | "ellipse" => widthHeight->Jzon.decode(json)->Result.map(((w, h)) => Ellipse(w, h))
       | x => Error(#UnexpectedJsonValue([Field("kind")], x))
       },
     Jzon.field("kind", Jzon.string),
@@ -89,8 +89,8 @@ test("Vertex decode (nested record)", () => {
 
 test("Vertex roundtrip (nested record)", () => {
   let data = {x: 10.0, y: 20.0, look: {color: "#09a", size: 5.0}}
-  let json = JsonCodecs.vertex->Jzon.Codec.encode(data)
-  let result = JsonCodecs.vertex->Jzon.Codec.decode(json)
+  let json = JsonCodecs.vertex->Jzon.encode(data)
+  let result = JsonCodecs.vertex->Jzon.decode(json)
   result->Assert.okOf(data, ~message="preserves data")
 })
 
@@ -107,8 +107,8 @@ test("Shape decode (tagged union)", () => {
 
 test("Shape roundtrip (tagged union)", () => {
   let data = Rectangle(3.0, 4.0)
-  let json = JsonCodecs.shape->Jzon.Codec.encode(data)
-  let result = JsonCodecs.shape->Jzon.Codec.decode(json)
+  let json = JsonCodecs.shape->Jzon.encode(data)
+  let result = JsonCodecs.shape->Jzon.decode(json)
   result->Assert.okOf(data, ~message="preserves data")
 })
 

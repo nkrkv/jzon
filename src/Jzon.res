@@ -74,9 +74,25 @@ module Codec = {
   let make = (encode, decode) => {encode: encode, decode: decode}
   let encode = codec => codec.encode
   let decode = codec => codec.decode
+  let decodeString = (codec, str) => {
+    let maybeJson = switch Js.Json.parseExn(str) {
+    | json => Ok(json)
+    | exception Js.Exn.Error(obj) =>
+      let message = Js.Exn.message(obj)
+      Error(#SyntaxError(message->Option.getWithDefault("Syntax error")))
+    }
+
+    maybeJson->Result.flatMap(json => codec->decode(json))
+  }
 
   let identity = make(x => x, x => Ok(x))
 }
+
+type codec<'v> = Codec.t<'v>
+
+let encode = Codec.encode
+let decode = Codec.decode
+let decodeString = Codec.decodeString
 
 module Field = {
   type path =
@@ -125,6 +141,8 @@ module Field = {
   // decode + flatMap the result
   let dfmap = (field, fieldset, fmapFn) => field->decode(fieldset)->Result.flatMap(fmapFn)
 }
+
+type field<'v> = Field.t<'v>
 
 let string = Codec.make(Js.Json.string, json =>
   switch json->Js.Json.decodeString {
@@ -348,14 +366,3 @@ let object15 = (
         }
       ),
   )
-
-let decodeString = (codec, str) => {
-  let maybeJson = switch Js.Json.parseExn(str) {
-  | json => Ok(json)
-  | exception Js.Exn.Error(obj) =>
-    let message = Js.Exn.message(obj)
-    Error(#SyntaxError(message->Option.getWithDefault("Syntax error")))
-  }
-
-  maybeJson->Result.flatMap(json => codec->Codec.decode(json))
-}
