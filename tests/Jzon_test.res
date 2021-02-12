@@ -10,6 +10,12 @@ module Assert = {
       ~message?,
     )
 
+  let roundtrips = (~message=?, data, codec) => {
+    let json = codec->Jzon.encode(data)
+    let result = codec->Jzon.decode(json)
+    result->okOf(data, ~message?)
+  }
+
   let errorString = (~message=?, left, right) => assertion((left, right) => {
       switch left {
       | Ok(_) => false
@@ -77,6 +83,14 @@ module JsonCodecs = {
     Jzon.field("look", look),
   )
 }
+
+test("Scalar types", () => {
+  Assert.roundtrips("Hello", Jzon.string, ~message="string does roundtrip")
+  Assert.roundtrips(42.5, Jzon.float, ~message="float does roundtrip")
+  Assert.roundtrips(42, Jzon.int, ~message="int does roundtrip")
+  Assert.roundtrips(true, Jzon.bool, ~message="bool does roundtrip")
+  Assert.roundtrips(Js.Json.number(42.), Jzon.json, ~message="Raw JSON does roundtrip")
+})
 
 test("Vertex decode (nested record)", () => {
   let json = `{"x": 10, "y": 20, "look": {"color": "#09a", "size": 5.0}}`

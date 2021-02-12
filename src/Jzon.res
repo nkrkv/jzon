@@ -158,6 +158,20 @@ let float = Codec.make(Js.Json.number, json =>
   }
 )
 
+let int = Codec.make(
+  x => float->encode(x->Int.toFloat),
+  json => float->decode(json)->Result.map(Js.Math.floor_int),
+)
+
+let bool = Codec.make(Js.Json.boolean, json =>
+  switch json->Js.Json.decodeBoolean {
+  | Some(x) => Ok(x)
+  | None => Error(#UnexpectedJsonType([], "bool", json))
+  }
+)
+
+let json = Codec.identity
+
 let field = (key, codec) => Field.make(Key(key), codec)
 let self = Field.make(Self, Codec.identity)
 

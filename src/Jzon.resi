@@ -22,6 +22,9 @@ let encode: (codec<'v>, 'v) => Js.Json.t
 
 let string: codec<string>
 let float: codec<float>
+let int: codec<int>
+let bool: codec<bool>
+let json: codec<Js.Json.t>
 
 let field: (string, codec<'v>) => field<'v>
 let self: field<Js.Json.t>
