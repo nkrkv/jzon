@@ -11,6 +11,12 @@ type vertex = {
   look: option<look>,
 }
 
+type link = {
+  start: int,
+  end: int,
+  weight: float,
+}
+
 module Codecs = {
   let look = Jzon.object2(
     ({color, size}) => (color, size),
@@ -25,6 +31,14 @@ module Codecs = {
     Jzon.field("x", Jzon.float),
     Jzon.field("y", Jzon.float),
     Jzon.field("look", look)->Jzon.optional,
+  )
+
+  let link = Jzon.object3(
+    ({start, end, weight}) => (start, end, weight),
+    ((start, end, weight)) => {start: start, end: end, weight: weight}->Ok,
+    Jzon.field("start", Jzon.int),
+    Jzon.field("end", Jzon.int),
+    Jzon.field("weight", Jzon.float)->Jzon.default(1.0),
   )
 }
 
@@ -62,7 +76,17 @@ test("Nested object optional field", () => {
   Codecs.vertex
   ->Jzon.encode({x: 10.0, y: 20.0, look: None})
   ->Js.Json.stringify
-  ->Assert.equals(`{"x":10,"y":20}`, ~message="Endoding omits nulls")
+  ->Assert.equals(`{"x":10,"y":20}`, ~message="Encoding omits nulls")
+})
+
+test("Object field default value", () => {
+  Codecs.link
+  ->Jzon.decodeString(`{"start": 0, "end": 1}`)
+  ->Assert.okOf({start: 0, end: 1, weight: 1.0}, ~message="Used if absent")
+
+  Codecs.vertex
+  ->Jzon.decodeString(`{"x": 10, "y": 20, "look": null}`)
+  ->Assert.okOf({x: 10.0, y: 20.0, look: None}, ~message="Used if null")
 })
 
 test("Object JSON with missing field", () => {

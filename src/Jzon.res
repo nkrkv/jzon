@@ -168,18 +168,20 @@ module Field = {
     | Self
     | Key(string)
 
-  type claim =
+  type claim<'v> =
     | Required
     | Optional
+    | OptionalWithDefault('v)
 
   type t<'v> = {
     path: path,
     codec: Codec.t<'v>,
-    claim: claim,
+    claim: claim<'v>,
   }
 
   let make = (path, codec) => {path: path, codec: codec, claim: Required}
   let makeOptional = ({path, codec}) => {path: path, codec: nullable(codec), claim: Optional}
+  let assignDefault = (field, value) => {...field, claim: OptionalWithDefault(value)}
   let path = ({path}) => path
   let codec = ({codec}) => codec
   let claim = ({claim}) => claim
@@ -206,18 +208,18 @@ module Field = {
     switch field->path {
     | Self => field->codec->Codec.decode(Js.Json.object_(fieldset))
     | Key(key) =>
-      let maybeChildJson = switch (fieldset->Js.Dict.get(key), field->claim) {
-      | (Some(childJson), _) => Ok(childJson)
-      | (None, Optional) => Ok(Js.Json.null)
-      | (None, Required) => Error(#MissingField([], key))
-      }
-
-      maybeChildJson->Result.flatMap(childJson =>
+      let decodeChild = childJson =>
         field
         ->codec
         ->Codec.decode(childJson)
         ->ResultX.mapError(DecodingError.prependLocation(_, Field(key)))
-      )
+
+      switch (fieldset->Js.Dict.get(key), field->claim) {
+      | (Some(childJson), _) => decodeChild(childJson)
+      | (None, Optional) => decodeChild(Js.Json.null)
+      | (None, OptionalWithDefault(x)) => Ok(x)
+      | (None, Required) => Error(#MissingField([], key))
+      }
     }
 
   // decode + flatMap the result
@@ -229,6 +231,7 @@ type field<'v> = Field.t<'v>
 let field = (key, codec) => Field.make(Key(key), codec)
 let self = Field.make(Self, Codec.identity)
 let optional = Field.makeOptional
+let default = Field.assignDefault
 
 let jsonObject = keyVals => Js.Json.object_(Js.Dict.fromArray(keyVals->Array.concatMany))
 
