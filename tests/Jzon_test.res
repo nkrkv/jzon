@@ -131,6 +131,10 @@ test("Array", () => {
     "Expected number, got string at .[2]",
     ~message="Barks on unexpected type with proper path",
   )
+
+  Jzon.array(Jzon.nullable(Jzon.int))
+  ->Jzon.decodeString(`[1, 2, null, 4]`)
+  ->Assert.okOf([Some(1), Some(2), None, Some(4)], ~message="Handles nullables")
 })
 
 test("Vertex decode (nested record)", () => {
