@@ -186,7 +186,9 @@ module Field = {
 
   let encode = (field, val) =>
     switch field->path {
-    | Key(key) => [(key, field->codec->Codec.encode(val))]
+    | Key(key) =>
+      let json = field->codec->Codec.encode(val)
+      json == Js.Json.null && field->claim == Optional ? [] : [(key, json)]
     | Self =>
       switch field->codec->Codec.encode(val)->Js.Json.classify {
       | JSONObject(objDict) => objDict->Js.Dict.entries

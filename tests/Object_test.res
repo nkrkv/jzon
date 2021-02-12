@@ -53,7 +53,16 @@ test("Nested object", () => {
 test("Nested object optional field", () => {
   Codecs.vertex
   ->Jzon.decodeString(`{"x": 10, "y": 20}`)
-  ->Assert.okOf({x: 10.0, y: 20.0, look: None}, ~message="Decodes to None")
+  ->Assert.okOf({x: 10.0, y: 20.0, look: None}, ~message="Decodes to None if absent")
+
+  Codecs.vertex
+  ->Jzon.decodeString(`{"x": 10, "y": 20, "look": null}`)
+  ->Assert.okOf({x: 10.0, y: 20.0, look: None}, ~message="Decodes to None if null")
+
+  Codecs.vertex
+  ->Jzon.encode({x: 10.0, y: 20.0, look: None})
+  ->Js.Json.stringify
+  ->Assert.equals(`{"x":10,"y":20}`, ~message="Endoding omits nulls")
 })
 
 test("Object JSON with missing field", () => {
