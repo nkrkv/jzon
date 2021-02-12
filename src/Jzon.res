@@ -232,9 +232,6 @@ module Field = {
       | (None, Required) => Error(#MissingField([], key))
       }
     }
-
-  // decode + flatMap the result
-  let dfmap = (field, fieldset, fmapFn) => field->decode(fieldset)->Result.flatMap(fmapFn)
 }
 
 type field<'v> = Field.t<'v>
@@ -263,7 +260,12 @@ let object1 = (destruct, construct, field1) =>
     json =>
       json
       ->asObject
-      ->Result.flatMap(fieldset => field1->Field.dfmap(fieldset, val1 => construct(val1))),
+      ->Result.flatMap(fieldset =>
+        switch field1->Field.decode(fieldset) {
+        | Ok(val1) => construct(val1)
+        | Error(_) as err => err
+        }
+      ),
   )
 
 let object2 = (destruct, construct, field1, field2) =>
@@ -278,9 +280,14 @@ let object2 = (destruct, construct, field1, field2) =>
       json
       ->asObject
       ->Result.flatMap(fieldset =>
-        field1->Field.dfmap(fieldset, val1 =>
-          field2->Field.dfmap(fieldset, val2 => construct((val1, val2)))
-        )
+        switch field1->Field.decode(fieldset) {
+        | Ok(val1) =>
+          switch field2->Field.decode(fieldset) {
+          | Ok(val2) => construct((val1, val2))
+          | Error(_) as err => err
+          }
+        | Error(_) as err => err
+        }
       ),
   )
 
@@ -300,11 +307,878 @@ let object3 = (destruct, construct, field1, field2, field3) =>
       json
       ->asObject
       ->Result.flatMap(fieldset =>
-        field1->Field.dfmap(fieldset, val1 =>
-          field2->Field.dfmap(fieldset, val2 =>
-            field3->Field.dfmap(fieldset, val3 => construct((val1, val2, val3)))
-          )
-        )
+        switch field1->Field.decode(fieldset) {
+        | Ok(val1) =>
+          switch field2->Field.decode(fieldset) {
+          | Ok(val2) =>
+            switch field3->Field.decode(fieldset) {
+            | Ok(val3) => construct((val1, val2, val3))
+            | Error(_) as err => err
+            }
+          | Error(_) as err => err
+          }
+        | Error(_) as err => err
+        }
+      ),
+  )
+
+let object4 = (destruct, construct, field1, field2, field3, field4) =>
+  Codec.make(
+    // encode
+    value => {
+      let (val1, val2, val3, val4) = destruct(value)
+      jsonObject([
+        Field.encode(field1, val1),
+        Field.encode(field2, val2),
+        Field.encode(field3, val3),
+        Field.encode(field4, val4),
+      ])
+    },
+    // decode
+    json =>
+      json
+      ->asObject
+      ->Result.flatMap(fieldset =>
+        switch field1->Field.decode(fieldset) {
+        | Ok(val1) =>
+          switch field2->Field.decode(fieldset) {
+          | Ok(val2) =>
+            switch field3->Field.decode(fieldset) {
+            | Ok(val3) =>
+              switch field4->Field.decode(fieldset) {
+              | Ok(val4) => construct((val1, val2, val3, val4))
+              | Error(_) as err => err
+              }
+            | Error(_) as err => err
+            }
+          | Error(_) as err => err
+          }
+        | Error(_) as err => err
+        }
+      ),
+  )
+
+let object5 = (destruct, construct, field1, field2, field3, field4, field5) =>
+  Codec.make(
+    // encode
+    value => {
+      let (val1, val2, val3, val4, val5) = destruct(value)
+      jsonObject([
+        Field.encode(field1, val1),
+        Field.encode(field2, val2),
+        Field.encode(field3, val3),
+        Field.encode(field4, val4),
+        Field.encode(field5, val5),
+      ])
+    },
+    // decode
+    json =>
+      json
+      ->asObject
+      ->Result.flatMap(fieldset =>
+        switch field1->Field.decode(fieldset) {
+        | Ok(val1) =>
+          switch field2->Field.decode(fieldset) {
+          | Ok(val2) =>
+            switch field3->Field.decode(fieldset) {
+            | Ok(val3) =>
+              switch field4->Field.decode(fieldset) {
+              | Ok(val4) =>
+                switch field5->Field.decode(fieldset) {
+                | Ok(val5) => construct((val1, val2, val3, val4, val5))
+                | Error(_) as err => err
+                }
+              | Error(_) as err => err
+              }
+            | Error(_) as err => err
+            }
+          | Error(_) as err => err
+          }
+        | Error(_) as err => err
+        }
+      ),
+  )
+
+let object6 = (destruct, construct, field1, field2, field3, field4, field5, field6) =>
+  Codec.make(
+    // encode
+    value => {
+      let (val1, val2, val3, val4, val5, val6) = destruct(value)
+      jsonObject([
+        Field.encode(field1, val1),
+        Field.encode(field2, val2),
+        Field.encode(field3, val3),
+        Field.encode(field4, val4),
+        Field.encode(field5, val5),
+        Field.encode(field6, val6),
+      ])
+    },
+    // decode
+    json =>
+      json
+      ->asObject
+      ->Result.flatMap(fieldset =>
+        switch field1->Field.decode(fieldset) {
+        | Ok(val1) =>
+          switch field2->Field.decode(fieldset) {
+          | Ok(val2) =>
+            switch field3->Field.decode(fieldset) {
+            | Ok(val3) =>
+              switch field4->Field.decode(fieldset) {
+              | Ok(val4) =>
+                switch field5->Field.decode(fieldset) {
+                | Ok(val5) =>
+                  switch field6->Field.decode(fieldset) {
+                  | Ok(val6) => construct((val1, val2, val3, val4, val5, val6))
+                  | Error(_) as err => err
+                  }
+                | Error(_) as err => err
+                }
+              | Error(_) as err => err
+              }
+            | Error(_) as err => err
+            }
+          | Error(_) as err => err
+          }
+        | Error(_) as err => err
+        }
+      ),
+  )
+
+let object7 = (destruct, construct, field1, field2, field3, field4, field5, field6, field7) =>
+  Codec.make(
+    // encode
+    value => {
+      let (val1, val2, val3, val4, val5, val6, val7) = destruct(value)
+      jsonObject([
+        Field.encode(field1, val1),
+        Field.encode(field2, val2),
+        Field.encode(field3, val3),
+        Field.encode(field4, val4),
+        Field.encode(field5, val5),
+        Field.encode(field6, val6),
+        Field.encode(field7, val7),
+      ])
+    },
+    // decode
+    json =>
+      json
+      ->asObject
+      ->Result.flatMap(fieldset =>
+        switch field1->Field.decode(fieldset) {
+        | Ok(val1) =>
+          switch field2->Field.decode(fieldset) {
+          | Ok(val2) =>
+            switch field3->Field.decode(fieldset) {
+            | Ok(val3) =>
+              switch field4->Field.decode(fieldset) {
+              | Ok(val4) =>
+                switch field5->Field.decode(fieldset) {
+                | Ok(val5) =>
+                  switch field6->Field.decode(fieldset) {
+                  | Ok(val6) =>
+                    switch field7->Field.decode(fieldset) {
+                    | Ok(val7) => construct((val1, val2, val3, val4, val5, val6, val7))
+                    | Error(_) as err => err
+                    }
+                  | Error(_) as err => err
+                  }
+                | Error(_) as err => err
+                }
+              | Error(_) as err => err
+              }
+            | Error(_) as err => err
+            }
+          | Error(_) as err => err
+          }
+        | Error(_) as err => err
+        }
+      ),
+  )
+
+let object8 = (
+  destruct,
+  construct,
+  field1,
+  field2,
+  field3,
+  field4,
+  field5,
+  field6,
+  field7,
+  field8,
+) =>
+  Codec.make(
+    // encode
+    value => {
+      let (val1, val2, val3, val4, val5, val6, val7, val8) = destruct(value)
+      jsonObject([
+        Field.encode(field1, val1),
+        Field.encode(field2, val2),
+        Field.encode(field3, val3),
+        Field.encode(field4, val4),
+        Field.encode(field5, val5),
+        Field.encode(field6, val6),
+        Field.encode(field7, val7),
+        Field.encode(field8, val8),
+      ])
+    },
+    // decode
+    json =>
+      json
+      ->asObject
+      ->Result.flatMap(fieldset =>
+        switch field1->Field.decode(fieldset) {
+        | Ok(val1) =>
+          switch field2->Field.decode(fieldset) {
+          | Ok(val2) =>
+            switch field3->Field.decode(fieldset) {
+            | Ok(val3) =>
+              switch field4->Field.decode(fieldset) {
+              | Ok(val4) =>
+                switch field5->Field.decode(fieldset) {
+                | Ok(val5) =>
+                  switch field6->Field.decode(fieldset) {
+                  | Ok(val6) =>
+                    switch field7->Field.decode(fieldset) {
+                    | Ok(val7) =>
+                      switch field8->Field.decode(fieldset) {
+                      | Ok(val8) => construct((val1, val2, val3, val4, val5, val6, val7, val8))
+                      | Error(_) as err => err
+                      }
+                    | Error(_) as err => err
+                    }
+                  | Error(_) as err => err
+                  }
+                | Error(_) as err => err
+                }
+              | Error(_) as err => err
+              }
+            | Error(_) as err => err
+            }
+          | Error(_) as err => err
+          }
+        | Error(_) as err => err
+        }
+      ),
+  )
+
+let object9 = (
+  destruct,
+  construct,
+  field1,
+  field2,
+  field3,
+  field4,
+  field5,
+  field6,
+  field7,
+  field8,
+  field9,
+) =>
+  Codec.make(
+    // encode
+    value => {
+      let (val1, val2, val3, val4, val5, val6, val7, val8, val9) = destruct(value)
+      jsonObject([
+        Field.encode(field1, val1),
+        Field.encode(field2, val2),
+        Field.encode(field3, val3),
+        Field.encode(field4, val4),
+        Field.encode(field5, val5),
+        Field.encode(field6, val6),
+        Field.encode(field7, val7),
+        Field.encode(field8, val8),
+        Field.encode(field9, val9),
+      ])
+    },
+    // decode
+    json =>
+      json
+      ->asObject
+      ->Result.flatMap(fieldset =>
+        switch field1->Field.decode(fieldset) {
+        | Ok(val1) =>
+          switch field2->Field.decode(fieldset) {
+          | Ok(val2) =>
+            switch field3->Field.decode(fieldset) {
+            | Ok(val3) =>
+              switch field4->Field.decode(fieldset) {
+              | Ok(val4) =>
+                switch field5->Field.decode(fieldset) {
+                | Ok(val5) =>
+                  switch field6->Field.decode(fieldset) {
+                  | Ok(val6) =>
+                    switch field7->Field.decode(fieldset) {
+                    | Ok(val7) =>
+                      switch field8->Field.decode(fieldset) {
+                      | Ok(val8) =>
+                        switch field9->Field.decode(fieldset) {
+                        | Ok(val9) =>
+                          construct((val1, val2, val3, val4, val5, val6, val7, val8, val9))
+                        | Error(_) as err => err
+                        }
+                      | Error(_) as err => err
+                      }
+                    | Error(_) as err => err
+                    }
+                  | Error(_) as err => err
+                  }
+                | Error(_) as err => err
+                }
+              | Error(_) as err => err
+              }
+            | Error(_) as err => err
+            }
+          | Error(_) as err => err
+          }
+        | Error(_) as err => err
+        }
+      ),
+  )
+
+let object10 = (
+  destruct,
+  construct,
+  field1,
+  field2,
+  field3,
+  field4,
+  field5,
+  field6,
+  field7,
+  field8,
+  field9,
+  field10,
+) =>
+  Codec.make(
+    // encode
+    value => {
+      let (val1, val2, val3, val4, val5, val6, val7, val8, val9, val10) = destruct(value)
+      jsonObject([
+        Field.encode(field1, val1),
+        Field.encode(field2, val2),
+        Field.encode(field3, val3),
+        Field.encode(field4, val4),
+        Field.encode(field5, val5),
+        Field.encode(field6, val6),
+        Field.encode(field7, val7),
+        Field.encode(field8, val8),
+        Field.encode(field9, val9),
+        Field.encode(field10, val10),
+      ])
+    },
+    // decode
+    json =>
+      json
+      ->asObject
+      ->Result.flatMap(fieldset =>
+        switch field1->Field.decode(fieldset) {
+        | Ok(val1) =>
+          switch field2->Field.decode(fieldset) {
+          | Ok(val2) =>
+            switch field3->Field.decode(fieldset) {
+            | Ok(val3) =>
+              switch field4->Field.decode(fieldset) {
+              | Ok(val4) =>
+                switch field5->Field.decode(fieldset) {
+                | Ok(val5) =>
+                  switch field6->Field.decode(fieldset) {
+                  | Ok(val6) =>
+                    switch field7->Field.decode(fieldset) {
+                    | Ok(val7) =>
+                      switch field8->Field.decode(fieldset) {
+                      | Ok(val8) =>
+                        switch field9->Field.decode(fieldset) {
+                        | Ok(val9) =>
+                          switch field10->Field.decode(fieldset) {
+                          | Ok(val10) =>
+                            construct((val1, val2, val3, val4, val5, val6, val7, val8, val9, val10))
+                          | Error(_) as err => err
+                          }
+                        | Error(_) as err => err
+                        }
+                      | Error(_) as err => err
+                      }
+                    | Error(_) as err => err
+                    }
+                  | Error(_) as err => err
+                  }
+                | Error(_) as err => err
+                }
+              | Error(_) as err => err
+              }
+            | Error(_) as err => err
+            }
+          | Error(_) as err => err
+          }
+        | Error(_) as err => err
+        }
+      ),
+  )
+
+let object11 = (
+  destruct,
+  construct,
+  field1,
+  field2,
+  field3,
+  field4,
+  field5,
+  field6,
+  field7,
+  field8,
+  field9,
+  field10,
+  field11,
+) =>
+  Codec.make(
+    // encode
+    value => {
+      let (val1, val2, val3, val4, val5, val6, val7, val8, val9, val10, val11) = destruct(value)
+      jsonObject([
+        Field.encode(field1, val1),
+        Field.encode(field2, val2),
+        Field.encode(field3, val3),
+        Field.encode(field4, val4),
+        Field.encode(field5, val5),
+        Field.encode(field6, val6),
+        Field.encode(field7, val7),
+        Field.encode(field8, val8),
+        Field.encode(field9, val9),
+        Field.encode(field10, val10),
+        Field.encode(field11, val11),
+      ])
+    },
+    // decode
+    json =>
+      json
+      ->asObject
+      ->Result.flatMap(fieldset =>
+        switch field1->Field.decode(fieldset) {
+        | Ok(val1) =>
+          switch field2->Field.decode(fieldset) {
+          | Ok(val2) =>
+            switch field3->Field.decode(fieldset) {
+            | Ok(val3) =>
+              switch field4->Field.decode(fieldset) {
+              | Ok(val4) =>
+                switch field5->Field.decode(fieldset) {
+                | Ok(val5) =>
+                  switch field6->Field.decode(fieldset) {
+                  | Ok(val6) =>
+                    switch field7->Field.decode(fieldset) {
+                    | Ok(val7) =>
+                      switch field8->Field.decode(fieldset) {
+                      | Ok(val8) =>
+                        switch field9->Field.decode(fieldset) {
+                        | Ok(val9) =>
+                          switch field10->Field.decode(fieldset) {
+                          | Ok(val10) =>
+                            switch field11->Field.decode(fieldset) {
+                            | Ok(val11) =>
+                              construct((
+                                val1,
+                                val2,
+                                val3,
+                                val4,
+                                val5,
+                                val6,
+                                val7,
+                                val8,
+                                val9,
+                                val10,
+                                val11,
+                              ))
+                            | Error(_) as err => err
+                            }
+                          | Error(_) as err => err
+                          }
+                        | Error(_) as err => err
+                        }
+                      | Error(_) as err => err
+                      }
+                    | Error(_) as err => err
+                    }
+                  | Error(_) as err => err
+                  }
+                | Error(_) as err => err
+                }
+              | Error(_) as err => err
+              }
+            | Error(_) as err => err
+            }
+          | Error(_) as err => err
+          }
+        | Error(_) as err => err
+        }
+      ),
+  )
+
+let object12 = (
+  destruct,
+  construct,
+  field1,
+  field2,
+  field3,
+  field4,
+  field5,
+  field6,
+  field7,
+  field8,
+  field9,
+  field10,
+  field11,
+  field12,
+) =>
+  Codec.make(
+    // encode
+    value => {
+      let (val1, val2, val3, val4, val5, val6, val7, val8, val9, val10, val11, val12) = destruct(
+        value,
+      )
+      jsonObject([
+        Field.encode(field1, val1),
+        Field.encode(field2, val2),
+        Field.encode(field3, val3),
+        Field.encode(field4, val4),
+        Field.encode(field5, val5),
+        Field.encode(field6, val6),
+        Field.encode(field7, val7),
+        Field.encode(field8, val8),
+        Field.encode(field9, val9),
+        Field.encode(field10, val10),
+        Field.encode(field11, val11),
+        Field.encode(field12, val12),
+      ])
+    },
+    // decode
+    json =>
+      json
+      ->asObject
+      ->Result.flatMap(fieldset =>
+        switch field1->Field.decode(fieldset) {
+        | Ok(val1) =>
+          switch field2->Field.decode(fieldset) {
+          | Ok(val2) =>
+            switch field3->Field.decode(fieldset) {
+            | Ok(val3) =>
+              switch field4->Field.decode(fieldset) {
+              | Ok(val4) =>
+                switch field5->Field.decode(fieldset) {
+                | Ok(val5) =>
+                  switch field6->Field.decode(fieldset) {
+                  | Ok(val6) =>
+                    switch field7->Field.decode(fieldset) {
+                    | Ok(val7) =>
+                      switch field8->Field.decode(fieldset) {
+                      | Ok(val8) =>
+                        switch field9->Field.decode(fieldset) {
+                        | Ok(val9) =>
+                          switch field10->Field.decode(fieldset) {
+                          | Ok(val10) =>
+                            switch field11->Field.decode(fieldset) {
+                            | Ok(val11) =>
+                              switch field12->Field.decode(fieldset) {
+                              | Ok(val12) =>
+                                construct((
+                                  val1,
+                                  val2,
+                                  val3,
+                                  val4,
+                                  val5,
+                                  val6,
+                                  val7,
+                                  val8,
+                                  val9,
+                                  val10,
+                                  val11,
+                                  val12,
+                                ))
+                              | Error(_) as err => err
+                              }
+                            | Error(_) as err => err
+                            }
+                          | Error(_) as err => err
+                          }
+                        | Error(_) as err => err
+                        }
+                      | Error(_) as err => err
+                      }
+                    | Error(_) as err => err
+                    }
+                  | Error(_) as err => err
+                  }
+                | Error(_) as err => err
+                }
+              | Error(_) as err => err
+              }
+            | Error(_) as err => err
+            }
+          | Error(_) as err => err
+          }
+        | Error(_) as err => err
+        }
+      ),
+  )
+
+let object13 = (
+  destruct,
+  construct,
+  field1,
+  field2,
+  field3,
+  field4,
+  field5,
+  field6,
+  field7,
+  field8,
+  field9,
+  field10,
+  field11,
+  field12,
+  field13,
+) =>
+  Codec.make(
+    // encode
+    value => {
+      let (
+        val1,
+        val2,
+        val3,
+        val4,
+        val5,
+        val6,
+        val7,
+        val8,
+        val9,
+        val10,
+        val11,
+        val12,
+        val13,
+      ) = destruct(value)
+      jsonObject([
+        Field.encode(field1, val1),
+        Field.encode(field2, val2),
+        Field.encode(field3, val3),
+        Field.encode(field4, val4),
+        Field.encode(field5, val5),
+        Field.encode(field6, val6),
+        Field.encode(field7, val7),
+        Field.encode(field8, val8),
+        Field.encode(field9, val9),
+        Field.encode(field10, val10),
+        Field.encode(field11, val11),
+        Field.encode(field12, val12),
+        Field.encode(field13, val13),
+      ])
+    },
+    // decode
+    json =>
+      json
+      ->asObject
+      ->Result.flatMap(fieldset =>
+        switch field1->Field.decode(fieldset) {
+        | Ok(val1) =>
+          switch field2->Field.decode(fieldset) {
+          | Ok(val2) =>
+            switch field3->Field.decode(fieldset) {
+            | Ok(val3) =>
+              switch field4->Field.decode(fieldset) {
+              | Ok(val4) =>
+                switch field5->Field.decode(fieldset) {
+                | Ok(val5) =>
+                  switch field6->Field.decode(fieldset) {
+                  | Ok(val6) =>
+                    switch field7->Field.decode(fieldset) {
+                    | Ok(val7) =>
+                      switch field8->Field.decode(fieldset) {
+                      | Ok(val8) =>
+                        switch field9->Field.decode(fieldset) {
+                        | Ok(val9) =>
+                          switch field10->Field.decode(fieldset) {
+                          | Ok(val10) =>
+                            switch field11->Field.decode(fieldset) {
+                            | Ok(val11) =>
+                              switch field12->Field.decode(fieldset) {
+                              | Ok(val12) =>
+                                switch field13->Field.decode(fieldset) {
+                                | Ok(val13) =>
+                                  construct((
+                                    val1,
+                                    val2,
+                                    val3,
+                                    val4,
+                                    val5,
+                                    val6,
+                                    val7,
+                                    val8,
+                                    val9,
+                                    val10,
+                                    val11,
+                                    val12,
+                                    val13,
+                                  ))
+                                | Error(_) as err => err
+                                }
+                              | Error(_) as err => err
+                              }
+                            | Error(_) as err => err
+                            }
+                          | Error(_) as err => err
+                          }
+                        | Error(_) as err => err
+                        }
+                      | Error(_) as err => err
+                      }
+                    | Error(_) as err => err
+                    }
+                  | Error(_) as err => err
+                  }
+                | Error(_) as err => err
+                }
+              | Error(_) as err => err
+              }
+            | Error(_) as err => err
+            }
+          | Error(_) as err => err
+          }
+        | Error(_) as err => err
+        }
+      ),
+  )
+
+let object14 = (
+  destruct,
+  construct,
+  field1,
+  field2,
+  field3,
+  field4,
+  field5,
+  field6,
+  field7,
+  field8,
+  field9,
+  field10,
+  field11,
+  field12,
+  field13,
+  field14,
+) =>
+  Codec.make(
+    // encode
+    value => {
+      let (
+        val1,
+        val2,
+        val3,
+        val4,
+        val5,
+        val6,
+        val7,
+        val8,
+        val9,
+        val10,
+        val11,
+        val12,
+        val13,
+        val14,
+      ) = destruct(value)
+      jsonObject([
+        Field.encode(field1, val1),
+        Field.encode(field2, val2),
+        Field.encode(field3, val3),
+        Field.encode(field4, val4),
+        Field.encode(field5, val5),
+        Field.encode(field6, val6),
+        Field.encode(field7, val7),
+        Field.encode(field8, val8),
+        Field.encode(field9, val9),
+        Field.encode(field10, val10),
+        Field.encode(field11, val11),
+        Field.encode(field12, val12),
+        Field.encode(field13, val13),
+        Field.encode(field14, val14),
+      ])
+    },
+    // decode
+    json =>
+      json
+      ->asObject
+      ->Result.flatMap(fieldset =>
+        switch field1->Field.decode(fieldset) {
+        | Ok(val1) =>
+          switch field2->Field.decode(fieldset) {
+          | Ok(val2) =>
+            switch field3->Field.decode(fieldset) {
+            | Ok(val3) =>
+              switch field4->Field.decode(fieldset) {
+              | Ok(val4) =>
+                switch field5->Field.decode(fieldset) {
+                | Ok(val5) =>
+                  switch field6->Field.decode(fieldset) {
+                  | Ok(val6) =>
+                    switch field7->Field.decode(fieldset) {
+                    | Ok(val7) =>
+                      switch field8->Field.decode(fieldset) {
+                      | Ok(val8) =>
+                        switch field9->Field.decode(fieldset) {
+                        | Ok(val9) =>
+                          switch field10->Field.decode(fieldset) {
+                          | Ok(val10) =>
+                            switch field11->Field.decode(fieldset) {
+                            | Ok(val11) =>
+                              switch field12->Field.decode(fieldset) {
+                              | Ok(val12) =>
+                                switch field13->Field.decode(fieldset) {
+                                | Ok(val13) =>
+                                  switch field14->Field.decode(fieldset) {
+                                  | Ok(val14) =>
+                                    construct((
+                                      val1,
+                                      val2,
+                                      val3,
+                                      val4,
+                                      val5,
+                                      val6,
+                                      val7,
+                                      val8,
+                                      val9,
+                                      val10,
+                                      val11,
+                                      val12,
+                                      val13,
+                                      val14,
+                                    ))
+                                  | Error(_) as err => err
+                                  }
+                                | Error(_) as err => err
+                                }
+                              | Error(_) as err => err
+                              }
+                            | Error(_) as err => err
+                            }
+                          | Error(_) as err => err
+                          }
+                        | Error(_) as err => err
+                        }
+                      | Error(_) as err => err
+                      }
+                    | Error(_) as err => err
+                    }
+                  | Error(_) as err => err
+                  }
+                | Error(_) as err => err
+                }
+              | Error(_) as err => err
+              }
+            | Error(_) as err => err
+            }
+          | Error(_) as err => err
+          }
+        | Error(_) as err => err
+        }
       ),
   )
 
