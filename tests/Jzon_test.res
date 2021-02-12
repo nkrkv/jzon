@@ -118,6 +118,14 @@ test("Nullable", () => {
   ->Assert.equals(Js.Json.null, ~message="Encodes as `null`")
 })
 
+test("Array", () => {
+  Assert.roundtrips(
+    [4, 8, 15, 16, 23, 42],
+    Jzon.array(Jzon.int),
+    ~message="array<int> does roundtrip",
+  )
+})
+
 test("Vertex decode (nested record)", () => {
   let json = `{"x": 10, "y": 20, "look": {"color": "#09a", "size": 5.0}}`
   let result = JsonCodecs.vertex->Jzon.decodeString(json)

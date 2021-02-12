@@ -4,6 +4,12 @@ module ResultX = {
     | Ok(_) as ok => ok
     | Error(err) => Error(fn(err))
     }
+
+  let sequence = (results: array<result<'ok, 'err>>): result<array<'ok>, 'err> => {
+    results->Array.reduce(Ok([]), (maybeAcc, res) => {
+      maybeAcc->Result.flatMap(acc => res->Result.map(x => acc->Array.concat([x])))
+    })
+  }
 }
 
 module DecodingError = {
@@ -187,6 +193,17 @@ let nullable = payloadCodec =>
       | None => Js.Json.null
       },
     json => json == Js.Json.null ? Ok(None) : payloadCodec->decode(json)->Result.map(v => Some(v)),
+  )
+
+let array = elementCodec =>
+  Codec.make(
+    xs => xs->Array.map(elementCodec->encode(_))->Js.Json.array,
+    json =>
+      switch json->Js.Json.classify {
+      | JSONArray(elementJsons) =>
+        elementJsons->Array.map(elementCodec->decode(_))->ResultX.sequence
+      | _ => Error(#UnexpectedJsonType([], "array", json))
+      },
   )
 
 let field = (key, codec) => Field.make(Key(key), codec)
