@@ -1,0 +1,5 @@
+site_name: Jzon
+theme: readthedocs
+nav:
+  - API: api.md
+  - How-to: howtos.md
