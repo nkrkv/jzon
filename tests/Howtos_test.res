@@ -20,7 +20,7 @@ module HowtoRecord = {
       Jzon.field("x", Jzon.float),
       Jzon.field("y", Jzon.float),
       Jzon.field("z", Jzon.float),
-      Jzon.field("color", Jzon.string)->Jzon.default("#000"),
+      Jzon.field("color", Jzon.string),
     )
   }
 
@@ -35,12 +35,53 @@ module HowtoRecord = {
     ->Jzon.decodeString(`{"x":1,"y":2,"z":3,"color":"#fda"}`)
     ->Assert.equals(Ok({x: 1.0, y: 2.0, z: 3.0, color: "#fda"}))
 
-    // Default value for color
-    Codecs.point
-    ->Jzon.decodeString(`{"x":1,"y":2,"z":3}`)
-    ->Assert.equals(Ok({x: 1.0, y: 2.0, z: 3.0, color: "#000"}))
-
     // Missing some required fields
     Codecs.point->Jzon.decodeString(`{"x":1,"y":2}`)->Assert.equals(Error(#MissingField([], "z")))
+  })
+}
+
+module HowtoOptionalDefault = {
+  type point = {
+    x: float,
+    y: float,
+    z: float,
+    color: option<string>,
+  }
+
+  module Codecs = {
+    let point = Jzon.object4(
+      ({x, y, z, color}) => (x, y, z, color),
+      ((x, y, z, color)) => {x: x, y: y, z: z, color: color}->Ok,
+      Jzon.field("x", Jzon.float),
+      Jzon.field("y", Jzon.float),
+      // Use Jzon.default adapter to provide a fallback value in case
+      // the field is missing
+      Jzon.field("z", Jzon.float)->Jzon.default(0.0),
+      // Use Jzon.optional adapter to make the value indeed option’al
+      Jzon.field("color", Jzon.string)->Jzon.optional,
+    )
+  }
+
+  test("Optional/default encoding", () => {
+    Codecs.point
+    ->Jzon.encodeString({x: 1.0, y: 2.0, z: 3.0, color: Some("#fda")})
+    ->Assert.equals(`{"x":1,"y":2,"z":3,"color":"#fda"}`)
+
+    // Optional fields are omitted in output if `None` and fields
+    // with default values are always encoded, even if match the
+    // fallback value
+    Codecs.point
+    ->Jzon.encodeString({x: 1.0, y: 2.0, z: 0.0, color: None})
+    ->Assert.equals(`{"x":1,"y":2,"z":0}`)
+  })
+
+  test("Optional/default decoding", () => {
+    Codecs.point
+    ->Jzon.decodeString(`{"x":1,"y":2,"z":3,"color":"#fda"}`)
+    ->Assert.equals(Ok({x: 1.0, y: 2.0, z: 3.0, color: Some("#fda")}))
+
+    Codecs.point
+    ->Jzon.decodeString(`{"x":1,"y":2}`)
+    ->Assert.equals(Ok({x: 1.0, y: 2.0, z: 0.0, color: None}))
   })
 }
