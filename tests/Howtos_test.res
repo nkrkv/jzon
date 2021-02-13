@@ -85,3 +85,32 @@ module HowtoOptionalDefault = {
     ->Assert.equals(Ok({x: 1.0, y: 2.0, z: 0.0, color: None}))
   })
 }
+
+module HowtoOpaque = {
+  module Codecs = {
+    let date = Jzon.object3(
+      date => (
+        date->Js.Date.getUTCFullYear,
+        date->Js.Date.getUTCMonth +. 1.0,
+        date->Js.Date.getUTCDate,
+      ),
+      ((year, month, day)) =>
+        Js.Date.utcWithYMD(~year, ~month=month -. 1.0, ~date=day, ())->Js.Date.fromFloat->Ok,
+      Jzon.field("year", Jzon.float),
+      Jzon.field("month", Jzon.float),
+      Jzon.field("day", Jzon.float),
+    )
+  }
+
+  test("Opaque type encoding", () => {
+    Codecs.date
+    ->Jzon.encodeString(Js.Date.fromString("Thu, 29 Nov 1973 21:30:54.321 GMT"))
+    ->Assert.equals(`{"year":1973,"month":11,"day":29}`)
+  })
+
+  test("Opaque type decoding", () => {
+    Codecs.date
+    ->Jzon.decodeString(`{"year":1973,"month":11,"day":29}`)
+    ->Assert.equals(Ok(Js.Date.fromString("Thu, 29 Nov 1973 00:00:00.000 GMT")))
+  })
+}
