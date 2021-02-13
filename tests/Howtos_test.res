@@ -114,3 +114,66 @@ module HowtoOpaque = {
     ->Assert.equals(Ok(Js.Date.fromString("Thu, 29 Nov 1973 00:00:00.000 GMT")))
   })
 }
+
+module HowtoArrayOfRecords = {
+  type point = {
+    x: float,
+    y: float,
+  }
+
+  type plot = {
+    title: string,
+    points: array<point>,
+  }
+
+  module Codecs = {
+    let point = Jzon.object2(
+      ({x, y}) => (x, y),
+      ((x, y)) => {x: x, y: y}->Ok,
+      Jzon.field("x", Jzon.float),
+      Jzon.field("y", Jzon.float),
+    )
+
+    let plot = Jzon.object2(
+      ({title, points}) => (title, points),
+      ((title, points)) => {title: title, points: points}->Ok,
+      Jzon.field("title", Jzon.string),
+      // Use the Jzon.array adapter to lift another codec to
+      // a codec of an array
+      Jzon.field("points", Jzon.array(point)),
+    )
+  }
+
+  test("Array encoding", () => {
+    Codecs.plot
+    ->Jzon.encodeString({
+      title: "My Scatter Plot",
+      points: [{x: 1.0, y: 2.0}, {x: 3.0, y: 4.0}, {x: 5.0, y: 6.0}],
+    })
+    ->Assert.equals(`{"title":"My Scatter Plot","points":[{"x":1,"y":2},{"x":3,"y":4},{"x":5,"y":6}]}`)
+  })
+
+  test("Array decoding", () => {
+    Codecs.plot
+    ->Jzon.decodeString(`{
+      "title": "My Scatter Plot",
+      "points": [
+        {"x":1, "y":2},
+        {"x":3, "y":4},
+        {"x":5, "y":6}
+      ]
+    }`)
+    ->Assert.equals(
+      Ok({
+        title: "My Scatter Plot",
+        points: [{x: 1.0, y: 2.0}, {x: 3.0, y: 4.0}, {x: 5.0, y: 6.0}],
+      }),
+    )
+
+    // Missing field does not mean an empty array by default. However, you may use
+    // the `default([])` field adaptor to express just that.
+    Codecs.plot
+    ->Jzon.decodeString(`{"title": "My Scatter Plot"}`)
+    ->Assert.equals(Error(#MissingField([], "points")))
+  })
+}
