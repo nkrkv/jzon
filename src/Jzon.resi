@@ -18,7 +18,9 @@ type field<'v>
 
 let decode: (codec<'v>, Js.Json.t) => result<'v, DecodingError.t>
 let decodeString: (codec<'v>, string) => result<'v, DecodingError.t>
+
 let encode: (codec<'v>, 'v) => Js.Json.t
+let encodeString: (codec<'v>, 'v) => string
 
 let string: codec<string>
 let float: codec<float>

@@ -79,7 +79,10 @@ module Codec = {
   }
 
   let make = (encode, decode) => {encode: encode, decode: decode}
+
   let encode = codec => codec.encode
+  let encodeString = (codec, value) => codec->encode(value)->Js.Json.stringify
+
   let decode = codec => codec.decode
   let decodeString = (codec, str) => {
     let maybeJson = switch Js.Json.parseExn(str) {
@@ -98,6 +101,8 @@ module Codec = {
 type codec<'v> = Codec.t<'v>
 
 let encode = Codec.encode
+let encodeString = Codec.encodeString
+
 let decode = Codec.decode
 let decodeString = Codec.decodeString
 
