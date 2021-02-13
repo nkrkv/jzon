@@ -301,3 +301,129 @@ test("Flat dependent schema decoding", () => {
   ->Assert.equals(Error(#UnexpectedJsonValue([Field("kind")], "donut")))
 })
 ```
+
+In other cases, the payload is put into a separate field. Like this:
+
+```js
+{
+  "kind": "circle",
+  "geometry": {
+    "r": 15
+  }
+}
+
+// or
+
+{
+  "kind": "rectangle",
+  "geometry": {
+    "width": 10,
+    "height": 20
+  }
+}
+
+// or
+
+{
+  "kind": "ellipse",
+  "geometry": {
+    "width": 30,
+    "height": 40
+  }
+}
+```
+
+Processing such schema is almost the same:
+
+```rescript
+type circle = {
+  radius: float,
+}
+
+type rectangle = {
+  width: float,
+  height: float,
+}
+
+type ellipse = {
+  rx: float,
+  ry: float,
+}
+
+// The type used to express various shapes
+type shape =
+  | Circle(circle)
+  | Rectangle(rectangle)
+  | Ellipse(ellipse)
+
+module Codecs = {
+  let circle = Jzon.object1(
+    ({radius}) => radius,
+    radius => {radius: radius}->Ok,
+    Jzon.field("radius", Jzon.float),
+  )
+
+  let rectangle = Jzon.object2(
+    ({width, height}) => (width, height),
+    ((width, height)) => {width, height}->Ok,
+    Jzon.field("width", Jzon.float),
+    Jzon.field("height", Jzon.float),
+  )
+
+  let ellipse = Jzon.object2(
+    ({rx, ry}) => (rx, ry),
+    ((rx, ry)) => {rx, ry}->Ok,
+    Jzon.field("rx", Jzon.float),
+    Jzon.field("ry", Jzon.float),
+  )
+
+  let shape = Jzon.object2(
+    shape =>
+      // Depending on the variant, stringify the tag for the "kind" field and
+      // use appropriate codec for the geometry
+      switch shape {
+      | Circle(geo) => ("circle", circle->Jzon.encode(geo))
+      | Rectangle(geo) => ("rectangle", rectangle->Jzon.encode(geo))
+      | Ellipse(geo) => ("ellipse", ellipse->Jzon.encode(geo))
+      },
+    ((kind, json)) =>
+      // Depending on the "kind" field value take a proper payload codec
+      // and build the value in the ReScript world
+      switch kind {
+      | "circle" => circle->Jzon.decode(json)->Result.map(geo => Circle(geo))
+      | "rectangle" => rectangle->Jzon.decode(json)->Result.map(geo => Rectangle(geo))
+      | "ellipse" => ellipse->Jzon.decode(json)->Result.map(geo => Ellipse(geo))
+      // Properly report bad enum value for pretty errors
+      | x => Error(#UnexpectedJsonValue([Field("kind")], x))
+      },
+    // The tag field is just an enum string
+    Jzon.field("kind", Jzon.string),
+    // Pass the payload field as is for further processing
+    Jzon.field("geometry", Jzon.json),
+  )
+}
+
+test("Nested dependent schema encoding", () => {
+  Codecs.shape
+  ->Jzon.encodeString(Rectangle({width: 3.0, height: 4.0}))
+  ->Assert.equals(`{"kind":"rectangle","geometry":{"width":3,"height":4}}`)
+
+  Codecs.shape
+  ->Jzon.encodeString(Circle({radius: 15.0}))
+  ->Assert.equals(`{"kind":"circle","geometry":{"radius":15}}`)
+})
+
+test("Nested dependent schema decoding", () => {
+  Codecs.shape
+  ->Jzon.decodeString(`{"kind":"rectangle","geometry":{"width":3,"height":4}}`)
+  ->Assert.equals(Ok(Rectangle({width: 3.0, height: 4.0})))
+
+  Codecs.shape
+  ->Jzon.decodeString(`{"kind":"circle","geometry":{"radius":15}}`)
+  ->Assert.equals(Ok(Circle({radius: 15.0})))
+
+  Codecs.shape
+  ->Jzon.decodeString(`{"kind":"donut","geometry":{"radius":15}}`)
+  ->Assert.equals(Error(#UnexpectedJsonValue([Field("kind")], "donut")))
+})
+```
