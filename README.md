@@ -1,71 +1,70 @@
+# Jzon
 
-```
-type look = {
-  color: string,
+Jzon is a library for ReScript to encode and decode JSON data with type safety.
+
+- 🎷 [Documentation](https://rescript-jzon.github.io) 🎷
+- [License](./LICENSE.md): MIT
+
+## Installation
+
+1. `yarn add rescript-jzon`
+2. Add `"rescript-jzon"` item to the `dependencies` key of `bsconfig.json`
+
+## Quick start
+
+Imaging you have the following ReScript types to encode and decode:
+
+```rescript
+type style = {
   size: float,
+  color: string,
 }
 
 type point = {
   x: float,
   y: float,
-  look: look,
+  z: float,
+  style: option<style>,
 }
+```
 
-type graph = {
-  name: string,
-  points: array(point),
-}
+First, define their _codecs_:
 
-let decodeLook =
-  Jzon.decode2(
-    (color, size) => {color, size},
-    Jzon.field("color")->Jzon.decodeString,
-    Jzon.field("size")->Json.decodeFloat,
-  );
-
-let decodePoint =
-  Jzon.decode3(
-    (x, y, look) => {x, y, look},
-    Jzon.field(_, "x")->Jzon.decodeFloat,
-    Jzon.field(_, "y")->Jzon.decodeFloat,
-    Jzon.field(_, "look")->decodeLook,
-  );
-
-let look =
-  Jzon.record2(
-    ((color, size)) => {color, size},
-    ({color, size}) => (color, size),
-    Jzon.field("color", Jzon.string),
+```rescript
+module Codecs = {
+  let style = Jzon.object2(
+    ({size, color}) => (size, color),
+    ((size, color)) => {size, color}->Ok,
     Jzon.field("size", Jzon.float),
+    Jzon.field("color", Jzon.string),
   );
 
-let point =
-  Jzon.record3(
-    ((x, y, look)) => {x, y, look},
-    ({x, y, look}) => (x, y, look),
-    Jzon.field("x", Jzon.float, ~default=42.0),
-    Jzon.field("y", Jzon.float)->Jzon.optional,
-    Jzon.field("look", look),
-  );
-
-let graph =
-  Jzon.record2(
-    ((name, points)) => {name, points},
-    ({name, points}) => (name, points),
-    Jzon.field("name", Jzon.string),
-    Jzon.field("points", Jzon.array(point), ~alt=[|"point_list"|]),
-  );
-
-
-let decodeGraph =
-  Jzon.decode2(
-    (name, points) => {name, points},
-    Jzon.field("color")->Jzon.decodeString,
-    Jzon.field("points")->Jzon.fallback("point_list")->Jzon.array->decodePoints,
-  );
-
-switch (Jzon.decodeString("foobarbaz", point)) {
-| Ok(_) =>
-| Error(err) =>
+  let point = Jzon.object4(
+    ({x, y, z, style}) => (x, y, z, style),
+    ((x, y, z, style)) => {x, y, z, style}->Ok,
+    Jzon.field("x", Jzon.float),
+    Jzon.field("y", Jzon.float),
+    Jzon.field("z", Jzon.float)->Jzon.default(0.0),
+    Jzon.field("style", style)->Jzon.optional,
+  )
 }
+```
+
+Next, convert between the ReScript types and `Js.Json.t` with:
+
+```rescript
+let myJsonData =
+  Codecs.point
+  ->Jzon.encode({
+    x: 1.0,
+    y: 2.0,
+    z: 3.0,
+    style: Some({size: 4.0, color: "#fd0"}),
+  })
+```
+
+and back with:
+
+```rescript
+let myPoint = Codecs.point->Jzon.decode(myJsonData)
 ```
