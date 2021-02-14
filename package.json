@@ -1,10 +1,21 @@
 {
   "name": "rescript-jzon",
-  "version": "0.0.0",
-  "main": "index.js",
+  "description": "JSON encoding and decoding for ReScript",
+  "author": "Victor Nakoryakov <nail.xx@gmail.com>",
+  "version": "1.0.0",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nkrkv/jzon.git"
+  },
   "devDependencies": {
-    "bs-platform": "^8.4.2",
+    "bs-platform": "^9.0.0",
     "rescript-test": "^0.6.3"
-  }
+  },
+  "keywords": [
+    "reason",
+    "reasonml",
+    "rescript",
+    "json"
+  ]
 }
