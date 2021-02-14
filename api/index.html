@@ -1,0 +1,576 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      <link rel="shortcut icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-6.2.8">
+    
+    
+      
+        <title>API Reference - Jzon Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.cb6bc1d0.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.39b8e14a.min.css">
+        
+          
+          
+          <meta name="theme-color" content="#ef5552">
+        
+      
+    
+    
+    
+      
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono",SFMono-Regular,Consolas,Menlo,monospace}</style>
+      
+    
+    
+    
+    
+      
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="red" data-md-color-accent="">
+      
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#jzon-api-reference" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid" aria-label="Header">
+    <a href=".." title="Jzon Documentation" class="md-header-nav__button md-logo" aria-label="Jzon Documentation">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    <label class="md-header-nav__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header-nav__title" data-md-component="header-title">
+      <div class="md-header-nav__ellipsis">
+        <div class="md-header-nav__topic">
+          <span class="md-ellipsis">
+            Jzon Documentation
+          </span>
+        </div>
+        <div class="md-header-nav__topic">
+          <span class="md-ellipsis">
+            
+              API Reference
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <label class="md-header-nav__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" data-md-component="search-reset" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Jzon Documentation" class="md-nav__button md-logo" aria-label="Jzon Documentation">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    Jzon Documentation
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        Getting Started
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../howtos/" class="md-nav__link">
+        How-to Guides
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          API Reference
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        API Reference
+      </a>
+      
+        
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#module-jzon" class="md-nav__link">
+    module Jzon
+  </a>
+  
+    <nav class="md-nav" aria-label="module Jzon">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#types" class="md-nav__link">
+    Types
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#decoding" class="md-nav__link">
+    Decoding
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#encoding" class="md-nav__link">
+    Encoding
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#simple-codecs" class="md-nav__link">
+    Simple codecs
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#array-adapter" class="md-nav__link">
+    Array adapter
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#null-adapters" class="md-nav__link">
+    Null adapters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#object-codecs" class="md-nav__link">
+    Object codecs
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#module-jzondecodingerror" class="md-nav__link">
+    module Jzon.DecodingError
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#module-jzon" class="md-nav__link">
+    module Jzon
+  </a>
+  
+    <nav class="md-nav" aria-label="module Jzon">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#types" class="md-nav__link">
+    Types
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#decoding" class="md-nav__link">
+    Decoding
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#encoding" class="md-nav__link">
+    Encoding
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#simple-codecs" class="md-nav__link">
+    Simple codecs
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#array-adapter" class="md-nav__link">
+    Array adapter
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#null-adapters" class="md-nav__link">
+    Null adapters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#object-codecs" class="md-nav__link">
+    Object codecs
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#module-jzondecodingerror" class="md-nav__link">
+    module Jzon.DecodingError
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                
+                <h1 id="jzon-api-reference">Jzon API Reference</h1>
+<h2 id="module-jzon">module Jzon</h2>
+<h3 id="types">Types</h3>
+<pre><code class="language-rescript">type codec&lt;'v&gt;
+</code></pre>
+<p>Defines a thing that can encode a value of type <code>'v</code> to <code>Js.Json.t</code> and decode it back. You either use one of built-in codecs, compose own codec from others using adaptors, or define a custom one.</p>
+<pre><code class="language-rescript">type field&lt;'v&gt;
+</code></pre>
+<p>Defines a field descriptor used to encode and decode an object field of type <code>'v</code>. Used for describing object codecs.</p>
+<h3 id="decoding">Decoding</h3>
+<pre><code class="language-rescript">let decode: (codec&lt;'v&gt;, Js.Json.t) =&gt; result&lt;'v, DecodingError.t&gt;
+let decodeString: (codec&lt;'v&gt;, string) =&gt; result&lt;'v, DecodingError.t&gt;
+</code></pre>
+<p>Decode payload given a codec. The functions never throw as long as custom codecs and object constructors do not throw.</p>
+<h3 id="encoding">Encoding</h3>
+<pre><code class="language-rescript">let encode: (codec&lt;'v&gt;, 'v) =&gt; Js.Json.t
+</code></pre>
+<p>Encodes a value with the given codec. The function always succeeds as long as custom codecs and object destructors do not throw.</p>
+<h3 id="simple-codecs">Simple codecs</h3>
+<pre><code class="language-rescript">let string: codec&lt;string&gt;
+let float: codec&lt;float&gt;
+let int: codec&lt;int&gt;
+let bool: codec&lt;bool&gt;
+let json: codec&lt;Js.Json.t&gt;
+</code></pre>
+<p>Provide codecs for scalar JSON types.</p>
+<p>The <code>json</code> codec is effectively an identity codec that encodes <code>Js.Json.t</code> to itself and back without changes. Useful in cases when composing a custom codec for data having different schemas in different cases.</p>
+<p>The <code>int</code> codec is somewhat opinionated because the JSON standard does not define an integer value, only floating point numbers. The <code>int</code> encoding always succeeds but decoding fails with <code>#UnexpectedJsonValue</code> in several cases:</p>
+<ul>
+<li>The value contains fractional part (42 and 42.0 are OK, 42.5 is not)</li>
+<li>The value is out of -2^31..+2^31 range and thus cannot be represented with ReScript’s int</li>
+</ul>
+<h3 id="array-adapter">Array adapter</h3>
+<pre><code class="language-rescript">let array: codec&lt;'v&gt; =&gt; codec&lt;array&lt;'v&gt;&gt;
+</code></pre>
+<p>Using a given codec, makes a new codec for an array which uses that given codec to encode and decode array elements.</p>
+<h3 id="null-adapters">Null adapters</h3>
+<pre><code class="language-rescript">let nullable: codec&lt;'v&gt; =&gt; codec&lt;option&lt;'v&gt;&gt;
+</code></pre>
+<p>Makes a codec accept the <code>null</code> JSON value by making its payload type <code>option</code>’al. <code>None</code> is encoded as JSON <code>null</code>, <code>Some(value)</code> is encoded as plain <code>value</code> would be encoded.</p>
+<pre><code class="language-rescript">let nullAs: (codec&lt;'v&gt;, 'v) =&gt; codec&lt;'v&gt;
+</code></pre>
+<p>Makes a codec accept the <code>null</code> JSON value while decoding by falling back to a predefined default value. The encoding process always outputs the real value even if it is equal to the default value. That is, <code>nullAs</code> never <em>produces</em> a JSON <code>null</code> value.</p>
+<h3 id="object-codecs">Object codecs</h3>
+<pre><code class="language-rescript">// NOTE: Not a real syntax. On practice use object1, object3, object13, etc.,
+// depending on the number of fields
+let objectN: (
+  'r =&gt; ('f1, 'f2, ..., 'fN),
+  (('f1, 'f2, ..., 'fN)) =&gt; result&lt;'r, DecodingError.t&gt;,
+  field&lt;'f1&gt;,
+  field&lt;'f2&gt;,
+  ...
+  field&lt;'fN&gt;,
+) =&gt; codec&lt;'r&gt;
+</code></pre>
+<p>Makes an object codec that translates between a JSON object and a ReScript object (record, tuple, custom opaque, whatever). The function takes arguments in the following order:</p>
+<ul>
+<li><em>destructor</em>: a function which takes the ReScript object and converts it to the tuple with the order and element types dictated by the field descriptors</li>
+<li><em>constructor</em>: a function which takes a tuple with the order and element types dictated by the field descriptors, and converts the tuple to the ReScript object. The function may return an <code>Error(DecodingError.t)</code> to fail the whole decoding process.</li>
+<li><em>N field descriptors</em>: N arguments which define the object keys and values. The codecs are currently available for N from 1 to 15. If you have an object with more fields, make a custom codec. It might be a sane idea to steal <code>object15</code> implementation and routinely extend it to the number of fields required.</li>
+</ul>
+<pre><code class="language-rescript">let field: (string, codec&lt;'v&gt;) =&gt; field&lt;'v&gt;
+</code></pre>
+<p>Makes a descriptor for an object field with the given key/name, using the codec provided.</p>
+<pre><code class="language-rescript">let self: field&lt;Js.Json.t&gt;
+</code></pre>
+<p>Makes a descriptor referring to the whole object being processed. Useful if the object shape depends on some factors, like a variant value.</p>
+<pre><code class="language-rescript">let optional: field&lt;'v&gt; =&gt; field&lt;option&lt;'v&gt;&gt;
+</code></pre>
+<p>Makes the given field optional. The field will be decoded to the <code>None</code> value if the given field key is missing in the JSON object <em>or</em> if the key is there but its value is <code>null</code>. While encoding, if the ReScript value is <code>None</code> the given field key will be omitted from the resulting JSON.</p>
+<pre><code class="language-rescript">let default: (field&lt;'v&gt;, 'v) =&gt; field&lt;'v&gt;
+</code></pre>
+<p>Makes the given field optional. The field will be decoded to the default fallback value provided if the given field key is missing in the JSON object <em>or</em> if the key is there but its value is <code>null</code>. While encoding, the resulting JSON always includes the key, even if the value is equal to the default.</p>
+<h2 id="module-jzondecodingerror">module Jzon.DecodingError</h2>
+<pre><code class="language-rescript">type locationComponent = Field(string) | Index(int)
+
+type location = array&lt;locationComponent&gt;
+
+type t = [
+  | #SyntaxError(string)
+  | #MissingField(location, string /* key */)
+  | #UnexpectedJsonType(location, string /* expected */, Js.Json.t /* actual */)
+  | #UnexpectedJsonValue(location, string /* actual */)
+]
+</code></pre>
+<p>An error type that used extensively as a failed <code>result</code> payload while decoding.</p>
+<pre><code class="language-rescript">let toString: t =&gt; string
+</code></pre>
+<p>Formats the error as a string suitable for logging or showing to a user.</p>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid" aria-label="Footer">
+        
+          <a href="../howtos/" class="md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+            </div>
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                How-to Guides
+              </div>
+            </div>
+          </a>
+        
+        
+      </nav>
+    </div>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../assets/javascripts/vendor.18f0862e.min.js"></script>
+      <script src="../assets/javascripts/bundle.994580cf.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}</script>
+      
+      <script>
+        app = initialize({
+          base: "..",
+          features: [],
+          search: Object.assign({
+            worker: "../assets/javascripts/worker/search.9c0e82ba.min.js"
+          }, typeof search !== "undefined" && search)
+        })
+      </script>
+      
+    
+  </body>
+</html>

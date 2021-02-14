@@ -1,0 +1,875 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      <link rel="shortcut icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-6.2.8">
+    
+    
+      
+        <title>How-to Guides - Jzon Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.cb6bc1d0.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.39b8e14a.min.css">
+        
+          
+          
+          <meta name="theme-color" content="#ef5552">
+        
+      
+    
+    
+    
+      
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono",SFMono-Regular,Consolas,Menlo,monospace}</style>
+      
+    
+    
+    
+    
+      
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="red" data-md-color-accent="">
+      
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#jzon-how-to-guides" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid" aria-label="Header">
+    <a href=".." title="Jzon Documentation" class="md-header-nav__button md-logo" aria-label="Jzon Documentation">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    <label class="md-header-nav__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header-nav__title" data-md-component="header-title">
+      <div class="md-header-nav__ellipsis">
+        <div class="md-header-nav__topic">
+          <span class="md-ellipsis">
+            Jzon Documentation
+          </span>
+        </div>
+        <div class="md-header-nav__topic">
+          <span class="md-ellipsis">
+            
+              How-to Guides
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <label class="md-header-nav__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" data-md-component="search-reset" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Jzon Documentation" class="md-nav__button md-logo" aria-label="Jzon Documentation">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    Jzon Documentation
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        Getting Started
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          How-to Guides
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        How-to Guides
+      </a>
+      
+        
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#how-to-encodedecode-a-record" class="md-nav__link">
+    How to encode/decode a record
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-to-make-some-fields-optional" class="md-nav__link">
+    How to make some fields optional
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-to-encodedecode-an-opaque-type" class="md-nav__link">
+    How to encode/decode an opaque type
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-to-encodedecode-array-of-records" class="md-nav__link">
+    How to encode/decode array of records
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-to-express-json-shape-dependent-on-a-tag-value" class="md-nav__link">
+    How to express JSON shape dependent on a tag value
+  </a>
+  
+    <nav class="md-nav" aria-label="How to express JSON shape dependent on a tag value">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#nested-case" class="md-nav__link">
+    Nested case
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#flat-case" class="md-nav__link">
+    Flat case
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/" class="md-nav__link">
+        API Reference
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#how-to-encodedecode-a-record" class="md-nav__link">
+    How to encode/decode a record
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-to-make-some-fields-optional" class="md-nav__link">
+    How to make some fields optional
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-to-encodedecode-an-opaque-type" class="md-nav__link">
+    How to encode/decode an opaque type
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-to-encodedecode-array-of-records" class="md-nav__link">
+    How to encode/decode array of records
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-to-express-json-shape-dependent-on-a-tag-value" class="md-nav__link">
+    How to express JSON shape dependent on a tag value
+  </a>
+  
+    <nav class="md-nav" aria-label="How to express JSON shape dependent on a tag value">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#nested-case" class="md-nav__link">
+    Nested case
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#flat-case" class="md-nav__link">
+    Flat case
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                
+                <h1 id="jzon-how-to-guides">Jzon How-To Guides</h1>
+<p>This document list common JSON coding tasks and how they could be solved with Jzon.</p>
+<h2 id="how-to-encodedecode-a-record">How to encode/decode a record</h2>
+<pre><code class="language-rescript">// The record to encode/decode
+type point = {
+  x: float,
+  y: float,
+  z: float,
+  color: string,
+}
+
+module Codecs = {
+  // The codec for the record. There’s no requirement to put it
+  // into a sub-module, but groupping all the codecs with the same
+  // names as their respective types in a dedicated module is
+  // a good idea for code organization
+  let point = Jzon.object4(
+    ({x, y, z, color}) =&gt; (x, y, z, color),
+    ((x, y, z, color)) =&gt; {x, y, z, color}-&gt;Ok,
+    Jzon.field(&quot;x&quot;, Jzon.float),
+    Jzon.field(&quot;y&quot;, Jzon.float),
+    Jzon.field(&quot;z&quot;, Jzon.float),
+    Jzon.field(&quot;color&quot;, Jzon.string),
+  )
+}
+
+test(&quot;Record encoding&quot;, () =&gt; {
+  Codecs.point
+  -&gt;Jzon.encodeString({x: 1.0, y: 2.0, z: 3.0, color: &quot;#fda&quot;})
+  -&gt;Assert.equals(`{&quot;x&quot;:1,&quot;y&quot;:2,&quot;z&quot;:3,&quot;color&quot;:&quot;#fda&quot;}`)
+})
+
+test(&quot;Record decoding&quot;, () =&gt; {
+  Codecs.point
+  -&gt;Jzon.decodeString(`{&quot;x&quot;:1,&quot;y&quot;:2,&quot;z&quot;:3,&quot;color&quot;:&quot;#fda&quot;}`)
+  -&gt;Assert.equals(Ok({x: 1.0, y: 2.0, z: 3.0, color: &quot;#fda&quot;}))
+
+  // Missing some required fields
+  Codecs.point-&gt;Jzon.decodeString(`{&quot;x&quot;:1,&quot;y&quot;:2}`)
+  -&gt;Assert.equals(Error(#MissingField([], &quot;z&quot;)))
+})
+</code></pre>
+<h2 id="how-to-make-some-fields-optional">How to make some fields optional</h2>
+<p>Jzon supports two flavors of the optionality: fallback to a default value and lifting to <code>option</code>. In the first case you always get your value while decoding and don’t even know whether the field was in JSON or not. And in the latter case you deal with <code>None</code> or <code>Some(...)</code> explicitly. The example below demonstrates both ways.</p>
+<pre><code class="language-rescript">type point = {
+  x: float,
+  y: float,
+  z: float,
+  color: option&lt;string&gt;,
+}
+
+module Codecs = {
+  let point = Jzon.object4(
+    ({x, y, z, color}) =&gt; (x, y, z, color),
+    ((x, y, z, color)) =&gt; {x, y, z, color}-&gt;Ok,
+    Jzon.field(&quot;x&quot;, Jzon.float),
+    Jzon.field(&quot;y&quot;, Jzon.float),
+    // Use Jzon.default adapter to provide a fallback value in case
+    // the field is missing
+    Jzon.field(&quot;z&quot;, Jzon.float)-&gt;Jzon.default(0.0),
+    // Use Jzon.optional adapter to make the value indeed option’al
+    Jzon.field(&quot;color&quot;, Jzon.string)-&gt;Jzon.optional,
+  )
+}
+
+test(&quot;Optional/default encoding&quot;, () =&gt; {
+  Codecs.point
+  -&gt;Jzon.encodeString({x: 1.0, y: 2.0, z: 3.0, color: Some(&quot;#fda&quot;)})
+  -&gt;Assert.equals(`{&quot;x&quot;:1,&quot;y&quot;:2,&quot;z&quot;:3,&quot;color&quot;:&quot;#fda&quot;}`)
+
+  // Optional fields are omitted in output if `None` and fields
+  // with default values are always encoded, even if match the
+  // fallback value
+  Codecs.point
+  -&gt;Jzon.encodeString({x: 1.0, y: 2.0, z: 0.0, color: None})
+  -&gt;Assert.equals(`{&quot;x&quot;:1,&quot;y&quot;:2,&quot;z&quot;:0}`)
+})
+
+test(&quot;Optional/default decoding&quot;, () =&gt; {
+  Codecs.point
+  -&gt;Jzon.decodeString(`{&quot;x&quot;:1,&quot;y&quot;:2,&quot;z&quot;:3,&quot;color&quot;:&quot;#fda&quot;}`)
+  -&gt;Assert.equals(Ok({x: 1.0, y: 2.0, z: 3.0, color: Some(&quot;#fda&quot;)}))
+
+  Codecs.point
+  -&gt;Jzon.decodeString(`{&quot;x&quot;:1,&quot;y&quot;:2}`)
+  -&gt;Assert.equals(Ok({x: 1.0, y: 2.0, z: 0.0, color: None}))
+})
+</code></pre>
+<h2 id="how-to-encodedecode-an-opaque-type">How to encode/decode an opaque type</h2>
+<p>Dealing with an opaque type is not much different from dealing with a record. You just use functions specific to the type to properly construct and destruct it.</p>
+<pre><code class="language-rescript">module Codecs = {
+  let date = Jzon.object3(
+    date =&gt; (
+      date-&gt;Js.Date.getUTCFullYear,
+      date-&gt;Js.Date.getUTCMonth +. 1.0,
+      date-&gt;Js.Date.getUTCDate,
+    ),
+    ((year, month, day)) =&gt;
+      Js.Date.utcWithYMD(~year, ~month=month -. 1.0, ~date=day, ())
+      -&gt;Js.Date.fromFloat
+      -&gt;Ok,
+    Jzon.field(&quot;year&quot;, Jzon.float),
+    Jzon.field(&quot;month&quot;, Jzon.float),
+    Jzon.field(&quot;day&quot;, Jzon.float),
+  )
+}
+
+test(&quot;Opaque type encoding&quot;, () =&gt; {
+  Codecs.date
+  -&gt;Jzon.encodeString(Js.Date.fromString(&quot;Thu, 29 Nov 1973 21:30:54.321 GMT&quot;))
+  -&gt;Assert.equals(`{&quot;year&quot;:1973,&quot;month&quot;:11,&quot;day&quot;:29}`)
+})
+
+test(&quot;Opaque type decoding&quot;, () =&gt; {
+  Codecs.date
+  -&gt;Jzon.decodeString(`{&quot;year&quot;:1973,&quot;month&quot;:11,&quot;day&quot;:29}`)
+  -&gt;Assert.equals(Ok(Js.Date.fromString(&quot;Thu, 29 Nov 1973 00:00:00.000 GMT&quot;)))
+})
+</code></pre>
+<h2 id="how-to-encodedecode-array-of-records">How to encode/decode array of records</h2>
+<pre><code class="language-rescript">type point = {
+  x: float,
+  y: float,
+}
+
+type plot = {
+  title: string,
+  points: array&lt;point&gt;,
+}
+
+module Codecs = {
+  let point = Jzon.object2(
+    ({x, y}) =&gt; (x, y),
+    ((x, y)) =&gt; {x, y}-&gt;Ok,
+    Jzon.field(&quot;x&quot;, Jzon.float),
+    Jzon.field(&quot;y&quot;, Jzon.float),
+  )
+
+  let plot = Jzon.object2(
+    ({title, points}) =&gt; (title, points),
+    ((title, points)) =&gt; {title, points}-&gt;Ok,
+    Jzon.field(&quot;title&quot;, Jzon.string),
+    // Use the Jzon.array adapter to lift another codec to
+    // a codec of an array
+    Jzon.field(&quot;points&quot;, Jzon.array(point)),
+  )
+}
+
+test(&quot;Array encoding&quot;, () =&gt; {
+  Codecs.plot
+  -&gt;Jzon.encodeString({
+    title: &quot;My Scatter Plot&quot;,
+    points: [{x: 1.0, y: 2.0}, {x: 3.0, y: 4.0}, {x: 5.0, y: 6.0}],
+  })
+  -&gt;Assert.equals(
+    `{&quot;title&quot;:&quot;My Scatter Plot&quot;,&quot;points&quot;:[{&quot;x&quot;:1,&quot;y&quot;:2},{&quot;x&quot;:3,&quot;y&quot;:4},{&quot;x&quot;:5,&quot;y&quot;:6}]}`
+  )
+})
+
+test(&quot;Array decoding&quot;, () =&gt; {
+  Codecs.plot
+  -&gt;Jzon.decodeString(`{
+    &quot;title&quot;: &quot;My Scatter Plot&quot;,
+    &quot;points&quot;: [
+      {&quot;x&quot;:1, &quot;y&quot;:2},
+      {&quot;x&quot;:3, &quot;y&quot;:4},
+      {&quot;x&quot;:5, &quot;y&quot;:6}
+    ]
+  }`)
+  -&gt;Assert.equals(
+    Ok({
+      title: &quot;My Scatter Plot&quot;,
+      points: [{x: 1.0, y: 2.0}, {x: 3.0, y: 4.0}, {x: 5.0, y: 6.0}],
+    }),
+  )
+
+  // Missing field does not mean an empty array by default. However, you may use
+  // the `default([])` field adaptor to express just that.
+  Codecs.plot
+  -&gt;Jzon.decodeString(`{&quot;title&quot;: &quot;My Scatter Plot&quot;}`)
+  -&gt;Assert.equals(Error(#MissingField([], &quot;points&quot;)))
+})
+</code></pre>
+<h2 id="how-to-express-json-shape-dependent-on-a-tag-value">How to express JSON shape dependent on a tag value</h2>
+<p>Sometimes the JSON schema is dynamic and its particular subtree depends on a value of some <em>tag</em> field which is usually a string denoting some enum value. This scenario is perfectly OK for Jzon albeit requires some boilerplate code.</p>
+<h3 id="nested-case">Nested case</h3>
+<p>You can face a JSON schema where the object field shape depends on the value of another field. For example:</p>
+<pre><code class="language-js">{
+  &quot;kind&quot;: &quot;circle&quot;,
+  &quot;geometry&quot;: {
+    &quot;r&quot;: 15
+  }
+}
+
+// or
+
+{
+  &quot;kind&quot;: &quot;rectangle&quot;,
+  &quot;geometry&quot;: {
+    &quot;width&quot;: 10,
+    &quot;height&quot;: 20
+  }
+}
+
+// or
+
+{
+  &quot;kind&quot;: &quot;ellipse&quot;,
+  &quot;geometry&quot;: {
+    &quot;width&quot;: 30,
+    &quot;height&quot;: 40
+  }
+}
+</code></pre>
+<p>In such case, the following codecs will do the job:</p>
+<pre><code class="language-rescript">type circle = {
+  radius: float,
+}
+
+type rectangle = {
+  width: float,
+  height: float,
+}
+
+type ellipse = {
+  rx: float,
+  ry: float,
+}
+
+// The type used to express various shapes
+type shape =
+  | Circle(circle)
+  | Rectangle(rectangle)
+  | Ellipse(ellipse)
+
+module Codecs = {
+  let circle = Jzon.object1(
+    ({radius}) =&gt; radius,
+    radius =&gt; {radius: radius}-&gt;Ok,
+    Jzon.field(&quot;radius&quot;, Jzon.float),
+  )
+
+  let rectangle = Jzon.object2(
+    ({width, height}) =&gt; (width, height),
+    ((width, height)) =&gt; {width, height}-&gt;Ok,
+    Jzon.field(&quot;width&quot;, Jzon.float),
+    Jzon.field(&quot;height&quot;, Jzon.float),
+  )
+
+  let ellipse = Jzon.object2(
+    ({rx, ry}) =&gt; (rx, ry),
+    ((rx, ry)) =&gt; {rx, ry}-&gt;Ok,
+    Jzon.field(&quot;rx&quot;, Jzon.float),
+    Jzon.field(&quot;ry&quot;, Jzon.float),
+  )
+
+  let shape = Jzon.object2(
+    shape =&gt;
+      // Depending on the variant, stringify the tag for the &quot;kind&quot; field and
+      // use appropriate codec for the geometry
+      switch shape {
+      | Circle(geo) =&gt; (&quot;circle&quot;, circle-&gt;Jzon.encode(geo))
+      | Rectangle(geo) =&gt; (&quot;rectangle&quot;, rectangle-&gt;Jzon.encode(geo))
+      | Ellipse(geo) =&gt; (&quot;ellipse&quot;, ellipse-&gt;Jzon.encode(geo))
+      },
+    ((kind, json)) =&gt;
+      // Depending on the &quot;kind&quot; field value take a proper payload codec
+      // and build the value in the ReScript world
+      switch kind {
+      | &quot;circle&quot; =&gt; circle-&gt;Jzon.decode(json)-&gt;Result.map(geo =&gt; Circle(geo))
+      | &quot;rectangle&quot; =&gt; rectangle-&gt;Jzon.decode(json)-&gt;Result.map(geo =&gt; Rectangle(geo))
+      | &quot;ellipse&quot; =&gt; ellipse-&gt;Jzon.decode(json)-&gt;Result.map(geo =&gt; Ellipse(geo))
+      // Properly report bad enum value for pretty errors
+      | x =&gt; Error(#UnexpectedJsonValue([Field(&quot;kind&quot;)], x))
+      },
+    // The tag field is just an enum string
+    Jzon.field(&quot;kind&quot;, Jzon.string),
+    // Pass the payload field as is for further processing
+    Jzon.field(&quot;geometry&quot;, Jzon.json),
+  )
+}
+
+test(&quot;Nested dependent schema encoding&quot;, () =&gt; {
+  Codecs.shape
+  -&gt;Jzon.encodeString(Rectangle({width: 3.0, height: 4.0}))
+  -&gt;Assert.equals(`{&quot;kind&quot;:&quot;rectangle&quot;,&quot;geometry&quot;:{&quot;width&quot;:3,&quot;height&quot;:4}}`)
+
+  Codecs.shape
+  -&gt;Jzon.encodeString(Circle({radius: 15.0}))
+  -&gt;Assert.equals(`{&quot;kind&quot;:&quot;circle&quot;,&quot;geometry&quot;:{&quot;radius&quot;:15}}`)
+})
+
+test(&quot;Nested dependent schema decoding&quot;, () =&gt; {
+  Codecs.shape
+  -&gt;Jzon.decodeString(`{&quot;kind&quot;:&quot;rectangle&quot;,&quot;geometry&quot;:{&quot;width&quot;:3,&quot;height&quot;:4}}`)
+  -&gt;Assert.equals(Ok(Rectangle({width: 3.0, height: 4.0})))
+
+  Codecs.shape
+  -&gt;Jzon.decodeString(`{&quot;kind&quot;:&quot;circle&quot;,&quot;geometry&quot;:{&quot;radius&quot;:15}}`)
+  -&gt;Assert.equals(Ok(Circle({radius: 15.0})))
+
+  Codecs.shape
+  -&gt;Jzon.decodeString(`{&quot;kind&quot;:&quot;donut&quot;,&quot;geometry&quot;:{&quot;radius&quot;:15}}`)
+  -&gt;Assert.equals(Error(#UnexpectedJsonValue([Field(&quot;kind&quot;)], &quot;donut&quot;)))
+})
+</code></pre>
+<h3 id="flat-case">Flat case</h3>
+<p>It might happen that the dependent fields are not encapsulated in a separate tree but smashed to the same JSON object:</p>
+<pre><code class="language-js">{
+  &quot;kind&quot;: &quot;circle&quot;,
+  &quot;r&quot;: 15
+}
+
+// or
+
+{
+  &quot;kind&quot;: &quot;rectangle&quot;,
+  &quot;width&quot;: 10,
+  &quot;height&quot;: 20
+}
+
+// or
+
+{
+  &quot;kind&quot;: &quot;ellipse&quot;,
+  &quot;width&quot;: 30,
+  &quot;height&quot;: 40
+}
+</code></pre>
+<p>To make things worse, the ReScript representation might be arbitrary and not a record-per-variant. Nevertheless, this case is can be expressed and it’s quite similar to the nested case:</p>
+<pre><code class="language-rescript">// The type used to express various shapes
+type shape =
+| Circle(float)
+| Rectangle(float, float)
+| Ellipse(float, float)
+
+module Codecs = {
+  // Temporary codec for Circle params. Effectively a single field extractor.
+  let radius = Jzon.object1(
+    r =&gt; r,
+    r =&gt; r-&gt;Ok,
+    Jzon.field(&quot;r&quot;, Jzon.float)
+  )
+
+  // Temporary codec for Rectangle|Ellipse params. Effectively a converter
+  // between JSON object and 2-tuple
+  let widthHeight = Jzon.object2(
+    ((w, h)) =&gt; (w, h),
+    ((w, h)) =&gt; (w, h)-&gt;Ok,
+    Jzon.field(&quot;width&quot;, Jzon.float),
+    Jzon.field(&quot;height&quot;, Jzon.float),
+  )
+
+  let shape = Jzon.object2(
+    shape =&gt;
+      // Depending on the variant, stringify the tag for the &quot;kind&quot; field and
+      // use appropriate params codec for the rest fields
+      switch shape {
+      | Circle(r) =&gt; (&quot;circle&quot;, radius-&gt;Jzon.encode(r))
+      | Rectangle(width, height) =&gt; (&quot;rectangle&quot;, widthHeight-&gt;Jzon.encode((width, height)))
+      | Ellipse(width, height) =&gt; (&quot;ellipse&quot;, widthHeight-&gt;Jzon.encode((width, height)))
+      },
+    ((kind, json)) =&gt;
+      // Depending on the &quot;kind&quot; field value take a proper params codec to decode
+      // other fields and build the value in the ReScript world
+      switch kind {
+      | &quot;circle&quot; =&gt; radius-&gt;Jzon.decode(json)-&gt;Result.map(r =&gt; Circle(r))
+      | &quot;rectangle&quot; =&gt; widthHeight-&gt;Jzon.decode(json)-&gt;Result.map(((w, h)) =&gt; Rectangle(w, h))
+      | &quot;ellipse&quot; =&gt; widthHeight-&gt;Jzon.decode(json)-&gt;Result.map(((w, h)) =&gt; Ellipse(w, h))
+      | x =&gt; Error(#UnexpectedJsonValue([Field(&quot;kind&quot;)], x))
+      },
+    Jzon.field(&quot;kind&quot;, Jzon.string),
+    // The `self` descriptor means “this object”. It allows to further process the
+    // same object with other codecs.
+    Jzon.self,
+  )
+}
+
+test(&quot;Flat dependent schema encoding&quot;, () =&gt; {
+  Codecs.shape
+  -&gt;Jzon.encodeString(Rectangle(3.0, 4.0))
+  -&gt;Assert.equals(`{&quot;kind&quot;:&quot;rectangle&quot;,&quot;width&quot;:3,&quot;height&quot;:4}`)
+
+  Codecs.shape
+  -&gt;Jzon.encodeString(Circle(15.0))
+  -&gt;Assert.equals(`{&quot;kind&quot;:&quot;circle&quot;,&quot;r&quot;:15}`)
+})
+
+test(&quot;Flat dependent schema decoding&quot;, () =&gt; {
+  Codecs.shape
+  -&gt;Jzon.decodeString(`{&quot;kind&quot;:&quot;rectangle&quot;,&quot;width&quot;:3,&quot;height&quot;:4}`)
+  -&gt;Assert.equals(Ok(Rectangle(3.0, 4.0)))
+
+  Codecs.shape
+  -&gt;Jzon.decodeString(`{&quot;kind&quot;:&quot;circle&quot;,&quot;r&quot;:15}`)
+  -&gt;Assert.equals(Ok(Circle(15.0)))
+
+  Codecs.shape
+  -&gt;Jzon.decodeString(`{&quot;kind&quot;:&quot;donut&quot;,&quot;r&quot;:15}`)
+  -&gt;Assert.equals(Error(#UnexpectedJsonValue([Field(&quot;kind&quot;)], &quot;donut&quot;)))
+})
+</code></pre>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid" aria-label="Footer">
+        
+          <a href=".." class="md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+            </div>
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                Getting Started
+              </div>
+            </div>
+          </a>
+        
+        
+          <a href="../api/" class="md-footer-nav__link md-footer-nav__link--next" rel="next">
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Next
+                </span>
+                API Reference
+              </div>
+            </div>
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    </div>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../assets/javascripts/vendor.18f0862e.min.js"></script>
+      <script src="../assets/javascripts/bundle.994580cf.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}</script>
+      
+      <script>
+        app = initialize({
+          base: "..",
+          features: [],
+          search: Object.assign({
+            worker: "../assets/javascripts/worker/search.9c0e82ba.min.js"
+          }, typeof search !== "undefined" && search)
+        })
+      </script>
+      
+    
+  </body>
+</html>
