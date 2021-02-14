@@ -1,5 +1,9 @@
-site_name: Jzon
-theme: readthedocs
+site_name: Jzon Documentation
+theme:
+  name: material
+  palette:
+    primary: red
 nav:
-  - API: api.md
-  - How-to: howtos.md
+  - "Getting Started": index.md
+  - "How-to Guides": howtos.md
+  - "API Reference": api.md

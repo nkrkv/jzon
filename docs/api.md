@@ -1,4 +1,4 @@
-# Jzon API
+# Jzon API Reference
 
 ## module Jzon
 

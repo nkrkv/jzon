@@ -1,5 +1,48 @@
 open Test
 
+module Quickstart = {
+  type style = {
+    size: float,
+    color: string,
+  }
+
+  type point = {
+    x: float,
+    y: float,
+    z: float,
+    style: option<style>,
+  }
+
+  module Codecs = {
+    let style = Jzon.object2(
+      ({size, color}) => (size, color),
+      ((size, color)) => {size: size, color: color}->Ok,
+      Jzon.field("size", Jzon.float),
+      Jzon.field("color", Jzon.string),
+    )
+
+    let point = Jzon.object4(
+      ({x, y, z, style}) => (x, y, z, style),
+      ((x, y, z, style)) => {x: x, y: y, z: z, style: style}->Ok,
+      Jzon.field("x", Jzon.float),
+      Jzon.field("y", Jzon.float),
+      Jzon.field("z", Jzon.float)->Jzon.default(0.0),
+      Jzon.field("style", style)->Jzon.optional,
+    )
+  }
+
+  let encode = () => {
+    let myJsonData =
+      Codecs.point->Jzon.encode({x: 1.0, y: 2.0, z: 3.0, style: Some({size: 4.0, color: "#fd0"})})
+    ignore(myJsonData)
+  }
+
+  let decode = myJsonData => {
+    let point = Codecs.point->Jzon.decode(myJsonData)
+    ignore(point)
+  }
+}
+
 module HowtoRecord = {
   // The record to encode/decode
   type point = {
