@@ -42,7 +42,7 @@ bump_version: test prettify
 	    read CHANGELOG_ACTUAL && \
 	    [ $${CHANGELOG_ACTUAL:-N} = y ] || \
 	    (echo "Update CHANGELOG.md, commit, then try again" && exit 1)
-	@echo -n "Which semver component to bump [major/minor/patch] " && \
+	@echo -n "Which semver component to bump? [major/minor/patch] " && \
 	    read VERSION_TO_BUMP && \
 	    npm version $${VERSION_TO_BUMP} --message "chore: bump version to \%s"
 	@echo "Version bumped. Now run `make publish`"
