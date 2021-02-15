@@ -2,6 +2,7 @@
 BSB=yarn bsb
 BSC=bsc
 RETEST=yarn retest
+MKDOCS=mkdocs
 
 ALL_RES=$(wildcard src/*.res*) $(wildcard tests/*.res*)
 
@@ -12,6 +13,10 @@ build:
 .PHONY: dev
 dev:
 	$(BSB) -make-world -clean-world -w
+
+.PHONY: dev_docs
+dev_docs:
+	$(MKDOCS) serve --dev-addr "localhost:8880"
 
 .PHONY: test
 test: build
