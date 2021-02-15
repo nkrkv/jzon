@@ -3,6 +3,7 @@
 Jzon is a library for ReScript to encode and decode JSON data with type safety.
 
 - 🎷 [Documentation](https://nkrkv.github.io/jzon/) 🎷
+- [Changelog](./CHANGELOG.md): MIT
 - [License](./LICENSE.md): MIT
 
 ## Installation
