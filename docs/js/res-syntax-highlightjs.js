@@ -39,7 +39,7 @@ hljs.registerLanguage("rescript", function(hljs) {
       'private',
 
     built_in:
-      'array bool exn float int int32 int64 list ref string unit',
+      'array bool exn float int int32 int64 list option ref result string unit',
 
     literal:
       'true false'
