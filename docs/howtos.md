@@ -164,18 +164,18 @@ module Codecs = {
 test("Array encoding", () => {
   Codecs.plot
   ->Jzon.encodeString({
-    title: "My Scatter Plot",
+    title: "My Plot",
     points: [{x: 1.0, y: 2.0}, {x: 3.0, y: 4.0}, {x: 5.0, y: 6.0}],
   })
   ->Assert.equals(
-    `{"title":"My Scatter Plot","points":[{"x":1,"y":2},{"x":3,"y":4},{"x":5,"y":6}]}`
+    `{"title":"My Plot","points":[{"x":1,"y":2},{"x":3,"y":4},{"x":5,"y":6}]}`
   )
 })
 
 test("Array decoding", () => {
   Codecs.plot
   ->Jzon.decodeString(`{
-    "title": "My Scatter Plot",
+    "title": "My Plot",
     "points": [
       {"x":1, "y":2},
       {"x":3, "y":4},
@@ -184,15 +184,15 @@ test("Array decoding", () => {
   }`)
   ->Assert.equals(
     Ok({
-      title: "My Scatter Plot",
+      title: "My Plot",
       points: [{x: 1.0, y: 2.0}, {x: 3.0, y: 4.0}, {x: 5.0, y: 6.0}],
     }),
   )
 
-  // Missing field does not mean an empty array by default. However, you may use
-  // the `default([])` field adaptor to express just that.
+  // Missing field does not mean an empty array by default. However, you may
+  // use the `default([])` field adaptor to express just that.
   Codecs.plot
-  ->Jzon.decodeString(`{"title": "My Scatter Plot"}`)
+  ->Jzon.decodeString(`{"title": "My Plot"}`)
   ->Assert.equals(Error(#MissingField([], "points")))
 })
 ```
@@ -291,9 +291,18 @@ module Codecs = {
       // Depending on the "kind" field value take a proper payload codec
       // and build the value in the ReScript world
       switch kind {
-      | "circle" => circle->Jzon.decode(json)->Result.map(geo => Circle(geo))
-      | "rectangle" => rectangle->Jzon.decode(json)->Result.map(geo => Rectangle(geo))
-      | "ellipse" => ellipse->Jzon.decode(json)->Result.map(geo => Ellipse(geo))
+      | "circle" =>
+        circle
+        ->Jzon.decode(json)
+        ->Result.map(geo => Circle(geo))
+      | "rectangle" =>
+        rectangle
+        ->Jzon.decode(json)
+        ->Result.map(geo => Rectangle(geo))
+      | "ellipse" =>
+        ellipse
+        ->Jzon.decode(json)
+        ->Result.map(geo => Ellipse(geo))
       // Properly report bad enum value for pretty errors
       | x => Error(#UnexpectedJsonValue([Field("kind")], x))
       },
@@ -387,22 +396,34 @@ module Codecs = {
       // Depending on the variant, stringify the tag for the "kind" field and
       // use appropriate params codec for the rest fields
       switch shape {
-      | Circle(r) => ("circle", radius->Jzon.encode(r))
-      | Rectangle(width, height) => ("rectangle", widthHeight->Jzon.encode((width, height)))
-      | Ellipse(width, height) => ("ellipse", widthHeight->Jzon.encode((width, height)))
+      | Circle(r) =>
+        ("circle", radius->Jzon.encode(r))
+      | Rectangle(width, height) =>
+        ("rectangle", widthHeight->Jzon.encode((width, height)))
+      | Ellipse(width, height) =>
+        ("ellipse", widthHeight->Jzon.encode((width, height)))
       },
     ((kind, json)) =>
-      // Depending on the "kind" field value take a proper params codec to decode
-      // other fields and build the value in the ReScript world
+      // Depending on the "kind" field value take a proper params codec
+      // to decode other fields and build the value in the ReScript world
       switch kind {
-      | "circle" => radius->Jzon.decode(json)->Result.map(r => Circle(r))
-      | "rectangle" => widthHeight->Jzon.decode(json)->Result.map(((w, h)) => Rectangle(w, h))
-      | "ellipse" => widthHeight->Jzon.decode(json)->Result.map(((w, h)) => Ellipse(w, h))
+      | "circle" =>
+        radius
+        ->Jzon.decode(json)
+        ->Result.map(r => Circle(r))
+      | "rectangle" =>
+        widthHeight
+        ->Jzon.decode(json)
+        ->Result.map(((w, h)) => Rectangle(w, h))
+      | "ellipse" =>
+        widthHeight
+        ->Jzon.decode(json)
+        ->Result.map(((w, h)) => Ellipse(w, h))
       | x => Error(#UnexpectedJsonValue([Field("kind")], x))
       },
     Jzon.field("kind", Jzon.string),
-    // The `self` descriptor means “this object”. It allows to further process the
-    // same object with other codecs.
+    // The `self` descriptor means “this object”. It allows to further process
+    // the same object with other codecs.
     Jzon.self,
   )
 }

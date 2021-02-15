@@ -190,16 +190,16 @@ module HowtoArrayOfRecords = {
   test("Array encoding", () => {
     Codecs.plot
     ->Jzon.encodeString({
-      title: "My Scatter Plot",
+      title: "My Plot",
       points: [{x: 1.0, y: 2.0}, {x: 3.0, y: 4.0}, {x: 5.0, y: 6.0}],
     })
-    ->Assert.equals(`{"title":"My Scatter Plot","points":[{"x":1,"y":2},{"x":3,"y":4},{"x":5,"y":6}]}`)
+    ->Assert.equals(`{"title":"My Plot","points":[{"x":1,"y":2},{"x":3,"y":4},{"x":5,"y":6}]}`)
   })
 
   test("Array decoding", () => {
     Codecs.plot
     ->Jzon.decodeString(`{
-      "title": "My Scatter Plot",
+      "title": "My Plot",
       "points": [
         {"x":1, "y":2},
         {"x":3, "y":4},
@@ -208,7 +208,7 @@ module HowtoArrayOfRecords = {
     }`)
     ->Assert.equals(
       Ok({
-        title: "My Scatter Plot",
+        title: "My Plot",
         points: [{x: 1.0, y: 2.0}, {x: 3.0, y: 4.0}, {x: 5.0, y: 6.0}],
       }),
     )
@@ -216,7 +216,7 @@ module HowtoArrayOfRecords = {
     // Missing field does not mean an empty array by default. However, you may use
     // the `default([])` field adaptor to express just that.
     Codecs.plot
-    ->Jzon.decodeString(`{"title": "My Scatter Plot"}`)
+    ->Jzon.decodeString(`{"title": "My Plot"}`)
     ->Assert.equals(Error(#MissingField([], "points")))
   })
 }
