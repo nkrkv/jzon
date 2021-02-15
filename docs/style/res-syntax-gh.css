@@ -11,6 +11,10 @@ code.hljs {
   color: #d73a49;
 }
 
+.hljs-built_in {
+  color: #005cc5;
+}
+
 .hljs-string {
   color: #032f62;
 }
