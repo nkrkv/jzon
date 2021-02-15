@@ -4,6 +4,11 @@ BSC=bsc
 RETEST=yarn retest
 MKDOCS=mkdocs
 
+ifeq ($(EDITOR),)
+    EDITOR:=vim
+endif
+
+
 ALL_RES=$(wildcard src/*.res*) $(wildcard tests/*.res*)
 
 .PHONY: build
@@ -24,7 +29,27 @@ test: build
 
 .PHONY: prettify
 prettify: $(ALL_RES)
-	for file in $^ ; do \
+	@echo "Prettifying..."
+	@for file in $^ ; do \
 	  $(BSC) -format $${file} > $${file}.fmt ; \
 	  mv $${file}.fmt $${file} ; \
+	  echo $${file} ; \
 	done
+
+.PHONY: bump_version
+bump_version: test prettify
+	@echo -n "Is CHANGELOG.md actual? [y/N] " && \
+	    read CHANGELOG_ACTUAL && \
+	    [ $${CHANGELOG_ACTUAL:-N} = y ] || \
+	    (echo "Update CHANGELOG.md, commit, then try again" && exit 1)
+	@echo -n "Which semver component to bump [major/minor/patch] " && \
+	    read VERSION_TO_BUMP && \
+	    npm version $${VERSION_TO_BUMP} --message "chore: bump version to \%s"
+	@echo "Version bumped. Now run `make publish`"
+
+.PHONY: publish
+publish:
+	git push
+	git push --tags
+	npm publish
+	$(MKDOCS) gh-deploy
