@@ -40,6 +40,8 @@
     
     
     
+      <link rel="stylesheet" href="../style/res-syntax-gh.css">
+    
     
       
     
@@ -540,18 +542,18 @@ module Codecs = {
 test(&quot;Array encoding&quot;, () =&gt; {
   Codecs.plot
   -&gt;Jzon.encodeString({
-    title: &quot;My Scatter Plot&quot;,
+    title: &quot;My Plot&quot;,
     points: [{x: 1.0, y: 2.0}, {x: 3.0, y: 4.0}, {x: 5.0, y: 6.0}],
   })
   -&gt;Assert.equals(
-    `{&quot;title&quot;:&quot;My Scatter Plot&quot;,&quot;points&quot;:[{&quot;x&quot;:1,&quot;y&quot;:2},{&quot;x&quot;:3,&quot;y&quot;:4},{&quot;x&quot;:5,&quot;y&quot;:6}]}`
+    `{&quot;title&quot;:&quot;My Plot&quot;,&quot;points&quot;:[{&quot;x&quot;:1,&quot;y&quot;:2},{&quot;x&quot;:3,&quot;y&quot;:4},{&quot;x&quot;:5,&quot;y&quot;:6}]}`
   )
 })
 
 test(&quot;Array decoding&quot;, () =&gt; {
   Codecs.plot
   -&gt;Jzon.decodeString(`{
-    &quot;title&quot;: &quot;My Scatter Plot&quot;,
+    &quot;title&quot;: &quot;My Plot&quot;,
     &quot;points&quot;: [
       {&quot;x&quot;:1, &quot;y&quot;:2},
       {&quot;x&quot;:3, &quot;y&quot;:4},
@@ -560,15 +562,15 @@ test(&quot;Array decoding&quot;, () =&gt; {
   }`)
   -&gt;Assert.equals(
     Ok({
-      title: &quot;My Scatter Plot&quot;,
+      title: &quot;My Plot&quot;,
       points: [{x: 1.0, y: 2.0}, {x: 3.0, y: 4.0}, {x: 5.0, y: 6.0}],
     }),
   )
 
-  // Missing field does not mean an empty array by default. However, you may use
-  // the `default([])` field adaptor to express just that.
+  // Missing field does not mean an empty array by default. However, you may
+  // use the `default([])` field adaptor to express just that.
   Codecs.plot
-  -&gt;Jzon.decodeString(`{&quot;title&quot;: &quot;My Scatter Plot&quot;}`)
+  -&gt;Jzon.decodeString(`{&quot;title&quot;: &quot;My Plot&quot;}`)
   -&gt;Assert.equals(Error(#MissingField([], &quot;points&quot;)))
 })
 </code></pre>
@@ -658,9 +660,18 @@ module Codecs = {
       // Depending on the &quot;kind&quot; field value take a proper payload codec
       // and build the value in the ReScript world
       switch kind {
-      | &quot;circle&quot; =&gt; circle-&gt;Jzon.decode(json)-&gt;Result.map(geo =&gt; Circle(geo))
-      | &quot;rectangle&quot; =&gt; rectangle-&gt;Jzon.decode(json)-&gt;Result.map(geo =&gt; Rectangle(geo))
-      | &quot;ellipse&quot; =&gt; ellipse-&gt;Jzon.decode(json)-&gt;Result.map(geo =&gt; Ellipse(geo))
+      | &quot;circle&quot; =&gt;
+        circle
+        -&gt;Jzon.decode(json)
+        -&gt;Result.map(geo =&gt; Circle(geo))
+      | &quot;rectangle&quot; =&gt;
+        rectangle
+        -&gt;Jzon.decode(json)
+        -&gt;Result.map(geo =&gt; Rectangle(geo))
+      | &quot;ellipse&quot; =&gt;
+        ellipse
+        -&gt;Jzon.decode(json)
+        -&gt;Result.map(geo =&gt; Ellipse(geo))
       // Properly report bad enum value for pretty errors
       | x =&gt; Error(#UnexpectedJsonValue([Field(&quot;kind&quot;)], x))
       },
@@ -747,22 +758,34 @@ module Codecs = {
       // Depending on the variant, stringify the tag for the &quot;kind&quot; field and
       // use appropriate params codec for the rest fields
       switch shape {
-      | Circle(r) =&gt; (&quot;circle&quot;, radius-&gt;Jzon.encode(r))
-      | Rectangle(width, height) =&gt; (&quot;rectangle&quot;, widthHeight-&gt;Jzon.encode((width, height)))
-      | Ellipse(width, height) =&gt; (&quot;ellipse&quot;, widthHeight-&gt;Jzon.encode((width, height)))
+      | Circle(r) =&gt;
+        (&quot;circle&quot;, radius-&gt;Jzon.encode(r))
+      | Rectangle(width, height) =&gt;
+        (&quot;rectangle&quot;, widthHeight-&gt;Jzon.encode((width, height)))
+      | Ellipse(width, height) =&gt;
+        (&quot;ellipse&quot;, widthHeight-&gt;Jzon.encode((width, height)))
       },
     ((kind, json)) =&gt;
-      // Depending on the &quot;kind&quot; field value take a proper params codec to decode
-      // other fields and build the value in the ReScript world
+      // Depending on the &quot;kind&quot; field value take a proper params codec
+      // to decode other fields and build the value in the ReScript world
       switch kind {
-      | &quot;circle&quot; =&gt; radius-&gt;Jzon.decode(json)-&gt;Result.map(r =&gt; Circle(r))
-      | &quot;rectangle&quot; =&gt; widthHeight-&gt;Jzon.decode(json)-&gt;Result.map(((w, h)) =&gt; Rectangle(w, h))
-      | &quot;ellipse&quot; =&gt; widthHeight-&gt;Jzon.decode(json)-&gt;Result.map(((w, h)) =&gt; Ellipse(w, h))
+      | &quot;circle&quot; =&gt;
+        radius
+        -&gt;Jzon.decode(json)
+        -&gt;Result.map(r =&gt; Circle(r))
+      | &quot;rectangle&quot; =&gt;
+        widthHeight
+        -&gt;Jzon.decode(json)
+        -&gt;Result.map(((w, h)) =&gt; Rectangle(w, h))
+      | &quot;ellipse&quot; =&gt;
+        widthHeight
+        -&gt;Jzon.decode(json)
+        -&gt;Result.map(((w, h)) =&gt; Ellipse(w, h))
       | x =&gt; Error(#UnexpectedJsonValue([Field(&quot;kind&quot;)], x))
       },
     Jzon.field(&quot;kind&quot;, Jzon.string),
-    // The `self` descriptor means “this object”. It allows to further process the
-    // same object with other codecs.
+    // The `self` descriptor means “this object”. It allows to further process
+    // the same object with other codecs.
     Jzon.self,
   )
 }
@@ -869,6 +892,12 @@ test(&quot;Flat dependent schema decoding&quot;, () =&gt; {
           }, typeof search !== "undefined" && search)
         })
       </script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+      
+        <script src="../js/res-syntax-highlightjs.js"></script>
+      
+        <script src="../js/config.js"></script>
       
     
   </body>
