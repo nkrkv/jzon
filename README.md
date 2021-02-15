@@ -12,7 +12,7 @@ Jzon is a library for ReScript to encode and decode JSON data with type safety.
 
 ## Quick start
 
-Imaging you have the following ReScript types to encode and decode:
+Imagine you have the following ReScript types to encode and decode:
 
 ```rescript
 type style = {
