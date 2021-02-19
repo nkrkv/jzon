@@ -159,3 +159,11 @@ let toString: t => string
 ```
 
 Formats the error as a string suitable for logging or showing to a user.
+
+```rescript
+let prependLocation: (t, locationComponent) => t
+```
+
+Transforms the error by prepending a location component. Other details are kept intact.
+
+Use this function to rectify the error location while implementing custom codecs. Particularly, when you drill-down a `Js.Json.t` object manually and mix this with decoding through other codecs which know nothing about your drill-down.
