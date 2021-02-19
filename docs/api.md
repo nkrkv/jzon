@@ -119,6 +119,16 @@ let default: (field<'v>, 'v) => field<'v>
 
 Makes the given field optional. The field will be decoded to the default fallback value provided if the given field key is missing in the JSON object _or_ if the key is there but its value is `null`. While encoding, the resulting JSON always includes the key, even if the value is equal to the default.
 
+### Custom codecs
+
+```rescript
+let custom: ('v => Js.Json.t, Js.Json.t => result<'v, DecodingError.t>) => codec<'v>
+```
+
+Creates a custom codec. Use this to integrate with existing codebase which does not relies on Jzon or when you have a quirky JSON representation which is hard or impossible to express by composing other codecs and adapters.
+
+The first argument is a function to encode the ReScript value into JSON. And the second argument is a function to decode JSON into the ReScript value.
+
 ### Decoding utilities
 
 ```rescript
