@@ -4,11 +4,6 @@ BSC=bsc
 RETEST=yarn retest
 MKDOCS=mkdocs
 
-ifeq ($(EDITOR),)
-    EDITOR:=vim
-endif
-
-
 ALL_RES=$(wildcard src/*.res*) $(wildcard tests/*.res*)
 
 .PHONY: build
@@ -44,8 +39,11 @@ bump_version: test prettify
 	    (echo "Update CHANGELOG.md, commit, then try again" && exit 1)
 	@echo -n "Which semver component to bump? [major/minor/patch] " && \
 	    read VERSION_TO_BUMP && \
-	    npm version $${VERSION_TO_BUMP} --message "chore: bump version to \%s"
-	@echo "Version bumped. Now run `make publish`"
+	    npm version $${VERSION_TO_BUMP} --message "chore: bump version to %s"
+	@echo "Version bumped. Now run:"
+	@echo ""
+	@echo "make publish"
+	@echo ""
 
 .PHONY: publish
 publish:
