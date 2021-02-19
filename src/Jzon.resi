@@ -35,6 +35,7 @@ let json: codec<Js.Json.t>
 let nullable: codec<'v> => codec<option<'v>>
 let nullAs: (codec<'v>, 'v) => codec<'v>
 let array: codec<'v> => codec<array<'v>>
+let dict: codec<'v> => codec<Js.Dict.t<'v>>
 
 let field: (string, codec<'v>) => field<'v>
 let self: field<Js.Json.t>
