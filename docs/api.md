@@ -58,7 +58,15 @@ The `int` codec is somewhat opinionated because the JSON standard does not defin
 let array: codec<'v> => codec<array<'v>>
 ```
 
-Using a given codec, makes a new codec for an array which uses that given codec to encode and decode array elements.
+Using the given codec, makes a new codec for an array which uses that given codec to encode and decode array elements.
+
+### Dict adapter
+
+```rescript
+let dict: codec<'v> => codec<Js.Dict.t<'v>>
+```
+
+Using the given codec, makes a new codec for a dictionary. The dictionary uses that given codec to encode and decode the values. Keys are encoded and decoded as strings without any changes.
 
 ### Null adapters
 
