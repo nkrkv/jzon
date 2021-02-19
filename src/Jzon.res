@@ -106,6 +106,8 @@ let encodeString = Codec.encodeString
 let decode = Codec.decode
 let decodeString = Codec.decodeString
 
+let custom = Codec.make
+
 let string = Codec.make(Js.Json.string, json =>
   switch json->Js.Json.decodeString {
   | Some(x) => Ok(x)

@@ -22,6 +22,8 @@ let decodeString: (codec<'v>, string) => result<'v, DecodingError.t>
 let encode: (codec<'v>, 'v) => Js.Json.t
 let encodeString: (codec<'v>, 'v) => string
 
+let custom: ('v => Js.Json.t, Js.Json.t => result<'v, DecodingError.t>) => codec<'v>
+
 let string: codec<string>
 let float: codec<float>
 let int: codec<int>
