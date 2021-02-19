@@ -176,6 +176,34 @@ let array = elementCodec =>
       },
   )
 
+let asObject = json =>
+  switch json->Js.Json.classify {
+  | JSONObject(fieldset) => Ok(fieldset)
+  | _ => Error(#UnexpectedJsonType([], "object", json))
+  }
+
+let dict = valuesCodec =>
+  Codec.make(
+    dict => dict->Js.Dict.map((. val) => valuesCodec->encode(val), _)->Js.Json.object_,
+    json =>
+      json
+      ->asObject
+      ->Result.flatMap(obj => {
+        let (keys, valResults) =
+          obj
+          ->Js.Dict.entries
+          ->Array.map(((key, val)) => (
+            key,
+            valuesCodec
+            ->decode(val)
+            ->ResultX.mapError(DecodingError.prependLocation(_, Field(key))),
+          ))
+          ->Array.unzip
+
+        valResults->ResultX.sequence->Result.map(vals => Array.zip(keys, vals)->Js.Dict.fromArray)
+      }),
+  )
+
 module Field = {
   type path =
     | Self
@@ -249,12 +277,6 @@ let optional = Field.makeOptional
 let default = Field.assignDefault
 
 let jsonObject = keyVals => Js.Json.object_(Js.Dict.fromArray(keyVals->Array.concatMany))
-
-let asObject = json =>
-  switch json->Js.Json.classify {
-  | JSONObject(fieldset) => Ok(fieldset)
-  | _ => Error(#UnexpectedJsonType([], "object", json))
-  }
 
 let object1 = (destruct, construct, field1) =>
   Codec.make(
