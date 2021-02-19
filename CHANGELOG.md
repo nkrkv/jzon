@@ -1,5 +1,13 @@
 # Jzon Changelog
 
+## 1.1.0 (2021-02-19) <a name="1.1.0"></a>
+
+* [fix] Do not require opening the library namespace, use `Jzon.*` straight away (#3)
+* [feat] Add `asObject` decoding utility (#4)
+* [feat] Add `custom` codec constructor (#5)
+* [feat] Add `DecodingError.prependLocation` transformer (#6)
+* [feat] Add dictionary (`Js.Dict.t`) codec (#7)
+
 ## 1.0.2 (2021-02-15) <a name="1.0.2"></a>
 
 * [docs] Add syntax highlight, reflow code, fix small typos (#1)
