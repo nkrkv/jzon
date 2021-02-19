@@ -37,6 +37,8 @@ let self: field<Js.Json.t>
 let optional: field<'v> => field<option<'v>>
 let default: (field<'v>, 'v) => field<'v>
 
+let asObject: Js.Json.t => result<Js.Dict.t<Js.Json.t>, DecodingError.t>
+
 let object1: ('r => 'f1, 'f1 => result<'r, DecodingError.t>, field<'f1>) => codec<'r>
 
 let object2: (
