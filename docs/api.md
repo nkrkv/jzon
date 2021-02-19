@@ -119,6 +119,14 @@ let default: (field<'v>, 'v) => field<'v>
 
 Makes the given field optional. The field will be decoded to the default fallback value provided if the given field key is missing in the JSON object _or_ if the key is there but its value is `null`. While encoding, the resulting JSON always includes the key, even if the value is equal to the default.
 
+### Decoding utilities
+
+```rescript
+let asObject: Js.Json.t => result<Js.Dict.t<Js.Json.t>, DecodingError.t>
+```
+
+Reinterprets a JSON object as a dictionary of JSON objects. Returns `Error(#UnexpectedJsonType(...))` if the argument is not an object (e.g., it is number or null).
+
 ## module Jzon.DecodingError
 
 ```rescript
