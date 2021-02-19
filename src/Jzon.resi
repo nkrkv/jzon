@@ -10,6 +10,7 @@ module DecodingError: {
     | #UnexpectedJsonValue(location, string)
   ]
 
+  let prependLocation: (t, locationComponent) => t
   let toString: t => string
 }
 
