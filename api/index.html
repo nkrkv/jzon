@@ -280,6 +280,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#dict-adapter" class="md-nav__link">
+    Dict adapter
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#null-adapters" class="md-nav__link">
     Null adapters
   </a>
@@ -289,6 +296,20 @@
           <li class="md-nav__item">
   <a href="#object-codecs" class="md-nav__link">
     Object codecs
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#custom-codecs" class="md-nav__link">
+    Custom codecs
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#decoding-utilities" class="md-nav__link">
+    Decoding utilities
   </a>
   
 </li>
@@ -381,6 +402,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#dict-adapter" class="md-nav__link">
+    Dict adapter
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#null-adapters" class="md-nav__link">
     Null adapters
   </a>
@@ -390,6 +418,20 @@
           <li class="md-nav__item">
   <a href="#object-codecs" class="md-nav__link">
     Object codecs
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#custom-codecs" class="md-nav__link">
+    Custom codecs
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#decoding-utilities" class="md-nav__link">
+    Decoding utilities
   </a>
   
 </li>
@@ -454,7 +496,11 @@ let json: codec&lt;Js.Json.t&gt;
 <h3 id="array-adapter">Array adapter</h3>
 <pre><code class="language-rescript">let array: codec&lt;'v&gt; =&gt; codec&lt;array&lt;'v&gt;&gt;
 </code></pre>
-<p>Using a given codec, makes a new codec for an array which uses that given codec to encode and decode array elements.</p>
+<p>Using the given codec, makes a new codec for an array which uses that given codec to encode and decode array elements.</p>
+<h3 id="dict-adapter">Dict adapter</h3>
+<pre><code class="language-rescript">let dict: codec&lt;'v&gt; =&gt; codec&lt;Js.Dict.t&lt;'v&gt;&gt;
+</code></pre>
+<p>Using the given codec, makes a new codec for a dictionary. The dictionary uses that given codec to encode and decode the values. Keys are encoded and decoded as strings without any changes.</p>
 <h3 id="null-adapters">Null adapters</h3>
 <pre><code class="language-rescript">let nullable: codec&lt;'v&gt; =&gt; codec&lt;option&lt;'v&gt;&gt;
 </code></pre>
@@ -492,6 +538,15 @@ let objectN: (
 <pre><code class="language-rescript">let default: (field&lt;'v&gt;, 'v) =&gt; field&lt;'v&gt;
 </code></pre>
 <p>Makes the given field optional. The field will be decoded to the default fallback value provided if the given field key is missing in the JSON object <em>or</em> if the key is there but its value is <code>null</code>. While encoding, the resulting JSON always includes the key, even if the value is equal to the default.</p>
+<h3 id="custom-codecs">Custom codecs</h3>
+<pre><code class="language-rescript">let custom: ('v =&gt; Js.Json.t, Js.Json.t =&gt; result&lt;'v, DecodingError.t&gt;) =&gt; codec&lt;'v&gt;
+</code></pre>
+<p>Creates a custom codec. Use this to integrate with existing codebase which does not relies on Jzon or when you have a quirky JSON representation which is hard or impossible to express by composing other codecs and adapters.</p>
+<p>The first argument is a function to encode the ReScript value into JSON. And the second argument is a function to decode JSON into the ReScript value.</p>
+<h3 id="decoding-utilities">Decoding utilities</h3>
+<pre><code class="language-rescript">let asObject: Js.Json.t =&gt; result&lt;Js.Dict.t&lt;Js.Json.t&gt;, DecodingError.t&gt;
+</code></pre>
+<p>Reinterprets a JSON object as a dictionary of JSON objects. Returns <code>Error(#UnexpectedJsonType(...))</code> if the argument is not an object (e.g., it is number or null).</p>
 <h2 id="module-jzondecodingerror">module Jzon.DecodingError</h2>
 <pre><code class="language-rescript">type locationComponent = Field(string) | Index(int)
 
@@ -508,6 +563,10 @@ type t = [
 <pre><code class="language-rescript">let toString: t =&gt; string
 </code></pre>
 <p>Formats the error as a string suitable for logging or showing to a user.</p>
+<pre><code class="language-rescript">let prependLocation: (t, locationComponent) =&gt; t
+</code></pre>
+<p>Transforms the error by prepending a location component. Other details are kept intact.</p>
+<p>Use this function to rectify the error location while implementing custom codecs. Particularly, when you drill-down a <code>Js.Json.t</code> object manually and mix this with decoding through other codecs which know nothing about your drill-down.</p>
                 
               
               
