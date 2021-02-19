@@ -19,7 +19,7 @@
     }
   ],
   "suffix": ".bs.js",
-  "namespace": true,
+  "namespace": false,
   "bs-dependencies": [],
   "bs-dev-dependencies": [
     "rescript-test"
