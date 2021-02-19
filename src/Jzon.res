@@ -35,6 +35,20 @@ module DecodingError = {
     )
     ->Js.Array2.joinWith(".")
 
+  let appendLocation = (err, loc) =>
+    switch err {
+    | #SyntaxError(_) as err => err
+    | #MissingField(location, key) =>
+      let location' = location->Array.concat([loc])
+      #MissingField(location', key)
+    | #UnexpectedJsonType(location, expectation, actualJson) =>
+      let location' = location->Array.concat([loc])
+      #UnexpectedJsonType(location', expectation, actualJson)
+    | #UnexpectedJsonValue(location, found) =>
+      let location' = location->Array.concat([loc])
+      #UnexpectedJsonValue(location', found)
+    }
+
   let prependLocation = (err, loc) =>
     switch err {
     | #SyntaxError(_) as err => err
