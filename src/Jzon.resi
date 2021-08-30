@@ -18,10 +18,14 @@ type codec<'v>
 type field<'v>
 
 let decode: (codec<'v>, Js.Json.t) => result<'v, DecodingError.t>
+let decodeWith: (Js.Json.t, codec<'v>) => result<'v, DecodingError.t>
 let decodeString: (codec<'v>, string) => result<'v, DecodingError.t>
+let decodeStringWith: (string, codec<'v>) => result<'v, DecodingError.t>
 
 let encode: (codec<'v>, 'v) => Js.Json.t
+let encodeWith: ('v, codec<'v>) => Js.Json.t
 let encodeString: (codec<'v>, 'v) => string
+let encodeStringWith: ('v, codec<'v>) => string
 
 let custom: ('v => Js.Json.t, Js.Json.t => result<'v, DecodingError.t>) => codec<'v>
 

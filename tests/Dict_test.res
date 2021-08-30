@@ -9,12 +9,12 @@ test("Roundtrip", () => {
 })
 
 test("Decoding", () => {
-  Jzon.dict(Jzon.int)
-  ->Jzon.decodeString(`{
-      "one": 1,
-      "two": 2,
-      "three": "борщ"
-    }`)
+  `{
+    "one": 1,
+    "two": 2,
+    "three": "борщ"
+  }`
+  ->Jzon.decodeStringWith(Jzon.dict(Jzon.int))
   ->Assert.errorString(
     `Expected number, got string at ."three"`,
     ~message="errors on wrong value type",

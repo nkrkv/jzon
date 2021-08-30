@@ -9,12 +9,12 @@ test("Scalar types", () => {
 })
 
 test("Int codec", () => {
-  Jzon.int
-  ->Jzon.decodeString("42.5")
+  "42.5"
+  ->Jzon.decodeStringWith(Jzon.int)
   ->Assert.errorString("Unexpected value 42.5 at .", ~message="Barks on fractional numbers")
 
-  Jzon.int
-  ->Jzon.decodeString("9111222333")
+  "9111222333"
+  ->Jzon.decodeStringWith(Jzon.int)
   ->Assert.errorString("Unexpected value 9111222333 at .", ~message="Barks on out-of-range numbers")
 })
 
@@ -26,15 +26,15 @@ test("Nullable", () => {
   )
 
   Assert.roundtrips(None, Jzon.nullable(Jzon.string), ~message="None does roundtrip")
-  Jzon.nullable(Jzon.string)
-  ->Jzon.encode(None)
+
+  None
+  ->Jzon.encodeWith(Jzon.nullable(Jzon.string))
   ->Assert.equals(Js.Json.null, ~message="Encodes as `null`")
 })
 
 test("Null as", () => {
-  Jzon.int
-  ->Jzon.nullAs(100)
-  ->Jzon.decodeString("null")
+  "null"
+  ->Jzon.decodeStringWith(Jzon.int->Jzon.nullAs(100))
   ->Assert.okOf(100, ~message="Decodes null as value provided")
 })
 
@@ -45,20 +45,20 @@ test("Array", () => {
     ~message="array<int> does roundtrip",
   )
 
-  Jzon.array(Jzon.int)
-  ->Jzon.decodeString(`[1, 2, "three", 4]`)
+  `[1, 2, "three", 4]`
+  ->Jzon.decodeStringWith(Jzon.array(Jzon.int))
   ->Assert.errorString(
     "Expected number, got string at .[2]",
     ~message="Barks on unexpected type with proper path",
   )
 
-  Jzon.array(Jzon.nullable(Jzon.int))
-  ->Jzon.decodeString(`[1, 2, null, 4]`)
+  `[1, 2, null, 4]`
+  ->Jzon.decodeStringWith(Jzon.array(Jzon.nullable(Jzon.int)))
   ->Assert.okOf([Some(1), Some(2), None, Some(4)], ~message="Handles nullables")
 })
 
 test("JSON with syntax error", () => {
-  Jzon.json
-  ->Jzon.decodeString(`{"color": "#09a", size: 5.0}`)
+  `{"color": "#09a", size: 5.0}`
+  ->Jzon.decodeStringWith(Jzon.json)
   ->Assert.errorString("Unexpected token s in JSON at position 18", ~message="Errors")
 })
