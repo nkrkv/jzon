@@ -20,18 +20,27 @@ Defines a field descriptor used to encode and decode an object field of type `'v
 
 ```rescript
 let decode: (codec<'v>, Js.Json.t) => result<'v, DecodingError.t>
+let decodeWith: (Js.Json.t, codec<'v>) => result<'v, DecodingError.t>
 let decodeString: (codec<'v>, string) => result<'v, DecodingError.t>
+let decodeStringWith: (string, codec<'v>) => result<'v, DecodingError.t>
 ```
 
 Decode payload given a codec. The functions never throw as long as custom codecs and object constructors do not throw.
+
+If you are in doubt which argument order to prefer, use data-first (i.e. `decodeWith`) for the sake of consistency. Usage experience shows it fits long pipe `->` chains `->` nicely.
 
 ### Encoding
 
 ```rescript
 let encode: (codec<'v>, 'v) => Js.Json.t
+let encodeWith: ('v, codec<'v>) => Js.Json.t
+let encodeString: (codec<'v>, 'v) => string
+let encodeStringWith: ('v, codec<'v>) => string
 ```
 
-Encodes a value with the given codec. The function always succeeds as long as custom codecs and object destructors do not throw.
+Encodes a value with the given codec. The functions always succeed as long as custom codecs and object destructors do not throw.
+
+If you are in doubt which argument order to prefer, use data-first (i.e. `encodeWith`) for the sake of consistency. Usage experience shows it fits long pipe `->` chains `->` nicely.
 
 ### Simple codecs
 
