@@ -9,8 +9,8 @@
     "url": "https://github.com/nkrkv/jzon.git"
   },
   "devDependencies": {
-    "bs-platform": "^9.0.0",
-    "rescript-test": "^0.6.3"
+    "rescript": "^9.1.4",
+    "rescript-test": "^3.1.0"
   },
   "keywords": [
     "reason",
