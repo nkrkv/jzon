@@ -10,7 +10,7 @@
   },
   "devDependencies": {
     "rescript": "^9.1.4",
-    "rescript-test": "^0.6.3"
+    "rescript-test": "^3.1.0"
   },
   "keywords": [
     "reason",

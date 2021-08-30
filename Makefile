@@ -8,11 +8,11 @@ ALL_RES=$(wildcard src/*.res*) $(wildcard tests/*.res*)
 
 .PHONY: build
 build:
-	$(RESCRIPT)
+	$(RESCRIPT) build -with-deps
 
 .PHONY: dev
 dev:
-	$(RESCRIPT) -w
+	$(RESCRIPT) build -with-deps -w
 
 .PHONY: dev_docs
 dev_docs:
