@@ -472,13 +472,20 @@
 <p>Defines a field descriptor used to encode and decode an object field of type <code>'v</code>. Used for describing object codecs.</p>
 <h3 id="decoding">Decoding</h3>
 <pre><code class="language-rescript">let decode: (codec&lt;'v&gt;, Js.Json.t) =&gt; result&lt;'v, DecodingError.t&gt;
+let decodeWith: (Js.Json.t, codec&lt;'v&gt;) =&gt; result&lt;'v, DecodingError.t&gt;
 let decodeString: (codec&lt;'v&gt;, string) =&gt; result&lt;'v, DecodingError.t&gt;
+let decodeStringWith: (string, codec&lt;'v&gt;) =&gt; result&lt;'v, DecodingError.t&gt;
 </code></pre>
 <p>Decode payload given a codec. The functions never throw as long as custom codecs and object constructors do not throw.</p>
+<p>If you are in doubt which argument order to prefer, use data-first (i.e. <code>decodeWith</code>) for the sake of consistency. Usage experience shows it fits long pipe <code>-&gt;</code> chains <code>-&gt;</code> nicely.</p>
 <h3 id="encoding">Encoding</h3>
 <pre><code class="language-rescript">let encode: (codec&lt;'v&gt;, 'v) =&gt; Js.Json.t
+let encodeWith: ('v, codec&lt;'v&gt;) =&gt; Js.Json.t
+let encodeString: (codec&lt;'v&gt;, 'v) =&gt; string
+let encodeStringWith: ('v, codec&lt;'v&gt;) =&gt; string
 </code></pre>
-<p>Encodes a value with the given codec. The function always succeeds as long as custom codecs and object destructors do not throw.</p>
+<p>Encodes a value with the given codec. The functions always succeed as long as custom codecs and object destructors do not throw.</p>
+<p>If you are in doubt which argument order to prefer, use data-first (i.e. <code>encodeWith</code>) for the sake of consistency. Usage experience shows it fits long pipe <code>-&gt;</code> chains <code>-&gt;</code> nicely.</p>
 <h3 id="simple-codecs">Simple codecs</h3>
 <pre><code class="language-rescript">let string: codec&lt;string&gt;
 let float: codec&lt;float&gt;

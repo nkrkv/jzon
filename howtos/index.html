@@ -418,18 +418,19 @@ module Codecs = {
 }
 
 test(&quot;Record encoding&quot;, () =&gt; {
-  Codecs.point
-  -&gt;Jzon.encodeString({x: 1.0, y: 2.0, z: 3.0, color: &quot;#fda&quot;})
+  {x: 1.0, y: 2.0, z: 3.0, color: &quot;#fda&quot;}
+  -&gt;Jzon.encodeStringWith(Codecs.point)
   -&gt;Assert.equals(`{&quot;x&quot;:1,&quot;y&quot;:2,&quot;z&quot;:3,&quot;color&quot;:&quot;#fda&quot;}`)
 })
 
 test(&quot;Record decoding&quot;, () =&gt; {
-  Codecs.point
-  -&gt;Jzon.decodeString(`{&quot;x&quot;:1,&quot;y&quot;:2,&quot;z&quot;:3,&quot;color&quot;:&quot;#fda&quot;}`)
+  `{&quot;x&quot;:1,&quot;y&quot;:2,&quot;z&quot;:3,&quot;color&quot;:&quot;#fda&quot;}`
+  -&gt;Jzon.decodeStringWith(Codecs.point)
   -&gt;Assert.equals(Ok({x: 1.0, y: 2.0, z: 3.0, color: &quot;#fda&quot;}))
 
   // Missing some required fields
-  Codecs.point-&gt;Jzon.decodeString(`{&quot;x&quot;:1,&quot;y&quot;:2}`)
+  `{&quot;x&quot;:1,&quot;y&quot;:2}`
+  -&gt;Jzon.decodeStringWith(Codecs.point)
   -&gt;Assert.equals(Error(#MissingField([], &quot;z&quot;)))
 })
 </code></pre>
@@ -457,25 +458,25 @@ module Codecs = {
 }
 
 test(&quot;Optional/default encoding&quot;, () =&gt; {
-  Codecs.point
-  -&gt;Jzon.encodeString({x: 1.0, y: 2.0, z: 3.0, color: Some(&quot;#fda&quot;)})
+  {x: 1.0, y: 2.0, z: 3.0, color: Some(&quot;#fda&quot;)}
+  -&gt;Jzon.encodeStringWith(Codecs.point)
   -&gt;Assert.equals(`{&quot;x&quot;:1,&quot;y&quot;:2,&quot;z&quot;:3,&quot;color&quot;:&quot;#fda&quot;}`)
 
   // Optional fields are omitted in output if `None` and fields
   // with default values are always encoded, even if match the
   // fallback value
-  Codecs.point
-  -&gt;Jzon.encodeString({x: 1.0, y: 2.0, z: 0.0, color: None})
+  {x: 1.0, y: 2.0, z: 0.0, color: None}
+  -&gt;Jzon.encodeStringWith(Codecs.point)
   -&gt;Assert.equals(`{&quot;x&quot;:1,&quot;y&quot;:2,&quot;z&quot;:0}`)
 })
 
 test(&quot;Optional/default decoding&quot;, () =&gt; {
-  Codecs.point
-  -&gt;Jzon.decodeString(`{&quot;x&quot;:1,&quot;y&quot;:2,&quot;z&quot;:3,&quot;color&quot;:&quot;#fda&quot;}`)
+  `{&quot;x&quot;:1,&quot;y&quot;:2,&quot;z&quot;:3,&quot;color&quot;:&quot;#fda&quot;}`
+  -&gt;Jzon.decodeStringWith(Codecs.point)
   -&gt;Assert.equals(Ok({x: 1.0, y: 2.0, z: 3.0, color: Some(&quot;#fda&quot;)}))
 
-  Codecs.point
-  -&gt;Jzon.decodeString(`{&quot;x&quot;:1,&quot;y&quot;:2}`)
+  `{&quot;x&quot;:1,&quot;y&quot;:2}`
+  -&gt;Jzon.decodeStringWith(Codecs.point)
   -&gt;Assert.equals(Ok({x: 1.0, y: 2.0, z: 0.0, color: None}))
 })
 </code></pre>
@@ -499,14 +500,14 @@ test(&quot;Optional/default decoding&quot;, () =&gt; {
 }
 
 test(&quot;Opaque type encoding&quot;, () =&gt; {
-  Codecs.date
-  -&gt;Jzon.encodeString(Js.Date.fromString(&quot;Thu, 29 Nov 1973 21:30:54.321 GMT&quot;))
+  Js.Date.fromString(&quot;Thu, 29 Nov 1973 21:30:54.321 GMT&quot;)
+  -&gt;Jzon.encodeStringWith(Codecs.date)
   -&gt;Assert.equals(`{&quot;year&quot;:1973,&quot;month&quot;:11,&quot;day&quot;:29}`)
 })
 
 test(&quot;Opaque type decoding&quot;, () =&gt; {
-  Codecs.date
-  -&gt;Jzon.decodeString(`{&quot;year&quot;:1973,&quot;month&quot;:11,&quot;day&quot;:29}`)
+  `{&quot;year&quot;:1973,&quot;month&quot;:11,&quot;day&quot;:29}`
+  -&gt;Jzon.decodeStringWith(Codecs.date)
   -&gt;Assert.equals(Ok(Js.Date.fromString(&quot;Thu, 29 Nov 1973 00:00:00.000 GMT&quot;)))
 })
 </code></pre>
@@ -540,26 +541,24 @@ module Codecs = {
 }
 
 test(&quot;Array encoding&quot;, () =&gt; {
-  Codecs.plot
-  -&gt;Jzon.encodeString({
+  {
     title: &quot;My Plot&quot;,
     points: [{x: 1.0, y: 2.0}, {x: 3.0, y: 4.0}, {x: 5.0, y: 6.0}],
-  })
-  -&gt;Assert.equals(
-    `{&quot;title&quot;:&quot;My Plot&quot;,&quot;points&quot;:[{&quot;x&quot;:1,&quot;y&quot;:2},{&quot;x&quot;:3,&quot;y&quot;:4},{&quot;x&quot;:5,&quot;y&quot;:6}]}`
-  )
+  }
+  -&gt;Jzon.encodeStringWith(Codecs.plot)
+  -&gt;Assert.equals(`{&quot;title&quot;:&quot;My Plot&quot;,&quot;points&quot;:[{&quot;x&quot;:1,&quot;y&quot;:2},{&quot;x&quot;:3,&quot;y&quot;:4},{&quot;x&quot;:5,&quot;y&quot;:6}]}`)
 })
 
 test(&quot;Array decoding&quot;, () =&gt; {
-  Codecs.plot
-  -&gt;Jzon.decodeString(`{
+  `{
     &quot;title&quot;: &quot;My Plot&quot;,
     &quot;points&quot;: [
       {&quot;x&quot;:1, &quot;y&quot;:2},
       {&quot;x&quot;:3, &quot;y&quot;:4},
       {&quot;x&quot;:5, &quot;y&quot;:6}
     ]
-  }`)
+  }`
+  -&gt;Jzon.decodeStringWith(Codecs.plot)
   -&gt;Assert.equals(
     Ok({
       title: &quot;My Plot&quot;,
@@ -567,10 +566,10 @@ test(&quot;Array decoding&quot;, () =&gt; {
     }),
   )
 
-  // Missing field does not mean an empty array by default. However, you may
-  // use the `default([])` field adaptor to express just that.
-  Codecs.plot
-  -&gt;Jzon.decodeString(`{&quot;title&quot;: &quot;My Plot&quot;}`)
+  // Missing field does not mean an empty array by default. However, you may use
+  // the `default([])` field adaptor to express just that.
+  `{&quot;title&quot;: &quot;My Plot&quot;}`
+  -&gt;Jzon.decodeStringWith(Codecs.plot)
   -&gt;Assert.equals(Error(#MissingField([], &quot;points&quot;)))
 })
 </code></pre>
@@ -606,9 +605,7 @@ test(&quot;Array decoding&quot;, () =&gt; {
 }
 </code></pre>
 <p>In such case, the following codecs will do the job:</p>
-<pre><code class="language-rescript">type circle = {
-  radius: float,
-}
+<pre><code class="language-rescript">type circle = {radius: float}
 
 type rectangle = {
   width: float,
@@ -652,26 +649,20 @@ module Codecs = {
       // Depending on the variant, stringify the tag for the &quot;kind&quot; field and
       // use appropriate codec for the geometry
       switch shape {
-      | Circle(geo) =&gt; (&quot;circle&quot;, circle-&gt;Jzon.encode(geo))
-      | Rectangle(geo) =&gt; (&quot;rectangle&quot;, rectangle-&gt;Jzon.encode(geo))
-      | Ellipse(geo) =&gt; (&quot;ellipse&quot;, ellipse-&gt;Jzon.encode(geo))
+      | Circle(geo) =&gt; (&quot;circle&quot;, geo-&gt;Jzon.encodeWith(circle))
+      | Rectangle(geo) =&gt; (&quot;rectangle&quot;, geo-&gt;Jzon.encodeWith(rectangle))
+      | Ellipse(geo) =&gt; (&quot;ellipse&quot;, geo-&gt;Jzon.encodeWith(ellipse))
       },
     ((kind, json)) =&gt;
       // Depending on the &quot;kind&quot; field value take a proper payload codec
       // and build the value in the ReScript world
       switch kind {
       | &quot;circle&quot; =&gt;
-        circle
-        -&gt;Jzon.decode(json)
-        -&gt;Result.map(geo =&gt; Circle(geo))
+        json-&gt;Jzon.decodeWith(circle)-&gt;Result.map(geo =&gt; Circle(geo))
       | &quot;rectangle&quot; =&gt;
-        rectangle
-        -&gt;Jzon.decode(json)
-        -&gt;Result.map(geo =&gt; Rectangle(geo))
+        json-&gt;Jzon.decodeWith(rectangle)-&gt;Result.map(geo =&gt; Rectangle(geo))
       | &quot;ellipse&quot; =&gt;
-        ellipse
-        -&gt;Jzon.decode(json)
-        -&gt;Result.map(geo =&gt; Ellipse(geo))
+        json-&gt;Jzon.decodeWith(ellipse)-&gt;Result.map(geo =&gt; Ellipse(geo))
       // Properly report bad enum value for pretty errors
       | x =&gt; Error(#UnexpectedJsonValue([Field(&quot;kind&quot;)], x))
       },
@@ -683,26 +674,26 @@ module Codecs = {
 }
 
 test(&quot;Nested dependent schema encoding&quot;, () =&gt; {
-  Codecs.shape
-  -&gt;Jzon.encodeString(Rectangle({width: 3.0, height: 4.0}))
+  Rectangle({width: 3.0, height: 4.0})
+  -&gt;Jzon.encodeStringWith(Codecs.shape)
   -&gt;Assert.equals(`{&quot;kind&quot;:&quot;rectangle&quot;,&quot;geometry&quot;:{&quot;width&quot;:3,&quot;height&quot;:4}}`)
 
-  Codecs.shape
-  -&gt;Jzon.encodeString(Circle({radius: 15.0}))
+  Circle({radius: 15.0})
+  -&gt;Jzon.encodeStringWith(Codecs.shape)
   -&gt;Assert.equals(`{&quot;kind&quot;:&quot;circle&quot;,&quot;geometry&quot;:{&quot;radius&quot;:15}}`)
 })
 
 test(&quot;Nested dependent schema decoding&quot;, () =&gt; {
-  Codecs.shape
-  -&gt;Jzon.decodeString(`{&quot;kind&quot;:&quot;rectangle&quot;,&quot;geometry&quot;:{&quot;width&quot;:3,&quot;height&quot;:4}}`)
+  `{&quot;kind&quot;:&quot;rectangle&quot;,&quot;geometry&quot;:{&quot;width&quot;:3,&quot;height&quot;:4}}`
+  -&gt;Jzon.decodeStringWith(Codecs.shape)
   -&gt;Assert.equals(Ok(Rectangle({width: 3.0, height: 4.0})))
 
-  Codecs.shape
-  -&gt;Jzon.decodeString(`{&quot;kind&quot;:&quot;circle&quot;,&quot;geometry&quot;:{&quot;radius&quot;:15}}`)
+  `{&quot;kind&quot;:&quot;circle&quot;,&quot;geometry&quot;:{&quot;radius&quot;:15}}`
+  -&gt;Jzon.decodeStringWith(Codecs.shape)
   -&gt;Assert.equals(Ok(Circle({radius: 15.0})))
 
-  Codecs.shape
-  -&gt;Jzon.decodeString(`{&quot;kind&quot;:&quot;donut&quot;,&quot;geometry&quot;:{&quot;radius&quot;:15}}`)
+  `{&quot;kind&quot;:&quot;donut&quot;,&quot;geometry&quot;:{&quot;radius&quot;:15}}`
+  -&gt;Jzon.decodeStringWith(Codecs.shape)
   -&gt;Assert.equals(Error(#UnexpectedJsonValue([Field(&quot;kind&quot;)], &quot;donut&quot;)))
 })
 </code></pre>
@@ -732,9 +723,9 @@ test(&quot;Nested dependent schema decoding&quot;, () =&gt; {
 <p>To make things worse, the ReScript representation might be arbitrary and not a record-per-variant. Nevertheless, this case is can be expressed and it’s quite similar to the nested case:</p>
 <pre><code class="language-rescript">// The type used to express various shapes
 type shape =
-| Circle(float)
-| Rectangle(float, float)
-| Ellipse(float, float)
+  | Circle(float)
+  | Rectangle(float, float)
+  | Ellipse(float, float)
 
 module Codecs = {
   // Temporary codec for Circle params. Effectively a single field extractor.
@@ -759,58 +750,54 @@ module Codecs = {
       // use appropriate params codec for the rest fields
       switch shape {
       | Circle(r) =&gt;
-        (&quot;circle&quot;, radius-&gt;Jzon.encode(r))
+        (&quot;circle&quot;, r-&gt;Jzon.encodeWith(radius))
       | Rectangle(width, height) =&gt;
-        (&quot;rectangle&quot;, widthHeight-&gt;Jzon.encode((width, height)))
+        (&quot;rectangle&quot;, (width, height)-&gt;Jzon.encodeWith(widthHeight))
       | Ellipse(width, height) =&gt;
-        (&quot;ellipse&quot;, widthHeight-&gt;Jzon.encode((width, height)))
+        (&quot;ellipse&quot;, (width, height)-&gt;Jzon.encodeWith(widthHeight))
       },
     ((kind, json)) =&gt;
-      // Depending on the &quot;kind&quot; field value take a proper params codec
-      // to decode other fields and build the value in the ReScript world
+      // Depending on the &quot;kind&quot; field value take a proper params codec to decode
+      // other fields and build the value in the ReScript world
       switch kind {
       | &quot;circle&quot; =&gt;
-        radius
-        -&gt;Jzon.decode(json)
-        -&gt;Result.map(r =&gt; Circle(r))
+        json-&gt;Jzon.decodeWith(radius)-&gt;Result.map(r =&gt; Circle(r))
       | &quot;rectangle&quot; =&gt;
-        widthHeight
-        -&gt;Jzon.decode(json)
-        -&gt;Result.map(((w, h)) =&gt; Rectangle(w, h))
+        json-&gt;Jzon.decodeWith(widthHeight)-&gt;Result.map(((w, h)) =&gt; Rectangle(w, h))
       | &quot;ellipse&quot; =&gt;
-        widthHeight
-        -&gt;Jzon.decode(json)
-        -&gt;Result.map(((w, h)) =&gt; Ellipse(w, h))
+        json-&gt;Jzon.decodeWith(widthHeight)-&gt;Result.map(((w, h)) =&gt; Ellipse(w, h))
+      // Properly report bad enum value for pretty errors
       | x =&gt; Error(#UnexpectedJsonValue([Field(&quot;kind&quot;)], x))
       },
+    // The tag field is just an enum string
     Jzon.field(&quot;kind&quot;, Jzon.string),
-    // The `self` descriptor means “this object”. It allows to further process
-    // the same object with other codecs.
+    // The `self` descriptor means “this object”. It allows to further process the
+    // same object with other codecs.
     Jzon.self,
   )
 }
 
 test(&quot;Flat dependent schema encoding&quot;, () =&gt; {
-  Codecs.shape
-  -&gt;Jzon.encodeString(Rectangle(3.0, 4.0))
+  Rectangle(3.0, 4.0)
+  -&gt;Jzon.encodeStringWith(Codecs.shape)
   -&gt;Assert.equals(`{&quot;kind&quot;:&quot;rectangle&quot;,&quot;width&quot;:3,&quot;height&quot;:4}`)
 
-  Codecs.shape
-  -&gt;Jzon.encodeString(Circle(15.0))
+  Circle(15.0)
+  -&gt;Jzon.encodeStringWith(Codecs.shape)
   -&gt;Assert.equals(`{&quot;kind&quot;:&quot;circle&quot;,&quot;r&quot;:15}`)
 })
 
 test(&quot;Flat dependent schema decoding&quot;, () =&gt; {
-  Codecs.shape
-  -&gt;Jzon.decodeString(`{&quot;kind&quot;:&quot;rectangle&quot;,&quot;width&quot;:3,&quot;height&quot;:4}`)
+  `{&quot;kind&quot;:&quot;rectangle&quot;,&quot;width&quot;:3,&quot;height&quot;:4}`
+  -&gt;Jzon.decodeStringWith(Codecs.shape)
   -&gt;Assert.equals(Ok(Rectangle(3.0, 4.0)))
 
-  Codecs.shape
-  -&gt;Jzon.decodeString(`{&quot;kind&quot;:&quot;circle&quot;,&quot;r&quot;:15}`)
+  `{&quot;kind&quot;:&quot;circle&quot;,&quot;r&quot;:15}`
+  -&gt;Jzon.decodeStringWith(Codecs.shape)
   -&gt;Assert.equals(Ok(Circle(15.0)))
 
-  Codecs.shape
-  -&gt;Jzon.decodeString(`{&quot;kind&quot;:&quot;donut&quot;,&quot;r&quot;:15}`)
+  `{&quot;kind&quot;:&quot;donut&quot;,&quot;r&quot;:15}`
+  -&gt;Jzon.decodeStringWith(Codecs.shape)
   -&gt;Assert.equals(Error(#UnexpectedJsonValue([Field(&quot;kind&quot;)], &quot;donut&quot;)))
 })
 </code></pre>
