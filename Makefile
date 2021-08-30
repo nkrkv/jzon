@@ -1,5 +1,5 @@
 
-BSB=yarn bsb
+RESCRIPT=yarn rescript
 BSC=bsc
 RETEST=yarn retest
 MKDOCS=mkdocs
@@ -8,11 +8,11 @@ ALL_RES=$(wildcard src/*.res*) $(wildcard tests/*.res*)
 
 .PHONY: build
 build:
-	$(BSB) -make-world -clean-world
+	$(RESCRIPT)
 
 .PHONY: dev
 dev:
-	$(BSB) -make-world -clean-world -w
+	$(RESCRIPT) -w
 
 .PHONY: dev_docs
 dev_docs:
