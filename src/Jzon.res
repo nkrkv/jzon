@@ -101,10 +101,14 @@ module Codec = {
 type codec<'v> = Codec.t<'v>
 
 let encode = Codec.encode
+let encodeWith = (data, codec) => codec->encode(data)
 let encodeString = Codec.encodeString
+let encodeStringWith = (data, codec) => codec->encodeString(data)
 
 let decode = Codec.decode
+let decodeWith = (json, codec) => codec->decode(json)
 let decodeString = Codec.decodeString
+let decodeStringWith = (string, codec) => codec->decodeString(string)
 
 let custom = Codec.make
 
