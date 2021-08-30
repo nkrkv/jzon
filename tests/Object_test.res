@@ -43,15 +43,15 @@ module Codecs = {
 }
 
 test("Nested object", () => {
-  Codecs.vertex
-  ->Jzon.decodeString(`{
+  `{
     "x": 10,
     "y": 20,
     "look": {
       "color": "#09a",
       "size": 5.0
     }
-  }`)
+  }`
+  ->Jzon.decodeStringWith(Codecs.vertex)
   ->Assert.okOf(
     {x: 10.0, y: 20.0, look: Some({color: "#09a", size: 5.0})},
     ~message="Decodes correctly",
@@ -65,44 +65,44 @@ test("Nested object", () => {
 })
 
 test("Nested object optional field", () => {
-  Codecs.vertex
-  ->Jzon.decodeString(`{"x": 10, "y": 20}`)
+  `{"x": 10, "y": 20}`
+  ->Jzon.decodeStringWith(Codecs.vertex)
   ->Assert.okOf({x: 10.0, y: 20.0, look: None}, ~message="Decodes to None if absent")
 
-  Codecs.vertex
-  ->Jzon.decodeString(`{"x": 10, "y": 20, "look": null}`)
+  `{"x": 10, "y": 20, "look": null}`
+  ->Jzon.decodeStringWith(Codecs.vertex)
   ->Assert.okOf({x: 10.0, y: 20.0, look: None}, ~message="Decodes to None if null")
 
-  Codecs.vertex
-  ->Jzon.encode({x: 10.0, y: 20.0, look: None})
+  {x: 10.0, y: 20.0, look: None}
+  ->Jzon.encodeWith(Codecs.vertex)
   ->Js.Json.stringify
   ->Assert.equals(`{"x":10,"y":20}`, ~message="Encoding omits nulls")
 })
 
 test("Object field default value", () => {
-  Codecs.link
-  ->Jzon.decodeString(`{"start": 0, "end": 1}`)
+  `{"start": 0, "end": 1}`
+  ->Jzon.decodeStringWith(Codecs.link)
   ->Assert.okOf({start: 0, end: 1, weight: 1.0}, ~message="Used if absent")
 
-  Codecs.link
-  ->Jzon.decodeString(`{"start": 0, "end": 1, "weight": null}`)
+  `{"start": 0, "end": 1, "weight": null}`
+  ->Jzon.decodeStringWith(Codecs.link)
   ->Assert.okOf({start: 0, end: 1, weight: 1.0}, ~message="Used if null")
 })
 
 test("Object JSON with missing field", () => {
-  Codecs.look
-  ->Jzon.decodeString(`{"color": "#09a"}`)
+  `{"color": "#09a"}`
+  ->Jzon.decodeStringWith(Codecs.look)
   ->Assert.errorString(`Missing field "size" at .`, ~message="Errors")
 })
 
 test("Object JSON with missing nested field", () => {
-  Codecs.vertex
-  ->Jzon.decodeString(`{"x": 10, "y": 20, "look": {"color": "#09a"}}`)
+  `{"x": 10, "y": 20, "look": {"color": "#09a"}}`
+  ->Jzon.decodeStringWith(Codecs.vertex)
   ->Assert.errorString(`Missing field "size" at ."look"`, ~message="Errors with proper path")
 })
 
 test("Object JSON with unexpected type", () => {
-  Codecs.vertex
-  ->Jzon.decodeString(`{"x": 10, "y": 20, "look": {"color": "#09a", "size": "laaaarge"}}`)
+  `{"x": 10, "y": 20, "look": {"color": "#09a", "size": "laaaarge"}}`
+  ->Jzon.decodeStringWith(Codecs.vertex)
   ->Assert.errorString(`Expected number, got string at ."look"."size"`, ~message="Errors")
 })

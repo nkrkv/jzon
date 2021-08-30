@@ -35,12 +35,12 @@ module Codecs = {
 }
 
 test("Tagged union", () => {
-  Codecs.shape
-  ->Jzon.decodeString(`{
+  `{
     "kind": "rectangle",
     "width": 3,
     "height": 4
-  }`)
+  }`
+  ->Jzon.decodeStringWith(Codecs.shape)
   ->Assert.okOf(Rectangle(3.0, 4.0), ~message="decodes correctly")
 
   Assert.roundtrips(Ellipse(1.0, 4.0), Codecs.shape, ~message="does roundtrip")
