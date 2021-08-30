@@ -276,12 +276,9 @@ module HowtoDependentSchemaNested = {
         // Depending on the "kind" field value take a proper payload codec
         // and build the value in the ReScript world
         switch kind {
-        | "circle" =>
-          json->Jzon.decodeWith(circle)->Result.map(geo => Circle(geo))
-        | "rectangle" =>
-          json->Jzon.decodeWith(rectangle)->Result.map(geo => Rectangle(geo))
-        | "ellipse" =>
-          json->Jzon.decodeWith(ellipse)->Result.map(geo => Ellipse(geo))
+        | "circle" => json->Jzon.decodeWith(circle)->Result.map(geo => Circle(geo))
+        | "rectangle" => json->Jzon.decodeWith(rectangle)->Result.map(geo => Rectangle(geo))
+        | "ellipse" => json->Jzon.decodeWith(ellipse)->Result.map(geo => Ellipse(geo))
         // Properly report bad enum value for pretty errors
         | x => Error(#UnexpectedJsonValue([Field("kind")], x))
         },
@@ -342,23 +339,17 @@ module HowtoDependentSchemaFlat = {
         // Depending on the variant, stringify the tag for the "kind" field and
         // use appropriate params codec for the rest fields
         switch shape {
-        | Circle(r) =>
-          ("circle", r->Jzon.encodeWith(radius))
-        | Rectangle(width, height) =>
-          ("rectangle", (width, height)->Jzon.encodeWith(widthHeight))
-        | Ellipse(width, height) =>
-          ("ellipse", (width, height)->Jzon.encodeWith(widthHeight))
+        | Circle(r) => ("circle", r->Jzon.encodeWith(radius))
+        | Rectangle(width, height) => ("rectangle", (width, height)->Jzon.encodeWith(widthHeight))
+        | Ellipse(width, height) => ("ellipse", (width, height)->Jzon.encodeWith(widthHeight))
         },
       ((kind, json)) =>
         // Depending on the "kind" field value take a proper params codec to decode
         // other fields and build the value in the ReScript world
         switch kind {
-        | "circle" =>
-          json->Jzon.decodeWith(radius)->Result.map(r => Circle(r))
-        | "rectangle" =>
-          json->Jzon.decodeWith(widthHeight)->Result.map(((w, h)) => Rectangle(w, h))
-        | "ellipse" =>
-          json->Jzon.decodeWith(widthHeight)->Result.map(((w, h)) => Ellipse(w, h))
+        | "circle" => json->Jzon.decodeWith(radius)->Result.map(r => Circle(r))
+        | "rectangle" => json->Jzon.decodeWith(widthHeight)->Result.map(((w, h)) => Rectangle(w, h))
+        | "ellipse" => json->Jzon.decodeWith(widthHeight)->Result.map(((w, h)) => Ellipse(w, h))
         // Properly report bad enum value for pretty errors
         | x => Error(#UnexpectedJsonValue([Field("kind")], x))
         },
@@ -375,9 +366,7 @@ module HowtoDependentSchemaFlat = {
     ->Jzon.encodeStringWith(Codecs.shape)
     ->Assert.equals(`{"kind":"rectangle","width":3,"height":4}`)
 
-    Circle(15.0)
-    ->Jzon.encodeStringWith(Codecs.shape)
-    ->Assert.equals(`{"kind":"circle","r":15}`)
+    Circle(15.0)->Jzon.encodeStringWith(Codecs.shape)->Assert.equals(`{"kind":"circle","r":15}`)
   })
 
   test("Flat dependent schema decoding", () => {
@@ -385,9 +374,7 @@ module HowtoDependentSchemaFlat = {
     ->Jzon.decodeStringWith(Codecs.shape)
     ->Assert.equals(Ok(Rectangle(3.0, 4.0)))
 
-    `{"kind":"circle","r":15}`
-    ->Jzon.decodeStringWith(Codecs.shape)
-    ->Assert.equals(Ok(Circle(15.0)))
+    `{"kind":"circle","r":15}`->Jzon.decodeStringWith(Codecs.shape)->Assert.equals(Ok(Circle(15.0)))
 
     `{"kind":"donut","r":15}`
     ->Jzon.decodeStringWith(Codecs.shape)
