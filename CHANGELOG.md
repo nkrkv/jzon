@@ -1,5 +1,9 @@
 # Jzon Changelog
 
+## 1.3.0 (2021-10-07) <a name="1.3.0"></a>
+
+* [feat] Add object codecs upto `object25` (#14)
+
 ## 1.2.0 (2021-09-31) <a name="1.2.0"></a>
 
 * [feat] Add and encourage use of data-first functions `Jzon.encodeWith` and `Jzon.decodeWith` (#11)
