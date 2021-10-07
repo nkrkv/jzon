@@ -1,0 +1,45 @@
+<% for (let n = 2; n <= MAX_N; ++n) { %>
+let object<%- n %> =
+  (
+    destruct,
+    construct,
+    <%_ for (let i = 1; i <= n; ++i) { _%>
+    field<%- i %>,
+    <%_ } _%>
+  ) =>
+  Codec.make(
+    // encode
+    value => {
+      let
+        (
+          <%_ for (let i = 1; i <= n; ++i) { _%>
+          val<%- i %>,
+          <%_ } _%>
+        ) = destruct(value)
+      jsonObject([
+        <%_ for (let i = 1; i <= n; ++i) { _%>
+        Field.encode(field<%- i %>, val<%- i %>),
+        <%_ } _%>
+      ])
+    },
+    // decode
+    json =>
+      json
+      ->asObject
+      ->Result.flatMap(fieldset =>
+        <%_ for (let i = 1; i <= n; ++i) { _%>
+        switch field<%- i %>->Field.decode(fieldset) {
+        | Ok(val<%- i %>) =>
+        <%_ } _%>
+        construct((
+          <%_ for (let i = 1; i <= n; ++i) { _%>
+          val<%- i %>,
+          <%_ } _%>
+        ))
+        <%_ for (let i = 1; i <= n; ++i) { _%>
+        | Error(_) as err => err
+        }
+        <%_ } _%>
+      ),
+  )
+<% } %>
