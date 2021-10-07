@@ -1,0 +1,18 @@
+<% for (let n = 2; n <= 25; ++n) { %>
+let object<%- n %>: (
+  'r =>
+    (
+      <%_ for (let i = 1; i <= n; ++i) { _%>
+      'f<%- i %>,
+      <%_ } _%>
+    ),
+  ((
+    <%_ for (let i = 1; i <= n; ++i) { _%>
+    'f<%- i %>,
+    <%_ } _%>
+  )) => result<'r, DecodingError.t>,
+  <%_ for (let i = 1; i <= n; ++i) { _%>
+  field<'f<%- i %>>,
+  <%_ } _%>
+) => codec<'r>
+<% } %>

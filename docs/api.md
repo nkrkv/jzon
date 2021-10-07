@@ -110,7 +110,7 @@ Makes an object codec that translates between a JSON object and a ReScript objec
 
 - _destructor_: a function which takes the ReScript object and converts it to the tuple with the order and element types dictated by the field descriptors
 - _constructor_: a function which takes a tuple with the order and element types dictated by the field descriptors, and converts the tuple to the ReScript object. The function may return an `Error(DecodingError.t)` to fail the whole decoding process.
-- _N field descriptors_: N arguments which define the object keys and values. The codecs are currently available for N from 1 to 15. If you have an object with more fields, make a custom codec. It might be a sane idea to steal `object15` implementation and routinely extend it to the number of fields required.
+- _N field descriptors_: N arguments which define the object keys and values. The codecs are currently available for N from 1 to 25. If you have an object with more fields, it is likely you have some patterns in it that are better served by a custom codec.
 
 ```rescript
 let field: (string, codec<'v>) => field<'v>

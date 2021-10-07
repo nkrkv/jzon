@@ -2,6 +2,7 @@
 RESCRIPT=yarn rescript
 BSC=bsc
 RETEST=yarn retest
+EJS=yarn ejs
 MKDOCS=mkdocs
 
 ALL_RES=$(wildcard src/*.res*) $(wildcard tests/*.res*)
@@ -51,3 +52,11 @@ publish:
 	git push --tags
 	npm publish
 	$(MKDOCS) gh-deploy
+
+.PHONY: objectn.res
+objectn.res:
+	$(EJS) ./templates/objectN.res.ejs
+
+.PHONY: objectn.resi
+objectn.resi:
+	$(EJS) ./templates/objectN.resi.ejs
