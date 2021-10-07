@@ -531,7 +531,7 @@ let objectN: (
 <ul>
 <li><em>destructor</em>: a function which takes the ReScript object and converts it to the tuple with the order and element types dictated by the field descriptors</li>
 <li><em>constructor</em>: a function which takes a tuple with the order and element types dictated by the field descriptors, and converts the tuple to the ReScript object. The function may return an <code>Error(DecodingError.t)</code> to fail the whole decoding process.</li>
-<li><em>N field descriptors</em>: N arguments which define the object keys and values. The codecs are currently available for N from 1 to 15. If you have an object with more fields, make a custom codec. It might be a sane idea to steal <code>object15</code> implementation and routinely extend it to the number of fields required.</li>
+<li><em>N field descriptors</em>: N arguments which define the object keys and values. The codecs are currently available for N from 1 to 25. If you have an object with more fields, it is likely you have some patterns in it that are better served by a custom codec.</li>
 </ul>
 <pre><code class="language-rescript">let field: (string, codec&lt;'v&gt;) =&gt; field&lt;'v&gt;
 </code></pre>

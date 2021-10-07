@@ -331,7 +331,7 @@
 <li>Add <code>"rescript-jzon"</code> item to the <code>dependencies</code> key of <code>bsconfig.json</code></li>
 </ol>
 <h2 id="quick-start">Quick start</h2>
-<p>Imaging you have the following ReScript types to encode and decode:</p>
+<p>Imagine you have the following ReScript types to encode and decode:</p>
 <pre><code class="language-rescript">type style = {
   size: float,
   color: string,
@@ -347,34 +347,42 @@ type point = {
 <p>First, define their <em>codecs</em>:</p>
 <pre><code class="language-rescript">module Codecs = {
   let style = Jzon.object2(
+    // Function to encode original object to linear tuple
     ({size, color}) =&gt; (size, color),
+
+    // Function to decode linear tuple back to object
     ((size, color)) =&gt; {size, color}-&gt;Ok,
+
+    // Field names and codecs for the tuple elements
     Jzon.field(&quot;size&quot;, Jzon.float),
     Jzon.field(&quot;color&quot;, Jzon.string),
   );
 
+  // Similar codec for another record type
   let point = Jzon.object4(
     ({x, y, z, style}) =&gt; (x, y, z, style),
     ((x, y, z, style)) =&gt; {x, y, z, style}-&gt;Ok,
     Jzon.field(&quot;x&quot;, Jzon.float),
     Jzon.field(&quot;y&quot;, Jzon.float),
+    // ... supports default values
     Jzon.field(&quot;z&quot;, Jzon.float)-&gt;Jzon.default(0.0),
+    // ... may refer your other codecs
     Jzon.field(&quot;style&quot;, style)-&gt;Jzon.optional,
   )
 }
 </code></pre>
 <p>Next, convert between the ReScript types and <code>Js.Json.t</code> with:</p>
-<pre><code class="language-rescript">let myJsonData =
-  Codecs.point
-  -&gt;Jzon.encode({
-    x: 1.0,
-    y: 2.0,
-    z: 3.0,
-    style: Some({size: 4.0, color: &quot;#fd0&quot;}),
-  })
+<pre><code class="language-rescript">let myPoint = {
+  x: 1.0,
+  y: 2.0,
+  z: 3.0,
+  style: Some({size: 4.0, color: &quot;#fd0&quot;}),
+}
+
+let json = myPoint-&gt;Jzon.encodeWith(Codecs.point)
 </code></pre>
 <p>and back with:</p>
-<pre><code class="language-rescript">let myPoint = Codecs.point-&gt;Jzon.decode(myJsonData)
+<pre><code class="language-rescript">let myPoint = json-&gt;Jzon.decodeWith(Codecs.point)
 </code></pre>
 <h2 id="whats-next">What’s next</h2>
 <ul>
