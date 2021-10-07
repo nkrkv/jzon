@@ -2,7 +2,7 @@
   "name": "rescript-jzon",
   "description": "JSON encoding and decoding for ReScript",
   "author": "Victor Nakoryakov <nail.xx@gmail.com>",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "license": "MIT",
   "repository": {
     "type": "git",
