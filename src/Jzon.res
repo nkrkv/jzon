@@ -282,6 +282,16 @@ let default = Field.assignDefault
 
 let jsonObject = keyVals => Js.Json.object_(Js.Dict.fromArray(keyVals->Array.concatMany))
 
+@inline
+let ap = (fn, r) => fn->Result.flatMap(fn => r->Result.map(fn))
+
+@inline
+let unpack = r =>
+  switch r {
+  | Ok(data) => data
+  | Error(_) as err => err
+  }
+
 let object1 = (destruct, construct, field1) =>
   Codec.make(
     // encode
@@ -313,14 +323,11 @@ let object2 = (destruct, construct, field1, field2) =>
       json
       ->asObject
       ->Result.flatMap(fieldset =>
-        switch field1->Field.decode(fieldset) {
-        | Ok(val1) =>
-          switch field2->Field.decode(fieldset) {
-          | Ok(val2) => construct((val1, val2))
-          | Error(_) as err => err
-          }
-        | Error(_) as err => err
-        }
+        field1
+        ->Field.decode(fieldset)
+        ->Result.map((val1, val2) => construct((val1, val2)))
+        ->ap(field2->Field.decode(fieldset))
+        ->unpack
       ),
   )
 
@@ -340,18 +347,12 @@ let object3 = (destruct, construct, field1, field2, field3) =>
       json
       ->asObject
       ->Result.flatMap(fieldset =>
-        switch field1->Field.decode(fieldset) {
-        | Ok(val1) =>
-          switch field2->Field.decode(fieldset) {
-          | Ok(val2) =>
-            switch field3->Field.decode(fieldset) {
-            | Ok(val3) => construct((val1, val2, val3))
-            | Error(_) as err => err
-            }
-          | Error(_) as err => err
-          }
-        | Error(_) as err => err
-        }
+        field1
+        ->Field.decode(fieldset)
+        ->Result.map((val1, val2, val3) => construct((val1, val2, val3)))
+        ->ap(field2->Field.decode(fieldset))
+        ->ap(field3->Field.decode(fieldset))
+        ->unpack
       ),
   )
 
@@ -372,22 +373,13 @@ let object4 = (destruct, construct, field1, field2, field3, field4) =>
       json
       ->asObject
       ->Result.flatMap(fieldset =>
-        switch field1->Field.decode(fieldset) {
-        | Ok(val1) =>
-          switch field2->Field.decode(fieldset) {
-          | Ok(val2) =>
-            switch field3->Field.decode(fieldset) {
-            | Ok(val3) =>
-              switch field4->Field.decode(fieldset) {
-              | Ok(val4) => construct((val1, val2, val3, val4))
-              | Error(_) as err => err
-              }
-            | Error(_) as err => err
-            }
-          | Error(_) as err => err
-          }
-        | Error(_) as err => err
-        }
+        field1
+        ->Field.decode(fieldset)
+        ->Result.map((val1, val2, val3, val4) => construct((val1, val2, val3, val4)))
+        ->ap(field2->Field.decode(fieldset))
+        ->ap(field3->Field.decode(fieldset))
+        ->ap(field4->Field.decode(fieldset))
+        ->unpack
       ),
   )
 
@@ -409,26 +401,14 @@ let object5 = (destruct, construct, field1, field2, field3, field4, field5) =>
       json
       ->asObject
       ->Result.flatMap(fieldset =>
-        switch field1->Field.decode(fieldset) {
-        | Ok(val1) =>
-          switch field2->Field.decode(fieldset) {
-          | Ok(val2) =>
-            switch field3->Field.decode(fieldset) {
-            | Ok(val3) =>
-              switch field4->Field.decode(fieldset) {
-              | Ok(val4) =>
-                switch field5->Field.decode(fieldset) {
-                | Ok(val5) => construct((val1, val2, val3, val4, val5))
-                | Error(_) as err => err
-                }
-              | Error(_) as err => err
-              }
-            | Error(_) as err => err
-            }
-          | Error(_) as err => err
-          }
-        | Error(_) as err => err
-        }
+        field1
+        ->Field.decode(fieldset)
+        ->Result.map((val1, val2, val3, val4, val5) => construct((val1, val2, val3, val4, val5)))
+        ->ap(field2->Field.decode(fieldset))
+        ->ap(field3->Field.decode(fieldset))
+        ->ap(field4->Field.decode(fieldset))
+        ->ap(field5->Field.decode(fieldset))
+        ->unpack
       ),
   )
 
@@ -451,30 +431,17 @@ let object6 = (destruct, construct, field1, field2, field3, field4, field5, fiel
       json
       ->asObject
       ->Result.flatMap(fieldset =>
-        switch field1->Field.decode(fieldset) {
-        | Ok(val1) =>
-          switch field2->Field.decode(fieldset) {
-          | Ok(val2) =>
-            switch field3->Field.decode(fieldset) {
-            | Ok(val3) =>
-              switch field4->Field.decode(fieldset) {
-              | Ok(val4) =>
-                switch field5->Field.decode(fieldset) {
-                | Ok(val5) =>
-                  switch field6->Field.decode(fieldset) {
-                  | Ok(val6) => construct((val1, val2, val3, val4, val5, val6))
-                  | Error(_) as err => err
-                  }
-                | Error(_) as err => err
-                }
-              | Error(_) as err => err
-              }
-            | Error(_) as err => err
-            }
-          | Error(_) as err => err
-          }
-        | Error(_) as err => err
-        }
+        field1
+        ->Field.decode(fieldset)
+        ->Result.map((val1, val2, val3, val4, val5, val6) =>
+          construct((val1, val2, val3, val4, val5, val6))
+        )
+        ->ap(field2->Field.decode(fieldset))
+        ->ap(field3->Field.decode(fieldset))
+        ->ap(field4->Field.decode(fieldset))
+        ->ap(field5->Field.decode(fieldset))
+        ->ap(field6->Field.decode(fieldset))
+        ->unpack
       ),
   )
 
@@ -498,34 +465,18 @@ let object7 = (destruct, construct, field1, field2, field3, field4, field5, fiel
       json
       ->asObject
       ->Result.flatMap(fieldset =>
-        switch field1->Field.decode(fieldset) {
-        | Ok(val1) =>
-          switch field2->Field.decode(fieldset) {
-          | Ok(val2) =>
-            switch field3->Field.decode(fieldset) {
-            | Ok(val3) =>
-              switch field4->Field.decode(fieldset) {
-              | Ok(val4) =>
-                switch field5->Field.decode(fieldset) {
-                | Ok(val5) =>
-                  switch field6->Field.decode(fieldset) {
-                  | Ok(val6) =>
-                    switch field7->Field.decode(fieldset) {
-                    | Ok(val7) => construct((val1, val2, val3, val4, val5, val6, val7))
-                    | Error(_) as err => err
-                    }
-                  | Error(_) as err => err
-                  }
-                | Error(_) as err => err
-                }
-              | Error(_) as err => err
-              }
-            | Error(_) as err => err
-            }
-          | Error(_) as err => err
-          }
-        | Error(_) as err => err
-        }
+        field1
+        ->Field.decode(fieldset)
+        ->Result.map((val1, val2, val3, val4, val5, val6, val7) =>
+          construct((val1, val2, val3, val4, val5, val6, val7))
+        )
+        ->ap(field2->Field.decode(fieldset))
+        ->ap(field3->Field.decode(fieldset))
+        ->ap(field4->Field.decode(fieldset))
+        ->ap(field5->Field.decode(fieldset))
+        ->ap(field6->Field.decode(fieldset))
+        ->ap(field7->Field.decode(fieldset))
+        ->unpack
       ),
   )
 
@@ -561,38 +512,19 @@ let object8 = (
       json
       ->asObject
       ->Result.flatMap(fieldset =>
-        switch field1->Field.decode(fieldset) {
-        | Ok(val1) =>
-          switch field2->Field.decode(fieldset) {
-          | Ok(val2) =>
-            switch field3->Field.decode(fieldset) {
-            | Ok(val3) =>
-              switch field4->Field.decode(fieldset) {
-              | Ok(val4) =>
-                switch field5->Field.decode(fieldset) {
-                | Ok(val5) =>
-                  switch field6->Field.decode(fieldset) {
-                  | Ok(val6) =>
-                    switch field7->Field.decode(fieldset) {
-                    | Ok(val7) =>
-                      switch field8->Field.decode(fieldset) {
-                      | Ok(val8) => construct((val1, val2, val3, val4, val5, val6, val7, val8))
-                      | Error(_) as err => err
-                      }
-                    | Error(_) as err => err
-                    }
-                  | Error(_) as err => err
-                  }
-                | Error(_) as err => err
-                }
-              | Error(_) as err => err
-              }
-            | Error(_) as err => err
-            }
-          | Error(_) as err => err
-          }
-        | Error(_) as err => err
-        }
+        field1
+        ->Field.decode(fieldset)
+        ->Result.map((val1, val2, val3, val4, val5, val6, val7, val8) =>
+          construct((val1, val2, val3, val4, val5, val6, val7, val8))
+        )
+        ->ap(field2->Field.decode(fieldset))
+        ->ap(field3->Field.decode(fieldset))
+        ->ap(field4->Field.decode(fieldset))
+        ->ap(field5->Field.decode(fieldset))
+        ->ap(field6->Field.decode(fieldset))
+        ->ap(field7->Field.decode(fieldset))
+        ->ap(field8->Field.decode(fieldset))
+        ->unpack
       ),
   )
 
@@ -630,43 +562,20 @@ let object9 = (
       json
       ->asObject
       ->Result.flatMap(fieldset =>
-        switch field1->Field.decode(fieldset) {
-        | Ok(val1) =>
-          switch field2->Field.decode(fieldset) {
-          | Ok(val2) =>
-            switch field3->Field.decode(fieldset) {
-            | Ok(val3) =>
-              switch field4->Field.decode(fieldset) {
-              | Ok(val4) =>
-                switch field5->Field.decode(fieldset) {
-                | Ok(val5) =>
-                  switch field6->Field.decode(fieldset) {
-                  | Ok(val6) =>
-                    switch field7->Field.decode(fieldset) {
-                    | Ok(val7) =>
-                      switch field8->Field.decode(fieldset) {
-                      | Ok(val8) =>
-                        switch field9->Field.decode(fieldset) {
-                        | Ok(val9) =>
-                          construct((val1, val2, val3, val4, val5, val6, val7, val8, val9))
-                        | Error(_) as err => err
-                        }
-                      | Error(_) as err => err
-                      }
-                    | Error(_) as err => err
-                    }
-                  | Error(_) as err => err
-                  }
-                | Error(_) as err => err
-                }
-              | Error(_) as err => err
-              }
-            | Error(_) as err => err
-            }
-          | Error(_) as err => err
-          }
-        | Error(_) as err => err
-        }
+        field1
+        ->Field.decode(fieldset)
+        ->Result.map((val1, val2, val3, val4, val5, val6, val7, val8, val9) =>
+          construct((val1, val2, val3, val4, val5, val6, val7, val8, val9))
+        )
+        ->ap(field2->Field.decode(fieldset))
+        ->ap(field3->Field.decode(fieldset))
+        ->ap(field4->Field.decode(fieldset))
+        ->ap(field5->Field.decode(fieldset))
+        ->ap(field6->Field.decode(fieldset))
+        ->ap(field7->Field.decode(fieldset))
+        ->ap(field8->Field.decode(fieldset))
+        ->ap(field9->Field.decode(fieldset))
+        ->unpack
       ),
   )
 
@@ -706,47 +615,21 @@ let object10 = (
       json
       ->asObject
       ->Result.flatMap(fieldset =>
-        switch field1->Field.decode(fieldset) {
-        | Ok(val1) =>
-          switch field2->Field.decode(fieldset) {
-          | Ok(val2) =>
-            switch field3->Field.decode(fieldset) {
-            | Ok(val3) =>
-              switch field4->Field.decode(fieldset) {
-              | Ok(val4) =>
-                switch field5->Field.decode(fieldset) {
-                | Ok(val5) =>
-                  switch field6->Field.decode(fieldset) {
-                  | Ok(val6) =>
-                    switch field7->Field.decode(fieldset) {
-                    | Ok(val7) =>
-                      switch field8->Field.decode(fieldset) {
-                      | Ok(val8) =>
-                        switch field9->Field.decode(fieldset) {
-                        | Ok(val9) =>
-                          switch field10->Field.decode(fieldset) {
-                          | Ok(val10) =>
-                            construct((val1, val2, val3, val4, val5, val6, val7, val8, val9, val10))
-                          | Error(_) as err => err
-                          }
-                        | Error(_) as err => err
-                        }
-                      | Error(_) as err => err
-                      }
-                    | Error(_) as err => err
-                    }
-                  | Error(_) as err => err
-                  }
-                | Error(_) as err => err
-                }
-              | Error(_) as err => err
-              }
-            | Error(_) as err => err
-            }
-          | Error(_) as err => err
-          }
-        | Error(_) as err => err
-        }
+        field1
+        ->Field.decode(fieldset)
+        ->Result.map((val1, val2, val3, val4, val5, val6, val7, val8, val9, val10) =>
+          construct((val1, val2, val3, val4, val5, val6, val7, val8, val9, val10))
+        )
+        ->ap(field2->Field.decode(fieldset))
+        ->ap(field3->Field.decode(fieldset))
+        ->ap(field4->Field.decode(fieldset))
+        ->ap(field5->Field.decode(fieldset))
+        ->ap(field6->Field.decode(fieldset))
+        ->ap(field7->Field.decode(fieldset))
+        ->ap(field8->Field.decode(fieldset))
+        ->ap(field9->Field.decode(fieldset))
+        ->ap(field10->Field.decode(fieldset))
+        ->unpack
       ),
   )
 
@@ -788,63 +671,22 @@ let object11 = (
       json
       ->asObject
       ->Result.flatMap(fieldset =>
-        switch field1->Field.decode(fieldset) {
-        | Ok(val1) =>
-          switch field2->Field.decode(fieldset) {
-          | Ok(val2) =>
-            switch field3->Field.decode(fieldset) {
-            | Ok(val3) =>
-              switch field4->Field.decode(fieldset) {
-              | Ok(val4) =>
-                switch field5->Field.decode(fieldset) {
-                | Ok(val5) =>
-                  switch field6->Field.decode(fieldset) {
-                  | Ok(val6) =>
-                    switch field7->Field.decode(fieldset) {
-                    | Ok(val7) =>
-                      switch field8->Field.decode(fieldset) {
-                      | Ok(val8) =>
-                        switch field9->Field.decode(fieldset) {
-                        | Ok(val9) =>
-                          switch field10->Field.decode(fieldset) {
-                          | Ok(val10) =>
-                            switch field11->Field.decode(fieldset) {
-                            | Ok(val11) =>
-                              construct((
-                                val1,
-                                val2,
-                                val3,
-                                val4,
-                                val5,
-                                val6,
-                                val7,
-                                val8,
-                                val9,
-                                val10,
-                                val11,
-                              ))
-                            | Error(_) as err => err
-                            }
-                          | Error(_) as err => err
-                          }
-                        | Error(_) as err => err
-                        }
-                      | Error(_) as err => err
-                      }
-                    | Error(_) as err => err
-                    }
-                  | Error(_) as err => err
-                  }
-                | Error(_) as err => err
-                }
-              | Error(_) as err => err
-              }
-            | Error(_) as err => err
-            }
-          | Error(_) as err => err
-          }
-        | Error(_) as err => err
-        }
+        field1
+        ->Field.decode(fieldset)
+        ->Result.map((val1, val2, val3, val4, val5, val6, val7, val8, val9, val10, val11) =>
+          construct((val1, val2, val3, val4, val5, val6, val7, val8, val9, val10, val11))
+        )
+        ->ap(field2->Field.decode(fieldset))
+        ->ap(field3->Field.decode(fieldset))
+        ->ap(field4->Field.decode(fieldset))
+        ->ap(field5->Field.decode(fieldset))
+        ->ap(field6->Field.decode(fieldset))
+        ->ap(field7->Field.decode(fieldset))
+        ->ap(field8->Field.decode(fieldset))
+        ->ap(field9->Field.decode(fieldset))
+        ->ap(field10->Field.decode(fieldset))
+        ->ap(field11->Field.decode(fieldset))
+        ->unpack
       ),
   )
 
@@ -890,68 +732,23 @@ let object12 = (
       json
       ->asObject
       ->Result.flatMap(fieldset =>
-        switch field1->Field.decode(fieldset) {
-        | Ok(val1) =>
-          switch field2->Field.decode(fieldset) {
-          | Ok(val2) =>
-            switch field3->Field.decode(fieldset) {
-            | Ok(val3) =>
-              switch field4->Field.decode(fieldset) {
-              | Ok(val4) =>
-                switch field5->Field.decode(fieldset) {
-                | Ok(val5) =>
-                  switch field6->Field.decode(fieldset) {
-                  | Ok(val6) =>
-                    switch field7->Field.decode(fieldset) {
-                    | Ok(val7) =>
-                      switch field8->Field.decode(fieldset) {
-                      | Ok(val8) =>
-                        switch field9->Field.decode(fieldset) {
-                        | Ok(val9) =>
-                          switch field10->Field.decode(fieldset) {
-                          | Ok(val10) =>
-                            switch field11->Field.decode(fieldset) {
-                            | Ok(val11) =>
-                              switch field12->Field.decode(fieldset) {
-                              | Ok(val12) =>
-                                construct((
-                                  val1,
-                                  val2,
-                                  val3,
-                                  val4,
-                                  val5,
-                                  val6,
-                                  val7,
-                                  val8,
-                                  val9,
-                                  val10,
-                                  val11,
-                                  val12,
-                                ))
-                              | Error(_) as err => err
-                              }
-                            | Error(_) as err => err
-                            }
-                          | Error(_) as err => err
-                          }
-                        | Error(_) as err => err
-                        }
-                      | Error(_) as err => err
-                      }
-                    | Error(_) as err => err
-                    }
-                  | Error(_) as err => err
-                  }
-                | Error(_) as err => err
-                }
-              | Error(_) as err => err
-              }
-            | Error(_) as err => err
-            }
-          | Error(_) as err => err
-          }
-        | Error(_) as err => err
-        }
+        field1
+        ->Field.decode(fieldset)
+        ->Result.map((val1, val2, val3, val4, val5, val6, val7, val8, val9, val10, val11, val12) =>
+          construct((val1, val2, val3, val4, val5, val6, val7, val8, val9, val10, val11, val12))
+        )
+        ->ap(field2->Field.decode(fieldset))
+        ->ap(field3->Field.decode(fieldset))
+        ->ap(field4->Field.decode(fieldset))
+        ->ap(field5->Field.decode(fieldset))
+        ->ap(field6->Field.decode(fieldset))
+        ->ap(field7->Field.decode(fieldset))
+        ->ap(field8->Field.decode(fieldset))
+        ->ap(field9->Field.decode(fieldset))
+        ->ap(field10->Field.decode(fieldset))
+        ->ap(field11->Field.decode(fieldset))
+        ->ap(field12->Field.decode(fieldset))
+        ->unpack
       ),
   )
 
@@ -1011,73 +808,52 @@ let object13 = (
       json
       ->asObject
       ->Result.flatMap(fieldset =>
-        switch field1->Field.decode(fieldset) {
-        | Ok(val1) =>
-          switch field2->Field.decode(fieldset) {
-          | Ok(val2) =>
-            switch field3->Field.decode(fieldset) {
-            | Ok(val3) =>
-              switch field4->Field.decode(fieldset) {
-              | Ok(val4) =>
-                switch field5->Field.decode(fieldset) {
-                | Ok(val5) =>
-                  switch field6->Field.decode(fieldset) {
-                  | Ok(val6) =>
-                    switch field7->Field.decode(fieldset) {
-                    | Ok(val7) =>
-                      switch field8->Field.decode(fieldset) {
-                      | Ok(val8) =>
-                        switch field9->Field.decode(fieldset) {
-                        | Ok(val9) =>
-                          switch field10->Field.decode(fieldset) {
-                          | Ok(val10) =>
-                            switch field11->Field.decode(fieldset) {
-                            | Ok(val11) =>
-                              switch field12->Field.decode(fieldset) {
-                              | Ok(val12) =>
-                                switch field13->Field.decode(fieldset) {
-                                | Ok(val13) =>
-                                  construct((
-                                    val1,
-                                    val2,
-                                    val3,
-                                    val4,
-                                    val5,
-                                    val6,
-                                    val7,
-                                    val8,
-                                    val9,
-                                    val10,
-                                    val11,
-                                    val12,
-                                    val13,
-                                  ))
-                                | Error(_) as err => err
-                                }
-                              | Error(_) as err => err
-                              }
-                            | Error(_) as err => err
-                            }
-                          | Error(_) as err => err
-                          }
-                        | Error(_) as err => err
-                        }
-                      | Error(_) as err => err
-                      }
-                    | Error(_) as err => err
-                    }
-                  | Error(_) as err => err
-                  }
-                | Error(_) as err => err
-                }
-              | Error(_) as err => err
-              }
-            | Error(_) as err => err
-            }
-          | Error(_) as err => err
-          }
-        | Error(_) as err => err
-        }
+        field1
+        ->Field.decode(fieldset)
+        ->Result.map((
+          val1,
+          val2,
+          val3,
+          val4,
+          val5,
+          val6,
+          val7,
+          val8,
+          val9,
+          val10,
+          val11,
+          val12,
+          val13,
+        ) =>
+          construct((
+            val1,
+            val2,
+            val3,
+            val4,
+            val5,
+            val6,
+            val7,
+            val8,
+            val9,
+            val10,
+            val11,
+            val12,
+            val13,
+          ))
+        )
+        ->ap(field2->Field.decode(fieldset))
+        ->ap(field3->Field.decode(fieldset))
+        ->ap(field4->Field.decode(fieldset))
+        ->ap(field5->Field.decode(fieldset))
+        ->ap(field6->Field.decode(fieldset))
+        ->ap(field7->Field.decode(fieldset))
+        ->ap(field8->Field.decode(fieldset))
+        ->ap(field9->Field.decode(fieldset))
+        ->ap(field10->Field.decode(fieldset))
+        ->ap(field11->Field.decode(fieldset))
+        ->ap(field12->Field.decode(fieldset))
+        ->ap(field13->Field.decode(fieldset))
+        ->unpack
       ),
   )
 
@@ -1140,78 +916,55 @@ let object14 = (
       json
       ->asObject
       ->Result.flatMap(fieldset =>
-        switch field1->Field.decode(fieldset) {
-        | Ok(val1) =>
-          switch field2->Field.decode(fieldset) {
-          | Ok(val2) =>
-            switch field3->Field.decode(fieldset) {
-            | Ok(val3) =>
-              switch field4->Field.decode(fieldset) {
-              | Ok(val4) =>
-                switch field5->Field.decode(fieldset) {
-                | Ok(val5) =>
-                  switch field6->Field.decode(fieldset) {
-                  | Ok(val6) =>
-                    switch field7->Field.decode(fieldset) {
-                    | Ok(val7) =>
-                      switch field8->Field.decode(fieldset) {
-                      | Ok(val8) =>
-                        switch field9->Field.decode(fieldset) {
-                        | Ok(val9) =>
-                          switch field10->Field.decode(fieldset) {
-                          | Ok(val10) =>
-                            switch field11->Field.decode(fieldset) {
-                            | Ok(val11) =>
-                              switch field12->Field.decode(fieldset) {
-                              | Ok(val12) =>
-                                switch field13->Field.decode(fieldset) {
-                                | Ok(val13) =>
-                                  switch field14->Field.decode(fieldset) {
-                                  | Ok(val14) =>
-                                    construct((
-                                      val1,
-                                      val2,
-                                      val3,
-                                      val4,
-                                      val5,
-                                      val6,
-                                      val7,
-                                      val8,
-                                      val9,
-                                      val10,
-                                      val11,
-                                      val12,
-                                      val13,
-                                      val14,
-                                    ))
-                                  | Error(_) as err => err
-                                  }
-                                | Error(_) as err => err
-                                }
-                              | Error(_) as err => err
-                              }
-                            | Error(_) as err => err
-                            }
-                          | Error(_) as err => err
-                          }
-                        | Error(_) as err => err
-                        }
-                      | Error(_) as err => err
-                      }
-                    | Error(_) as err => err
-                    }
-                  | Error(_) as err => err
-                  }
-                | Error(_) as err => err
-                }
-              | Error(_) as err => err
-              }
-            | Error(_) as err => err
-            }
-          | Error(_) as err => err
-          }
-        | Error(_) as err => err
-        }
+        field1
+        ->Field.decode(fieldset)
+        ->Result.map((
+          val1,
+          val2,
+          val3,
+          val4,
+          val5,
+          val6,
+          val7,
+          val8,
+          val9,
+          val10,
+          val11,
+          val12,
+          val13,
+          val14,
+        ) =>
+          construct((
+            val1,
+            val2,
+            val3,
+            val4,
+            val5,
+            val6,
+            val7,
+            val8,
+            val9,
+            val10,
+            val11,
+            val12,
+            val13,
+            val14,
+          ))
+        )
+        ->ap(field2->Field.decode(fieldset))
+        ->ap(field3->Field.decode(fieldset))
+        ->ap(field4->Field.decode(fieldset))
+        ->ap(field5->Field.decode(fieldset))
+        ->ap(field6->Field.decode(fieldset))
+        ->ap(field7->Field.decode(fieldset))
+        ->ap(field8->Field.decode(fieldset))
+        ->ap(field9->Field.decode(fieldset))
+        ->ap(field10->Field.decode(fieldset))
+        ->ap(field11->Field.decode(fieldset))
+        ->ap(field12->Field.decode(fieldset))
+        ->ap(field13->Field.decode(fieldset))
+        ->ap(field14->Field.decode(fieldset))
+        ->unpack
       ),
   )
 
@@ -1277,83 +1030,58 @@ let object15 = (
       json
       ->asObject
       ->Result.flatMap(fieldset =>
-        switch field1->Field.decode(fieldset) {
-        | Ok(val1) =>
-          switch field2->Field.decode(fieldset) {
-          | Ok(val2) =>
-            switch field3->Field.decode(fieldset) {
-            | Ok(val3) =>
-              switch field4->Field.decode(fieldset) {
-              | Ok(val4) =>
-                switch field5->Field.decode(fieldset) {
-                | Ok(val5) =>
-                  switch field6->Field.decode(fieldset) {
-                  | Ok(val6) =>
-                    switch field7->Field.decode(fieldset) {
-                    | Ok(val7) =>
-                      switch field8->Field.decode(fieldset) {
-                      | Ok(val8) =>
-                        switch field9->Field.decode(fieldset) {
-                        | Ok(val9) =>
-                          switch field10->Field.decode(fieldset) {
-                          | Ok(val10) =>
-                            switch field11->Field.decode(fieldset) {
-                            | Ok(val11) =>
-                              switch field12->Field.decode(fieldset) {
-                              | Ok(val12) =>
-                                switch field13->Field.decode(fieldset) {
-                                | Ok(val13) =>
-                                  switch field14->Field.decode(fieldset) {
-                                  | Ok(val14) =>
-                                    switch field15->Field.decode(fieldset) {
-                                    | Ok(val15) =>
-                                      construct((
-                                        val1,
-                                        val2,
-                                        val3,
-                                        val4,
-                                        val5,
-                                        val6,
-                                        val7,
-                                        val8,
-                                        val9,
-                                        val10,
-                                        val11,
-                                        val12,
-                                        val13,
-                                        val14,
-                                        val15,
-                                      ))
-                                    | Error(_) as err => err
-                                    }
-                                  | Error(_) as err => err
-                                  }
-                                | Error(_) as err => err
-                                }
-                              | Error(_) as err => err
-                              }
-                            | Error(_) as err => err
-                            }
-                          | Error(_) as err => err
-                          }
-                        | Error(_) as err => err
-                        }
-                      | Error(_) as err => err
-                      }
-                    | Error(_) as err => err
-                    }
-                  | Error(_) as err => err
-                  }
-                | Error(_) as err => err
-                }
-              | Error(_) as err => err
-              }
-            | Error(_) as err => err
-            }
-          | Error(_) as err => err
-          }
-        | Error(_) as err => err
-        }
+        field1
+        ->Field.decode(fieldset)
+        ->Result.map((
+          val1,
+          val2,
+          val3,
+          val4,
+          val5,
+          val6,
+          val7,
+          val8,
+          val9,
+          val10,
+          val11,
+          val12,
+          val13,
+          val14,
+          val15,
+        ) =>
+          construct((
+            val1,
+            val2,
+            val3,
+            val4,
+            val5,
+            val6,
+            val7,
+            val8,
+            val9,
+            val10,
+            val11,
+            val12,
+            val13,
+            val14,
+            val15,
+          ))
+        )
+        ->ap(field2->Field.decode(fieldset))
+        ->ap(field3->Field.decode(fieldset))
+        ->ap(field4->Field.decode(fieldset))
+        ->ap(field5->Field.decode(fieldset))
+        ->ap(field6->Field.decode(fieldset))
+        ->ap(field7->Field.decode(fieldset))
+        ->ap(field8->Field.decode(fieldset))
+        ->ap(field9->Field.decode(fieldset))
+        ->ap(field10->Field.decode(fieldset))
+        ->ap(field11->Field.decode(fieldset))
+        ->ap(field12->Field.decode(fieldset))
+        ->ap(field13->Field.decode(fieldset))
+        ->ap(field14->Field.decode(fieldset))
+        ->ap(field15->Field.decode(fieldset))
+        ->unpack
       ),
   )
 
@@ -1422,88 +1150,61 @@ let object16 = (
       json
       ->asObject
       ->Result.flatMap(fieldset =>
-        switch field1->Field.decode(fieldset) {
-        | Ok(val1) =>
-          switch field2->Field.decode(fieldset) {
-          | Ok(val2) =>
-            switch field3->Field.decode(fieldset) {
-            | Ok(val3) =>
-              switch field4->Field.decode(fieldset) {
-              | Ok(val4) =>
-                switch field5->Field.decode(fieldset) {
-                | Ok(val5) =>
-                  switch field6->Field.decode(fieldset) {
-                  | Ok(val6) =>
-                    switch field7->Field.decode(fieldset) {
-                    | Ok(val7) =>
-                      switch field8->Field.decode(fieldset) {
-                      | Ok(val8) =>
-                        switch field9->Field.decode(fieldset) {
-                        | Ok(val9) =>
-                          switch field10->Field.decode(fieldset) {
-                          | Ok(val10) =>
-                            switch field11->Field.decode(fieldset) {
-                            | Ok(val11) =>
-                              switch field12->Field.decode(fieldset) {
-                              | Ok(val12) =>
-                                switch field13->Field.decode(fieldset) {
-                                | Ok(val13) =>
-                                  switch field14->Field.decode(fieldset) {
-                                  | Ok(val14) =>
-                                    switch field15->Field.decode(fieldset) {
-                                    | Ok(val15) =>
-                                      switch field16->Field.decode(fieldset) {
-                                      | Ok(val16) =>
-                                        construct((
-                                          val1,
-                                          val2,
-                                          val3,
-                                          val4,
-                                          val5,
-                                          val6,
-                                          val7,
-                                          val8,
-                                          val9,
-                                          val10,
-                                          val11,
-                                          val12,
-                                          val13,
-                                          val14,
-                                          val15,
-                                          val16,
-                                        ))
-                                      | Error(_) as err => err
-                                      }
-                                    | Error(_) as err => err
-                                    }
-                                  | Error(_) as err => err
-                                  }
-                                | Error(_) as err => err
-                                }
-                              | Error(_) as err => err
-                              }
-                            | Error(_) as err => err
-                            }
-                          | Error(_) as err => err
-                          }
-                        | Error(_) as err => err
-                        }
-                      | Error(_) as err => err
-                      }
-                    | Error(_) as err => err
-                    }
-                  | Error(_) as err => err
-                  }
-                | Error(_) as err => err
-                }
-              | Error(_) as err => err
-              }
-            | Error(_) as err => err
-            }
-          | Error(_) as err => err
-          }
-        | Error(_) as err => err
-        }
+        field1
+        ->Field.decode(fieldset)
+        ->Result.map((
+          val1,
+          val2,
+          val3,
+          val4,
+          val5,
+          val6,
+          val7,
+          val8,
+          val9,
+          val10,
+          val11,
+          val12,
+          val13,
+          val14,
+          val15,
+          val16,
+        ) =>
+          construct((
+            val1,
+            val2,
+            val3,
+            val4,
+            val5,
+            val6,
+            val7,
+            val8,
+            val9,
+            val10,
+            val11,
+            val12,
+            val13,
+            val14,
+            val15,
+            val16,
+          ))
+        )
+        ->ap(field2->Field.decode(fieldset))
+        ->ap(field3->Field.decode(fieldset))
+        ->ap(field4->Field.decode(fieldset))
+        ->ap(field5->Field.decode(fieldset))
+        ->ap(field6->Field.decode(fieldset))
+        ->ap(field7->Field.decode(fieldset))
+        ->ap(field8->Field.decode(fieldset))
+        ->ap(field9->Field.decode(fieldset))
+        ->ap(field10->Field.decode(fieldset))
+        ->ap(field11->Field.decode(fieldset))
+        ->ap(field12->Field.decode(fieldset))
+        ->ap(field13->Field.decode(fieldset))
+        ->ap(field14->Field.decode(fieldset))
+        ->ap(field15->Field.decode(fieldset))
+        ->ap(field16->Field.decode(fieldset))
+        ->unpack
       ),
   )
 
@@ -1575,93 +1276,64 @@ let object17 = (
       json
       ->asObject
       ->Result.flatMap(fieldset =>
-        switch field1->Field.decode(fieldset) {
-        | Ok(val1) =>
-          switch field2->Field.decode(fieldset) {
-          | Ok(val2) =>
-            switch field3->Field.decode(fieldset) {
-            | Ok(val3) =>
-              switch field4->Field.decode(fieldset) {
-              | Ok(val4) =>
-                switch field5->Field.decode(fieldset) {
-                | Ok(val5) =>
-                  switch field6->Field.decode(fieldset) {
-                  | Ok(val6) =>
-                    switch field7->Field.decode(fieldset) {
-                    | Ok(val7) =>
-                      switch field8->Field.decode(fieldset) {
-                      | Ok(val8) =>
-                        switch field9->Field.decode(fieldset) {
-                        | Ok(val9) =>
-                          switch field10->Field.decode(fieldset) {
-                          | Ok(val10) =>
-                            switch field11->Field.decode(fieldset) {
-                            | Ok(val11) =>
-                              switch field12->Field.decode(fieldset) {
-                              | Ok(val12) =>
-                                switch field13->Field.decode(fieldset) {
-                                | Ok(val13) =>
-                                  switch field14->Field.decode(fieldset) {
-                                  | Ok(val14) =>
-                                    switch field15->Field.decode(fieldset) {
-                                    | Ok(val15) =>
-                                      switch field16->Field.decode(fieldset) {
-                                      | Ok(val16) =>
-                                        switch field17->Field.decode(fieldset) {
-                                        | Ok(val17) =>
-                                          construct((
-                                            val1,
-                                            val2,
-                                            val3,
-                                            val4,
-                                            val5,
-                                            val6,
-                                            val7,
-                                            val8,
-                                            val9,
-                                            val10,
-                                            val11,
-                                            val12,
-                                            val13,
-                                            val14,
-                                            val15,
-                                            val16,
-                                            val17,
-                                          ))
-                                        | Error(_) as err => err
-                                        }
-                                      | Error(_) as err => err
-                                      }
-                                    | Error(_) as err => err
-                                    }
-                                  | Error(_) as err => err
-                                  }
-                                | Error(_) as err => err
-                                }
-                              | Error(_) as err => err
-                              }
-                            | Error(_) as err => err
-                            }
-                          | Error(_) as err => err
-                          }
-                        | Error(_) as err => err
-                        }
-                      | Error(_) as err => err
-                      }
-                    | Error(_) as err => err
-                    }
-                  | Error(_) as err => err
-                  }
-                | Error(_) as err => err
-                }
-              | Error(_) as err => err
-              }
-            | Error(_) as err => err
-            }
-          | Error(_) as err => err
-          }
-        | Error(_) as err => err
-        }
+        field1
+        ->Field.decode(fieldset)
+        ->Result.map((
+          val1,
+          val2,
+          val3,
+          val4,
+          val5,
+          val6,
+          val7,
+          val8,
+          val9,
+          val10,
+          val11,
+          val12,
+          val13,
+          val14,
+          val15,
+          val16,
+          val17,
+        ) =>
+          construct((
+            val1,
+            val2,
+            val3,
+            val4,
+            val5,
+            val6,
+            val7,
+            val8,
+            val9,
+            val10,
+            val11,
+            val12,
+            val13,
+            val14,
+            val15,
+            val16,
+            val17,
+          ))
+        )
+        ->ap(field2->Field.decode(fieldset))
+        ->ap(field3->Field.decode(fieldset))
+        ->ap(field4->Field.decode(fieldset))
+        ->ap(field5->Field.decode(fieldset))
+        ->ap(field6->Field.decode(fieldset))
+        ->ap(field7->Field.decode(fieldset))
+        ->ap(field8->Field.decode(fieldset))
+        ->ap(field9->Field.decode(fieldset))
+        ->ap(field10->Field.decode(fieldset))
+        ->ap(field11->Field.decode(fieldset))
+        ->ap(field12->Field.decode(fieldset))
+        ->ap(field13->Field.decode(fieldset))
+        ->ap(field14->Field.decode(fieldset))
+        ->ap(field15->Field.decode(fieldset))
+        ->ap(field16->Field.decode(fieldset))
+        ->ap(field17->Field.decode(fieldset))
+        ->unpack
       ),
   )
 
@@ -1736,98 +1408,67 @@ let object18 = (
       json
       ->asObject
       ->Result.flatMap(fieldset =>
-        switch field1->Field.decode(fieldset) {
-        | Ok(val1) =>
-          switch field2->Field.decode(fieldset) {
-          | Ok(val2) =>
-            switch field3->Field.decode(fieldset) {
-            | Ok(val3) =>
-              switch field4->Field.decode(fieldset) {
-              | Ok(val4) =>
-                switch field5->Field.decode(fieldset) {
-                | Ok(val5) =>
-                  switch field6->Field.decode(fieldset) {
-                  | Ok(val6) =>
-                    switch field7->Field.decode(fieldset) {
-                    | Ok(val7) =>
-                      switch field8->Field.decode(fieldset) {
-                      | Ok(val8) =>
-                        switch field9->Field.decode(fieldset) {
-                        | Ok(val9) =>
-                          switch field10->Field.decode(fieldset) {
-                          | Ok(val10) =>
-                            switch field11->Field.decode(fieldset) {
-                            | Ok(val11) =>
-                              switch field12->Field.decode(fieldset) {
-                              | Ok(val12) =>
-                                switch field13->Field.decode(fieldset) {
-                                | Ok(val13) =>
-                                  switch field14->Field.decode(fieldset) {
-                                  | Ok(val14) =>
-                                    switch field15->Field.decode(fieldset) {
-                                    | Ok(val15) =>
-                                      switch field16->Field.decode(fieldset) {
-                                      | Ok(val16) =>
-                                        switch field17->Field.decode(fieldset) {
-                                        | Ok(val17) =>
-                                          switch field18->Field.decode(fieldset) {
-                                          | Ok(val18) =>
-                                            construct((
-                                              val1,
-                                              val2,
-                                              val3,
-                                              val4,
-                                              val5,
-                                              val6,
-                                              val7,
-                                              val8,
-                                              val9,
-                                              val10,
-                                              val11,
-                                              val12,
-                                              val13,
-                                              val14,
-                                              val15,
-                                              val16,
-                                              val17,
-                                              val18,
-                                            ))
-                                          | Error(_) as err => err
-                                          }
-                                        | Error(_) as err => err
-                                        }
-                                      | Error(_) as err => err
-                                      }
-                                    | Error(_) as err => err
-                                    }
-                                  | Error(_) as err => err
-                                  }
-                                | Error(_) as err => err
-                                }
-                              | Error(_) as err => err
-                              }
-                            | Error(_) as err => err
-                            }
-                          | Error(_) as err => err
-                          }
-                        | Error(_) as err => err
-                        }
-                      | Error(_) as err => err
-                      }
-                    | Error(_) as err => err
-                    }
-                  | Error(_) as err => err
-                  }
-                | Error(_) as err => err
-                }
-              | Error(_) as err => err
-              }
-            | Error(_) as err => err
-            }
-          | Error(_) as err => err
-          }
-        | Error(_) as err => err
-        }
+        field1
+        ->Field.decode(fieldset)
+        ->Result.map((
+          val1,
+          val2,
+          val3,
+          val4,
+          val5,
+          val6,
+          val7,
+          val8,
+          val9,
+          val10,
+          val11,
+          val12,
+          val13,
+          val14,
+          val15,
+          val16,
+          val17,
+          val18,
+        ) =>
+          construct((
+            val1,
+            val2,
+            val3,
+            val4,
+            val5,
+            val6,
+            val7,
+            val8,
+            val9,
+            val10,
+            val11,
+            val12,
+            val13,
+            val14,
+            val15,
+            val16,
+            val17,
+            val18,
+          ))
+        )
+        ->ap(field2->Field.decode(fieldset))
+        ->ap(field3->Field.decode(fieldset))
+        ->ap(field4->Field.decode(fieldset))
+        ->ap(field5->Field.decode(fieldset))
+        ->ap(field6->Field.decode(fieldset))
+        ->ap(field7->Field.decode(fieldset))
+        ->ap(field8->Field.decode(fieldset))
+        ->ap(field9->Field.decode(fieldset))
+        ->ap(field10->Field.decode(fieldset))
+        ->ap(field11->Field.decode(fieldset))
+        ->ap(field12->Field.decode(fieldset))
+        ->ap(field13->Field.decode(fieldset))
+        ->ap(field14->Field.decode(fieldset))
+        ->ap(field15->Field.decode(fieldset))
+        ->ap(field16->Field.decode(fieldset))
+        ->ap(field17->Field.decode(fieldset))
+        ->ap(field18->Field.decode(fieldset))
+        ->unpack
       ),
   )
 
@@ -1905,103 +1546,70 @@ let object19 = (
       json
       ->asObject
       ->Result.flatMap(fieldset =>
-        switch field1->Field.decode(fieldset) {
-        | Ok(val1) =>
-          switch field2->Field.decode(fieldset) {
-          | Ok(val2) =>
-            switch field3->Field.decode(fieldset) {
-            | Ok(val3) =>
-              switch field4->Field.decode(fieldset) {
-              | Ok(val4) =>
-                switch field5->Field.decode(fieldset) {
-                | Ok(val5) =>
-                  switch field6->Field.decode(fieldset) {
-                  | Ok(val6) =>
-                    switch field7->Field.decode(fieldset) {
-                    | Ok(val7) =>
-                      switch field8->Field.decode(fieldset) {
-                      | Ok(val8) =>
-                        switch field9->Field.decode(fieldset) {
-                        | Ok(val9) =>
-                          switch field10->Field.decode(fieldset) {
-                          | Ok(val10) =>
-                            switch field11->Field.decode(fieldset) {
-                            | Ok(val11) =>
-                              switch field12->Field.decode(fieldset) {
-                              | Ok(val12) =>
-                                switch field13->Field.decode(fieldset) {
-                                | Ok(val13) =>
-                                  switch field14->Field.decode(fieldset) {
-                                  | Ok(val14) =>
-                                    switch field15->Field.decode(fieldset) {
-                                    | Ok(val15) =>
-                                      switch field16->Field.decode(fieldset) {
-                                      | Ok(val16) =>
-                                        switch field17->Field.decode(fieldset) {
-                                        | Ok(val17) =>
-                                          switch field18->Field.decode(fieldset) {
-                                          | Ok(val18) =>
-                                            switch field19->Field.decode(fieldset) {
-                                            | Ok(val19) =>
-                                              construct((
-                                                val1,
-                                                val2,
-                                                val3,
-                                                val4,
-                                                val5,
-                                                val6,
-                                                val7,
-                                                val8,
-                                                val9,
-                                                val10,
-                                                val11,
-                                                val12,
-                                                val13,
-                                                val14,
-                                                val15,
-                                                val16,
-                                                val17,
-                                                val18,
-                                                val19,
-                                              ))
-                                            | Error(_) as err => err
-                                            }
-                                          | Error(_) as err => err
-                                          }
-                                        | Error(_) as err => err
-                                        }
-                                      | Error(_) as err => err
-                                      }
-                                    | Error(_) as err => err
-                                    }
-                                  | Error(_) as err => err
-                                  }
-                                | Error(_) as err => err
-                                }
-                              | Error(_) as err => err
-                              }
-                            | Error(_) as err => err
-                            }
-                          | Error(_) as err => err
-                          }
-                        | Error(_) as err => err
-                        }
-                      | Error(_) as err => err
-                      }
-                    | Error(_) as err => err
-                    }
-                  | Error(_) as err => err
-                  }
-                | Error(_) as err => err
-                }
-              | Error(_) as err => err
-              }
-            | Error(_) as err => err
-            }
-          | Error(_) as err => err
-          }
-        | Error(_) as err => err
-        }
+        field1
+        ->Field.decode(fieldset)
+        ->Result.map((
+          val1,
+          val2,
+          val3,
+          val4,
+          val5,
+          val6,
+          val7,
+          val8,
+          val9,
+          val10,
+          val11,
+          val12,
+          val13,
+          val14,
+          val15,
+          val16,
+          val17,
+          val18,
+          val19,
+        ) =>
+          construct((
+            val1,
+            val2,
+            val3,
+            val4,
+            val5,
+            val6,
+            val7,
+            val8,
+            val9,
+            val10,
+            val11,
+            val12,
+            val13,
+            val14,
+            val15,
+            val16,
+            val17,
+            val18,
+            val19,
+          ))
+        )
+        ->ap(field2->Field.decode(fieldset))
+        ->ap(field3->Field.decode(fieldset))
+        ->ap(field4->Field.decode(fieldset))
+        ->ap(field5->Field.decode(fieldset))
+        ->ap(field6->Field.decode(fieldset))
+        ->ap(field7->Field.decode(fieldset))
+        ->ap(field8->Field.decode(fieldset))
+        ->ap(field9->Field.decode(fieldset))
+        ->ap(field10->Field.decode(fieldset))
+        ->ap(field11->Field.decode(fieldset))
+        ->ap(field12->Field.decode(fieldset))
+        ->ap(field13->Field.decode(fieldset))
+        ->ap(field14->Field.decode(fieldset))
+        ->ap(field15->Field.decode(fieldset))
+        ->ap(field16->Field.decode(fieldset))
+        ->ap(field17->Field.decode(fieldset))
+        ->ap(field18->Field.decode(fieldset))
+        ->ap(field19->Field.decode(fieldset))
+        ->unpack
       ),
   )
 
@@ -2082,108 +1690,73 @@ let object20 = (
       json
       ->asObject
       ->Result.flatMap(fieldset =>
-        switch field1->Field.decode(fieldset) {
-        | Ok(val1) =>
-          switch field2->Field.decode(fieldset) {
-          | Ok(val2) =>
-            switch field3->Field.decode(fieldset) {
-            | Ok(val3) =>
-              switch field4->Field.decode(fieldset) {
-              | Ok(val4) =>
-                switch field5->Field.decode(fieldset) {
-                | Ok(val5) =>
-                  switch field6->Field.decode(fieldset) {
-                  | Ok(val6) =>
-                    switch field7->Field.decode(fieldset) {
-                    | Ok(val7) =>
-                      switch field8->Field.decode(fieldset) {
-                      | Ok(val8) =>
-                        switch field9->Field.decode(fieldset) {
-                        | Ok(val9) =>
-                          switch field10->Field.decode(fieldset) {
-                          | Ok(val10) =>
-                            switch field11->Field.decode(fieldset) {
-                            | Ok(val11) =>
-                              switch field12->Field.decode(fieldset) {
-                              | Ok(val12) =>
-                                switch field13->Field.decode(fieldset) {
-                                | Ok(val13) =>
-                                  switch field14->Field.decode(fieldset) {
-                                  | Ok(val14) =>
-                                    switch field15->Field.decode(fieldset) {
-                                    | Ok(val15) =>
-                                      switch field16->Field.decode(fieldset) {
-                                      | Ok(val16) =>
-                                        switch field17->Field.decode(fieldset) {
-                                        | Ok(val17) =>
-                                          switch field18->Field.decode(fieldset) {
-                                          | Ok(val18) =>
-                                            switch field19->Field.decode(fieldset) {
-                                            | Ok(val19) =>
-                                              switch field20->Field.decode(fieldset) {
-                                              | Ok(val20) =>
-                                                construct((
-                                                  val1,
-                                                  val2,
-                                                  val3,
-                                                  val4,
-                                                  val5,
-                                                  val6,
-                                                  val7,
-                                                  val8,
-                                                  val9,
-                                                  val10,
-                                                  val11,
-                                                  val12,
-                                                  val13,
-                                                  val14,
-                                                  val15,
-                                                  val16,
-                                                  val17,
-                                                  val18,
-                                                  val19,
-                                                  val20,
-                                                ))
-                                              | Error(_) as err => err
-                                              }
-                                            | Error(_) as err => err
-                                            }
-                                          | Error(_) as err => err
-                                          }
-                                        | Error(_) as err => err
-                                        }
-                                      | Error(_) as err => err
-                                      }
-                                    | Error(_) as err => err
-                                    }
-                                  | Error(_) as err => err
-                                  }
-                                | Error(_) as err => err
-                                }
-                              | Error(_) as err => err
-                              }
-                            | Error(_) as err => err
-                            }
-                          | Error(_) as err => err
-                          }
-                        | Error(_) as err => err
-                        }
-                      | Error(_) as err => err
-                      }
-                    | Error(_) as err => err
-                    }
-                  | Error(_) as err => err
-                  }
-                | Error(_) as err => err
-                }
-              | Error(_) as err => err
-              }
-            | Error(_) as err => err
-            }
-          | Error(_) as err => err
-          }
-        | Error(_) as err => err
-        }
+        field1
+        ->Field.decode(fieldset)
+        ->Result.map((
+          val1,
+          val2,
+          val3,
+          val4,
+          val5,
+          val6,
+          val7,
+          val8,
+          val9,
+          val10,
+          val11,
+          val12,
+          val13,
+          val14,
+          val15,
+          val16,
+          val17,
+          val18,
+          val19,
+          val20,
+        ) =>
+          construct((
+            val1,
+            val2,
+            val3,
+            val4,
+            val5,
+            val6,
+            val7,
+            val8,
+            val9,
+            val10,
+            val11,
+            val12,
+            val13,
+            val14,
+            val15,
+            val16,
+            val17,
+            val18,
+            val19,
+            val20,
+          ))
+        )
+        ->ap(field2->Field.decode(fieldset))
+        ->ap(field3->Field.decode(fieldset))
+        ->ap(field4->Field.decode(fieldset))
+        ->ap(field5->Field.decode(fieldset))
+        ->ap(field6->Field.decode(fieldset))
+        ->ap(field7->Field.decode(fieldset))
+        ->ap(field8->Field.decode(fieldset))
+        ->ap(field9->Field.decode(fieldset))
+        ->ap(field10->Field.decode(fieldset))
+        ->ap(field11->Field.decode(fieldset))
+        ->ap(field12->Field.decode(fieldset))
+        ->ap(field13->Field.decode(fieldset))
+        ->ap(field14->Field.decode(fieldset))
+        ->ap(field15->Field.decode(fieldset))
+        ->ap(field16->Field.decode(fieldset))
+        ->ap(field17->Field.decode(fieldset))
+        ->ap(field18->Field.decode(fieldset))
+        ->ap(field19->Field.decode(fieldset))
+        ->ap(field20->Field.decode(fieldset))
+        ->unpack
       ),
   )
 
@@ -2267,113 +1840,76 @@ let object21 = (
       json
       ->asObject
       ->Result.flatMap(fieldset =>
-        switch field1->Field.decode(fieldset) {
-        | Ok(val1) =>
-          switch field2->Field.decode(fieldset) {
-          | Ok(val2) =>
-            switch field3->Field.decode(fieldset) {
-            | Ok(val3) =>
-              switch field4->Field.decode(fieldset) {
-              | Ok(val4) =>
-                switch field5->Field.decode(fieldset) {
-                | Ok(val5) =>
-                  switch field6->Field.decode(fieldset) {
-                  | Ok(val6) =>
-                    switch field7->Field.decode(fieldset) {
-                    | Ok(val7) =>
-                      switch field8->Field.decode(fieldset) {
-                      | Ok(val8) =>
-                        switch field9->Field.decode(fieldset) {
-                        | Ok(val9) =>
-                          switch field10->Field.decode(fieldset) {
-                          | Ok(val10) =>
-                            switch field11->Field.decode(fieldset) {
-                            | Ok(val11) =>
-                              switch field12->Field.decode(fieldset) {
-                              | Ok(val12) =>
-                                switch field13->Field.decode(fieldset) {
-                                | Ok(val13) =>
-                                  switch field14->Field.decode(fieldset) {
-                                  | Ok(val14) =>
-                                    switch field15->Field.decode(fieldset) {
-                                    | Ok(val15) =>
-                                      switch field16->Field.decode(fieldset) {
-                                      | Ok(val16) =>
-                                        switch field17->Field.decode(fieldset) {
-                                        | Ok(val17) =>
-                                          switch field18->Field.decode(fieldset) {
-                                          | Ok(val18) =>
-                                            switch field19->Field.decode(fieldset) {
-                                            | Ok(val19) =>
-                                              switch field20->Field.decode(fieldset) {
-                                              | Ok(val20) =>
-                                                switch field21->Field.decode(fieldset) {
-                                                | Ok(val21) =>
-                                                  construct((
-                                                    val1,
-                                                    val2,
-                                                    val3,
-                                                    val4,
-                                                    val5,
-                                                    val6,
-                                                    val7,
-                                                    val8,
-                                                    val9,
-                                                    val10,
-                                                    val11,
-                                                    val12,
-                                                    val13,
-                                                    val14,
-                                                    val15,
-                                                    val16,
-                                                    val17,
-                                                    val18,
-                                                    val19,
-                                                    val20,
-                                                    val21,
-                                                  ))
-                                                | Error(_) as err => err
-                                                }
-                                              | Error(_) as err => err
-                                              }
-                                            | Error(_) as err => err
-                                            }
-                                          | Error(_) as err => err
-                                          }
-                                        | Error(_) as err => err
-                                        }
-                                      | Error(_) as err => err
-                                      }
-                                    | Error(_) as err => err
-                                    }
-                                  | Error(_) as err => err
-                                  }
-                                | Error(_) as err => err
-                                }
-                              | Error(_) as err => err
-                              }
-                            | Error(_) as err => err
-                            }
-                          | Error(_) as err => err
-                          }
-                        | Error(_) as err => err
-                        }
-                      | Error(_) as err => err
-                      }
-                    | Error(_) as err => err
-                    }
-                  | Error(_) as err => err
-                  }
-                | Error(_) as err => err
-                }
-              | Error(_) as err => err
-              }
-            | Error(_) as err => err
-            }
-          | Error(_) as err => err
-          }
-        | Error(_) as err => err
-        }
+        field1
+        ->Field.decode(fieldset)
+        ->Result.map((
+          val1,
+          val2,
+          val3,
+          val4,
+          val5,
+          val6,
+          val7,
+          val8,
+          val9,
+          val10,
+          val11,
+          val12,
+          val13,
+          val14,
+          val15,
+          val16,
+          val17,
+          val18,
+          val19,
+          val20,
+          val21,
+        ) =>
+          construct((
+            val1,
+            val2,
+            val3,
+            val4,
+            val5,
+            val6,
+            val7,
+            val8,
+            val9,
+            val10,
+            val11,
+            val12,
+            val13,
+            val14,
+            val15,
+            val16,
+            val17,
+            val18,
+            val19,
+            val20,
+            val21,
+          ))
+        )
+        ->ap(field2->Field.decode(fieldset))
+        ->ap(field3->Field.decode(fieldset))
+        ->ap(field4->Field.decode(fieldset))
+        ->ap(field5->Field.decode(fieldset))
+        ->ap(field6->Field.decode(fieldset))
+        ->ap(field7->Field.decode(fieldset))
+        ->ap(field8->Field.decode(fieldset))
+        ->ap(field9->Field.decode(fieldset))
+        ->ap(field10->Field.decode(fieldset))
+        ->ap(field11->Field.decode(fieldset))
+        ->ap(field12->Field.decode(fieldset))
+        ->ap(field13->Field.decode(fieldset))
+        ->ap(field14->Field.decode(fieldset))
+        ->ap(field15->Field.decode(fieldset))
+        ->ap(field16->Field.decode(fieldset))
+        ->ap(field17->Field.decode(fieldset))
+        ->ap(field18->Field.decode(fieldset))
+        ->ap(field19->Field.decode(fieldset))
+        ->ap(field20->Field.decode(fieldset))
+        ->ap(field21->Field.decode(fieldset))
+        ->unpack
       ),
   )
 
@@ -2460,118 +1996,79 @@ let object22 = (
       json
       ->asObject
       ->Result.flatMap(fieldset =>
-        switch field1->Field.decode(fieldset) {
-        | Ok(val1) =>
-          switch field2->Field.decode(fieldset) {
-          | Ok(val2) =>
-            switch field3->Field.decode(fieldset) {
-            | Ok(val3) =>
-              switch field4->Field.decode(fieldset) {
-              | Ok(val4) =>
-                switch field5->Field.decode(fieldset) {
-                | Ok(val5) =>
-                  switch field6->Field.decode(fieldset) {
-                  | Ok(val6) =>
-                    switch field7->Field.decode(fieldset) {
-                    | Ok(val7) =>
-                      switch field8->Field.decode(fieldset) {
-                      | Ok(val8) =>
-                        switch field9->Field.decode(fieldset) {
-                        | Ok(val9) =>
-                          switch field10->Field.decode(fieldset) {
-                          | Ok(val10) =>
-                            switch field11->Field.decode(fieldset) {
-                            | Ok(val11) =>
-                              switch field12->Field.decode(fieldset) {
-                              | Ok(val12) =>
-                                switch field13->Field.decode(fieldset) {
-                                | Ok(val13) =>
-                                  switch field14->Field.decode(fieldset) {
-                                  | Ok(val14) =>
-                                    switch field15->Field.decode(fieldset) {
-                                    | Ok(val15) =>
-                                      switch field16->Field.decode(fieldset) {
-                                      | Ok(val16) =>
-                                        switch field17->Field.decode(fieldset) {
-                                        | Ok(val17) =>
-                                          switch field18->Field.decode(fieldset) {
-                                          | Ok(val18) =>
-                                            switch field19->Field.decode(fieldset) {
-                                            | Ok(val19) =>
-                                              switch field20->Field.decode(fieldset) {
-                                              | Ok(val20) =>
-                                                switch field21->Field.decode(fieldset) {
-                                                | Ok(val21) =>
-                                                  switch field22->Field.decode(fieldset) {
-                                                  | Ok(val22) =>
-                                                    construct((
-                                                      val1,
-                                                      val2,
-                                                      val3,
-                                                      val4,
-                                                      val5,
-                                                      val6,
-                                                      val7,
-                                                      val8,
-                                                      val9,
-                                                      val10,
-                                                      val11,
-                                                      val12,
-                                                      val13,
-                                                      val14,
-                                                      val15,
-                                                      val16,
-                                                      val17,
-                                                      val18,
-                                                      val19,
-                                                      val20,
-                                                      val21,
-                                                      val22,
-                                                    ))
-                                                  | Error(_) as err => err
-                                                  }
-                                                | Error(_) as err => err
-                                                }
-                                              | Error(_) as err => err
-                                              }
-                                            | Error(_) as err => err
-                                            }
-                                          | Error(_) as err => err
-                                          }
-                                        | Error(_) as err => err
-                                        }
-                                      | Error(_) as err => err
-                                      }
-                                    | Error(_) as err => err
-                                    }
-                                  | Error(_) as err => err
-                                  }
-                                | Error(_) as err => err
-                                }
-                              | Error(_) as err => err
-                              }
-                            | Error(_) as err => err
-                            }
-                          | Error(_) as err => err
-                          }
-                        | Error(_) as err => err
-                        }
-                      | Error(_) as err => err
-                      }
-                    | Error(_) as err => err
-                    }
-                  | Error(_) as err => err
-                  }
-                | Error(_) as err => err
-                }
-              | Error(_) as err => err
-              }
-            | Error(_) as err => err
-            }
-          | Error(_) as err => err
-          }
-        | Error(_) as err => err
-        }
+        field1
+        ->Field.decode(fieldset)
+        ->Result.map((
+          val1,
+          val2,
+          val3,
+          val4,
+          val5,
+          val6,
+          val7,
+          val8,
+          val9,
+          val10,
+          val11,
+          val12,
+          val13,
+          val14,
+          val15,
+          val16,
+          val17,
+          val18,
+          val19,
+          val20,
+          val21,
+          val22,
+        ) =>
+          construct((
+            val1,
+            val2,
+            val3,
+            val4,
+            val5,
+            val6,
+            val7,
+            val8,
+            val9,
+            val10,
+            val11,
+            val12,
+            val13,
+            val14,
+            val15,
+            val16,
+            val17,
+            val18,
+            val19,
+            val20,
+            val21,
+            val22,
+          ))
+        )
+        ->ap(field2->Field.decode(fieldset))
+        ->ap(field3->Field.decode(fieldset))
+        ->ap(field4->Field.decode(fieldset))
+        ->ap(field5->Field.decode(fieldset))
+        ->ap(field6->Field.decode(fieldset))
+        ->ap(field7->Field.decode(fieldset))
+        ->ap(field8->Field.decode(fieldset))
+        ->ap(field9->Field.decode(fieldset))
+        ->ap(field10->Field.decode(fieldset))
+        ->ap(field11->Field.decode(fieldset))
+        ->ap(field12->Field.decode(fieldset))
+        ->ap(field13->Field.decode(fieldset))
+        ->ap(field14->Field.decode(fieldset))
+        ->ap(field15->Field.decode(fieldset))
+        ->ap(field16->Field.decode(fieldset))
+        ->ap(field17->Field.decode(fieldset))
+        ->ap(field18->Field.decode(fieldset))
+        ->ap(field19->Field.decode(fieldset))
+        ->ap(field20->Field.decode(fieldset))
+        ->ap(field21->Field.decode(fieldset))
+        ->ap(field22->Field.decode(fieldset))
+        ->unpack
       ),
   )
 
@@ -2661,123 +2158,82 @@ let object23 = (
       json
       ->asObject
       ->Result.flatMap(fieldset =>
-        switch field1->Field.decode(fieldset) {
-        | Ok(val1) =>
-          switch field2->Field.decode(fieldset) {
-          | Ok(val2) =>
-            switch field3->Field.decode(fieldset) {
-            | Ok(val3) =>
-              switch field4->Field.decode(fieldset) {
-              | Ok(val4) =>
-                switch field5->Field.decode(fieldset) {
-                | Ok(val5) =>
-                  switch field6->Field.decode(fieldset) {
-                  | Ok(val6) =>
-                    switch field7->Field.decode(fieldset) {
-                    | Ok(val7) =>
-                      switch field8->Field.decode(fieldset) {
-                      | Ok(val8) =>
-                        switch field9->Field.decode(fieldset) {
-                        | Ok(val9) =>
-                          switch field10->Field.decode(fieldset) {
-                          | Ok(val10) =>
-                            switch field11->Field.decode(fieldset) {
-                            | Ok(val11) =>
-                              switch field12->Field.decode(fieldset) {
-                              | Ok(val12) =>
-                                switch field13->Field.decode(fieldset) {
-                                | Ok(val13) =>
-                                  switch field14->Field.decode(fieldset) {
-                                  | Ok(val14) =>
-                                    switch field15->Field.decode(fieldset) {
-                                    | Ok(val15) =>
-                                      switch field16->Field.decode(fieldset) {
-                                      | Ok(val16) =>
-                                        switch field17->Field.decode(fieldset) {
-                                        | Ok(val17) =>
-                                          switch field18->Field.decode(fieldset) {
-                                          | Ok(val18) =>
-                                            switch field19->Field.decode(fieldset) {
-                                            | Ok(val19) =>
-                                              switch field20->Field.decode(fieldset) {
-                                              | Ok(val20) =>
-                                                switch field21->Field.decode(fieldset) {
-                                                | Ok(val21) =>
-                                                  switch field22->Field.decode(fieldset) {
-                                                  | Ok(val22) =>
-                                                    switch field23->Field.decode(fieldset) {
-                                                    | Ok(val23) =>
-                                                      construct((
-                                                        val1,
-                                                        val2,
-                                                        val3,
-                                                        val4,
-                                                        val5,
-                                                        val6,
-                                                        val7,
-                                                        val8,
-                                                        val9,
-                                                        val10,
-                                                        val11,
-                                                        val12,
-                                                        val13,
-                                                        val14,
-                                                        val15,
-                                                        val16,
-                                                        val17,
-                                                        val18,
-                                                        val19,
-                                                        val20,
-                                                        val21,
-                                                        val22,
-                                                        val23,
-                                                      ))
-                                                    | Error(_) as err => err
-                                                    }
-                                                  | Error(_) as err => err
-                                                  }
-                                                | Error(_) as err => err
-                                                }
-                                              | Error(_) as err => err
-                                              }
-                                            | Error(_) as err => err
-                                            }
-                                          | Error(_) as err => err
-                                          }
-                                        | Error(_) as err => err
-                                        }
-                                      | Error(_) as err => err
-                                      }
-                                    | Error(_) as err => err
-                                    }
-                                  | Error(_) as err => err
-                                  }
-                                | Error(_) as err => err
-                                }
-                              | Error(_) as err => err
-                              }
-                            | Error(_) as err => err
-                            }
-                          | Error(_) as err => err
-                          }
-                        | Error(_) as err => err
-                        }
-                      | Error(_) as err => err
-                      }
-                    | Error(_) as err => err
-                    }
-                  | Error(_) as err => err
-                  }
-                | Error(_) as err => err
-                }
-              | Error(_) as err => err
-              }
-            | Error(_) as err => err
-            }
-          | Error(_) as err => err
-          }
-        | Error(_) as err => err
-        }
+        field1
+        ->Field.decode(fieldset)
+        ->Result.map((
+          val1,
+          val2,
+          val3,
+          val4,
+          val5,
+          val6,
+          val7,
+          val8,
+          val9,
+          val10,
+          val11,
+          val12,
+          val13,
+          val14,
+          val15,
+          val16,
+          val17,
+          val18,
+          val19,
+          val20,
+          val21,
+          val22,
+          val23,
+        ) =>
+          construct((
+            val1,
+            val2,
+            val3,
+            val4,
+            val5,
+            val6,
+            val7,
+            val8,
+            val9,
+            val10,
+            val11,
+            val12,
+            val13,
+            val14,
+            val15,
+            val16,
+            val17,
+            val18,
+            val19,
+            val20,
+            val21,
+            val22,
+            val23,
+          ))
+        )
+        ->ap(field2->Field.decode(fieldset))
+        ->ap(field3->Field.decode(fieldset))
+        ->ap(field4->Field.decode(fieldset))
+        ->ap(field5->Field.decode(fieldset))
+        ->ap(field6->Field.decode(fieldset))
+        ->ap(field7->Field.decode(fieldset))
+        ->ap(field8->Field.decode(fieldset))
+        ->ap(field9->Field.decode(fieldset))
+        ->ap(field10->Field.decode(fieldset))
+        ->ap(field11->Field.decode(fieldset))
+        ->ap(field12->Field.decode(fieldset))
+        ->ap(field13->Field.decode(fieldset))
+        ->ap(field14->Field.decode(fieldset))
+        ->ap(field15->Field.decode(fieldset))
+        ->ap(field16->Field.decode(fieldset))
+        ->ap(field17->Field.decode(fieldset))
+        ->ap(field18->Field.decode(fieldset))
+        ->ap(field19->Field.decode(fieldset))
+        ->ap(field20->Field.decode(fieldset))
+        ->ap(field21->Field.decode(fieldset))
+        ->ap(field22->Field.decode(fieldset))
+        ->ap(field23->Field.decode(fieldset))
+        ->unpack
       ),
   )
 
@@ -2870,128 +2326,85 @@ let object24 = (
       json
       ->asObject
       ->Result.flatMap(fieldset =>
-        switch field1->Field.decode(fieldset) {
-        | Ok(val1) =>
-          switch field2->Field.decode(fieldset) {
-          | Ok(val2) =>
-            switch field3->Field.decode(fieldset) {
-            | Ok(val3) =>
-              switch field4->Field.decode(fieldset) {
-              | Ok(val4) =>
-                switch field5->Field.decode(fieldset) {
-                | Ok(val5) =>
-                  switch field6->Field.decode(fieldset) {
-                  | Ok(val6) =>
-                    switch field7->Field.decode(fieldset) {
-                    | Ok(val7) =>
-                      switch field8->Field.decode(fieldset) {
-                      | Ok(val8) =>
-                        switch field9->Field.decode(fieldset) {
-                        | Ok(val9) =>
-                          switch field10->Field.decode(fieldset) {
-                          | Ok(val10) =>
-                            switch field11->Field.decode(fieldset) {
-                            | Ok(val11) =>
-                              switch field12->Field.decode(fieldset) {
-                              | Ok(val12) =>
-                                switch field13->Field.decode(fieldset) {
-                                | Ok(val13) =>
-                                  switch field14->Field.decode(fieldset) {
-                                  | Ok(val14) =>
-                                    switch field15->Field.decode(fieldset) {
-                                    | Ok(val15) =>
-                                      switch field16->Field.decode(fieldset) {
-                                      | Ok(val16) =>
-                                        switch field17->Field.decode(fieldset) {
-                                        | Ok(val17) =>
-                                          switch field18->Field.decode(fieldset) {
-                                          | Ok(val18) =>
-                                            switch field19->Field.decode(fieldset) {
-                                            | Ok(val19) =>
-                                              switch field20->Field.decode(fieldset) {
-                                              | Ok(val20) =>
-                                                switch field21->Field.decode(fieldset) {
-                                                | Ok(val21) =>
-                                                  switch field22->Field.decode(fieldset) {
-                                                  | Ok(val22) =>
-                                                    switch field23->Field.decode(fieldset) {
-                                                    | Ok(val23) =>
-                                                      switch field24->Field.decode(fieldset) {
-                                                      | Ok(val24) =>
-                                                        construct((
-                                                          val1,
-                                                          val2,
-                                                          val3,
-                                                          val4,
-                                                          val5,
-                                                          val6,
-                                                          val7,
-                                                          val8,
-                                                          val9,
-                                                          val10,
-                                                          val11,
-                                                          val12,
-                                                          val13,
-                                                          val14,
-                                                          val15,
-                                                          val16,
-                                                          val17,
-                                                          val18,
-                                                          val19,
-                                                          val20,
-                                                          val21,
-                                                          val22,
-                                                          val23,
-                                                          val24,
-                                                        ))
-                                                      | Error(_) as err => err
-                                                      }
-                                                    | Error(_) as err => err
-                                                    }
-                                                  | Error(_) as err => err
-                                                  }
-                                                | Error(_) as err => err
-                                                }
-                                              | Error(_) as err => err
-                                              }
-                                            | Error(_) as err => err
-                                            }
-                                          | Error(_) as err => err
-                                          }
-                                        | Error(_) as err => err
-                                        }
-                                      | Error(_) as err => err
-                                      }
-                                    | Error(_) as err => err
-                                    }
-                                  | Error(_) as err => err
-                                  }
-                                | Error(_) as err => err
-                                }
-                              | Error(_) as err => err
-                              }
-                            | Error(_) as err => err
-                            }
-                          | Error(_) as err => err
-                          }
-                        | Error(_) as err => err
-                        }
-                      | Error(_) as err => err
-                      }
-                    | Error(_) as err => err
-                    }
-                  | Error(_) as err => err
-                  }
-                | Error(_) as err => err
-                }
-              | Error(_) as err => err
-              }
-            | Error(_) as err => err
-            }
-          | Error(_) as err => err
-          }
-        | Error(_) as err => err
-        }
+        field1
+        ->Field.decode(fieldset)
+        ->Result.map((
+          val1,
+          val2,
+          val3,
+          val4,
+          val5,
+          val6,
+          val7,
+          val8,
+          val9,
+          val10,
+          val11,
+          val12,
+          val13,
+          val14,
+          val15,
+          val16,
+          val17,
+          val18,
+          val19,
+          val20,
+          val21,
+          val22,
+          val23,
+          val24,
+        ) =>
+          construct((
+            val1,
+            val2,
+            val3,
+            val4,
+            val5,
+            val6,
+            val7,
+            val8,
+            val9,
+            val10,
+            val11,
+            val12,
+            val13,
+            val14,
+            val15,
+            val16,
+            val17,
+            val18,
+            val19,
+            val20,
+            val21,
+            val22,
+            val23,
+            val24,
+          ))
+        )
+        ->ap(field2->Field.decode(fieldset))
+        ->ap(field3->Field.decode(fieldset))
+        ->ap(field4->Field.decode(fieldset))
+        ->ap(field5->Field.decode(fieldset))
+        ->ap(field6->Field.decode(fieldset))
+        ->ap(field7->Field.decode(fieldset))
+        ->ap(field8->Field.decode(fieldset))
+        ->ap(field9->Field.decode(fieldset))
+        ->ap(field10->Field.decode(fieldset))
+        ->ap(field11->Field.decode(fieldset))
+        ->ap(field12->Field.decode(fieldset))
+        ->ap(field13->Field.decode(fieldset))
+        ->ap(field14->Field.decode(fieldset))
+        ->ap(field15->Field.decode(fieldset))
+        ->ap(field16->Field.decode(fieldset))
+        ->ap(field17->Field.decode(fieldset))
+        ->ap(field18->Field.decode(fieldset))
+        ->ap(field19->Field.decode(fieldset))
+        ->ap(field20->Field.decode(fieldset))
+        ->ap(field21->Field.decode(fieldset))
+        ->ap(field22->Field.decode(fieldset))
+        ->ap(field23->Field.decode(fieldset))
+        ->ap(field24->Field.decode(fieldset))
+        ->unpack
       ),
   )
 
@@ -3087,132 +2500,87 @@ let object25 = (
       json
       ->asObject
       ->Result.flatMap(fieldset =>
-        switch field1->Field.decode(fieldset) {
-        | Ok(val1) =>
-          switch field2->Field.decode(fieldset) {
-          | Ok(val2) =>
-            switch field3->Field.decode(fieldset) {
-            | Ok(val3) =>
-              switch field4->Field.decode(fieldset) {
-              | Ok(val4) =>
-                switch field5->Field.decode(fieldset) {
-                | Ok(val5) =>
-                  switch field6->Field.decode(fieldset) {
-                  | Ok(val6) =>
-                    switch field7->Field.decode(fieldset) {
-                    | Ok(val7) =>
-                      switch field8->Field.decode(fieldset) {
-                      | Ok(val8) =>
-                        switch field9->Field.decode(fieldset) {
-                        | Ok(val9) =>
-                          switch field10->Field.decode(fieldset) {
-                          | Ok(val10) =>
-                            switch field11->Field.decode(fieldset) {
-                            | Ok(val11) =>
-                              switch field12->Field.decode(fieldset) {
-                              | Ok(val12) =>
-                                switch field13->Field.decode(fieldset) {
-                                | Ok(val13) =>
-                                  switch field14->Field.decode(fieldset) {
-                                  | Ok(val14) =>
-                                    switch field15->Field.decode(fieldset) {
-                                    | Ok(val15) =>
-                                      switch field16->Field.decode(fieldset) {
-                                      | Ok(val16) =>
-                                        switch field17->Field.decode(fieldset) {
-                                        | Ok(val17) =>
-                                          switch field18->Field.decode(fieldset) {
-                                          | Ok(val18) =>
-                                            switch field19->Field.decode(fieldset) {
-                                            | Ok(val19) =>
-                                              switch field20->Field.decode(fieldset) {
-                                              | Ok(val20) =>
-                                                switch field21->Field.decode(fieldset) {
-                                                | Ok(val21) =>
-                                                  switch field22->Field.decode(fieldset) {
-                                                  | Ok(val22) =>
-                                                    switch field23->Field.decode(fieldset) {
-                                                    | Ok(val23) =>
-                                                      switch field24->Field.decode(fieldset) {
-                                                      | Ok(val24) =>
-                                                        switch field25->Field.decode(fieldset) {
-                                                        | Ok(val25) =>
-                                                          construct((
-                                                            val1,
-                                                            val2,
-                                                            val3,
-                                                            val4,
-                                                            val5,
-                                                            val6,
-                                                            val7,
-                                                            val8,
-                                                            val9,
-                                                            val10,
-                                                            val11,
-                                                            val12,
-                                                            val13,
-                                                            val14,
-                                                            val15,
-                                                            val16,
-                                                            val17,
-                                                            val18,
-                                                            val19,
-                                                            val20,
-                                                            val21,
-                                                            val22,
-                                                            val23,
-                                                            val24,
-                                                            val25,
-                                                          ))
-                                                        | Error(_) as err => err
-                                                        }
-                                                      | Error(_) as err => err
-                                                      }
-                                                    | Error(_) as err => err
-                                                    }
-                                                  | Error(_) as err => err
-                                                  }
-                                                | Error(_) as err => err
-                                                }
-                                              | Error(_) as err => err
-                                              }
-                                            | Error(_) as err => err
-                                            }
-                                          | Error(_) as err => err
-                                          }
-                                        | Error(_) as err => err
-                                        }
-                                      | Error(_) as err => err
-                                      }
-                                    | Error(_) as err => err
-                                    }
-                                  | Error(_) as err => err
-                                  }
-                                | Error(_) as err => err
-                                }
-                              | Error(_) as err => err
-                              }
-                            | Error(_) as err => err
-                            }
-                          | Error(_) as err => err
-                          }
-                        | Error(_) as err => err
-                        }
-                      | Error(_) as err => err
-                      }
-                    | Error(_) as err => err
-                    }
-                  | Error(_) as err => err
-                  }
-                | Error(_) as err => err
-                }
-              | Error(_) as err => err
-              }
-            | Error(_) as err => err
-            }
-          | Error(_) as err => err
-          }
-        | Error(_) as err => err
-        }
+        field1
+        ->Field.decode(fieldset)
+        ->Result.map((
+          val1,
+          val2,
+          val3,
+          val4,
+          val5,
+          val6,
+          val7,
+          val8,
+          val9,
+          val10,
+          val11,
+          val12,
+          val13,
+          val14,
+          val15,
+          val16,
+          val17,
+          val18,
+          val19,
+          val20,
+          val21,
+          val22,
+          val23,
+          val24,
+          val25,
+        ) =>
+          construct((
+            val1,
+            val2,
+            val3,
+            val4,
+            val5,
+            val6,
+            val7,
+            val8,
+            val9,
+            val10,
+            val11,
+            val12,
+            val13,
+            val14,
+            val15,
+            val16,
+            val17,
+            val18,
+            val19,
+            val20,
+            val21,
+            val22,
+            val23,
+            val24,
+            val25,
+          ))
+        )
+        ->ap(field2->Field.decode(fieldset))
+        ->ap(field3->Field.decode(fieldset))
+        ->ap(field4->Field.decode(fieldset))
+        ->ap(field5->Field.decode(fieldset))
+        ->ap(field6->Field.decode(fieldset))
+        ->ap(field7->Field.decode(fieldset))
+        ->ap(field8->Field.decode(fieldset))
+        ->ap(field9->Field.decode(fieldset))
+        ->ap(field10->Field.decode(fieldset))
+        ->ap(field11->Field.decode(fieldset))
+        ->ap(field12->Field.decode(fieldset))
+        ->ap(field13->Field.decode(fieldset))
+        ->ap(field14->Field.decode(fieldset))
+        ->ap(field15->Field.decode(fieldset))
+        ->ap(field16->Field.decode(fieldset))
+        ->ap(field17->Field.decode(fieldset))
+        ->ap(field18->Field.decode(fieldset))
+        ->ap(field19->Field.decode(fieldset))
+        ->ap(field20->Field.decode(fieldset))
+        ->ap(field21->Field.decode(fieldset))
+        ->ap(field22->Field.decode(fieldset))
+        ->ap(field23->Field.decode(fieldset))
+        ->ap(field24->Field.decode(fieldset))
+        ->ap(field25->Field.decode(fieldset))
+        ->unpack
       ),
   )
