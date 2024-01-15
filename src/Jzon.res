@@ -78,7 +78,7 @@ module Codec = {
     decode: decode<'v>,
   }
 
-  let make = (encode, decode) => {encode: encode, decode: decode}
+  let make = (encode, decode) => {encode, decode}
 
   let encode = codec => codec.encode
   let encodeString = (codec, value) => codec->encode(value)->Js.Json.stringify
@@ -165,7 +165,7 @@ let nullAs = (payloadCodec, fallbackValue) =>
 
 let array = elementCodec =>
   Codec.make(
-    xs => xs->Array.map(elementCodec->encode(_))->Js.Json.array,
+    xs => xs->Array.map(elementCodec->(encode(_)))->Js.Json.array,
     json =>
       switch json->Js.Json.classify {
       | JSONArray(elementJsons) =>
@@ -188,7 +188,7 @@ let asObject = json =>
 
 let dict = valuesCodec =>
   Codec.make(
-    dict => dict->Js.Dict.map((. val) => valuesCodec->encode(val), _)->Js.Json.object_,
+    dict => dict->Js.Dict.map(val => valuesCodec->encode(val), _)->Js.Json.object_,
     json =>
       json
       ->asObject
@@ -224,10 +224,10 @@ module Field = {
     claim: claim<'v>,
   }
 
-  let make = (path, codec) => {path: path, codec: codec, claim: Required}
-  let makeOptional = ({path, codec}) => {path: path, codec: codec->nullable, claim: Optional}
+  let make = (path, codec) => {path, codec, claim: Required}
+  let makeOptional = ({path, codec}) => {path, codec: codec->nullable, claim: Optional}
   let assignDefault = ({path, codec}, value) => {
-    path: path,
+    path,
     codec: codec->nullAs(value),
     claim: OptionalWithDefault(value),
   }
