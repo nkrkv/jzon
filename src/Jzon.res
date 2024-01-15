@@ -1,10 +1,4 @@
 module ResultX = {
-  let mapError = (result, fn) =>
-    switch result {
-    | Ok(_) as ok => ok
-    | Error(err) => Error(fn(err))
-    }
-
   let sequence = (results: array<result<'ok, 'err>>): result<array<'ok>, 'err> => {
     results->Array.reduce(Ok([]), (maybeAcc, res) => {
       maybeAcc->Result.flatMap(acc => res->Result.map(x => acc->Array.concat([x])))
@@ -20,7 +14,7 @@ module DecodingError = {
   type t = [
     | #SyntaxError(string)
     | #MissingField(location, string)
-    | #UnexpectedJsonType(location, string, Js.Json.t)
+    | #UnexpectedJsonType(location, string, JSON.t)
     | #UnexpectedJsonValue(location, string)
   ]
 
@@ -33,7 +27,7 @@ module DecodingError = {
       | Index(index) => `[` ++ index->Int.toString ++ `]`
       }
     )
-    ->Js.Array2.joinWith(".")
+    ->Array.joinWith(".")
 
   let prependLocation = (err, loc) =>
     switch err {
@@ -54,14 +48,13 @@ module DecodingError = {
     | #SyntaxError(err) => err
     | #MissingField(location, key) => `Missing field "${key}" at ${location->formatLocation}`
     | #UnexpectedJsonType(location, expectation, actualJson) =>
-      let actualType = switch actualJson->Js.Json.classify {
-      | JSONFalse
-      | JSONTrue => "boolean"
-      | JSONNull => "null"
-      | JSONString(_) => "string"
-      | JSONNumber(_) => "number"
-      | JSONObject(_) => "object"
-      | JSONArray(_) => "array"
+      let actualType = switch actualJson->JSON.Classify.classify {
+      | Bool(_) => "boolean"
+      | Null => "null"
+      | String(_) => "string"
+      | Number(_) => "number"
+      | Object(_) => "object"
+      | Array(_) => "array"
       }
 
       `Expected ${expectation}, got ${actualType} at ${location->formatLocation}`
@@ -71,8 +64,8 @@ module DecodingError = {
 }
 
 module Codec = {
-  type encode<'v> = 'v => Js.Json.t
-  type decode<'v> = Js.Json.t => result<'v, DecodingError.t>
+  type encode<'v> = 'v => JSON.t
+  type decode<'v> = JSON.t => result<'v, DecodingError.t>
   type t<'v> = {
     encode: encode<'v>,
     decode: decode<'v>,
@@ -80,16 +73,16 @@ module Codec = {
 
   let make = (encode, decode) => {encode, decode}
 
-  let encode = codec => codec.encode
-  let encodeString = (codec, value) => codec->encode(value)->Js.Json.stringify
+  let encode = (codec, value) => codec.encode(value)
+  let encodeString = (codec, value) => codec->encode(value)->JSON.stringify
 
-  let decode = codec => codec.decode
+  let decode = (codec, value) => codec.decode(value)
   let decodeString = (codec, str) => {
-    let maybeJson = switch Js.Json.parseExn(str) {
+    let maybeJson = switch JSON.parseExn(str) {
     | json => Ok(json)
-    | exception Js.Exn.Error(obj) =>
-      let message = Js.Exn.message(obj)
-      Error(#SyntaxError(message->Option.getWithDefault("Syntax error")))
+    | exception Exn.Error(obj) =>
+      let message = Error.message(obj)
+      Error(#SyntaxError(message->Option.getOr("Syntax error")))
     }
 
     maybeJson->Result.flatMap(json => codec->decode(json))
@@ -112,15 +105,15 @@ let decodeStringWith = (string, codec) => codec->decodeString(string)
 
 let custom = Codec.make
 
-let string = Codec.make(Js.Json.string, json =>
-  switch json->Js.Json.decodeString {
+let string = Codec.make(JSON.Encode.string, json =>
+  switch json->JSON.Decode.string {
   | Some(x) => Ok(x)
   | None => Error(#UnexpectedJsonType([], "string", json))
   }
 )
 
-let float = Codec.make(Js.Json.number, json =>
-  switch json->Js.Json.decodeNumber {
+let float = Codec.make(JSON.Encode.float, json =>
+  switch json->JSON.Decode.float {
   | Some(x) => Ok(x)
   | None => Error(#UnexpectedJsonType([], "number", json))
   }
@@ -132,14 +125,16 @@ let int = Codec.make(
     float
     ->decode(json)
     ->Result.flatMap(x =>
-      x == x->Js.Math.trunc && x >= -2147483648. && x <= 2147483647.
-        ? Ok(x->Js.Math.unsafe_trunc)
+      x == x->Math.trunc &&
+      x >= Int.Constants.minValue->Int.toFloat &&
+      x <= Int.Constants.maxValue->Int.toFloat
+        ? Ok(x->Int.fromFloat)
         : Error(#UnexpectedJsonValue([], x->Float.toString))
     ),
 )
 
-let bool = Codec.make(Js.Json.boolean, json =>
-  switch json->Js.Json.decodeBoolean {
+let bool = Codec.make(JSON.Encode.bool, json =>
+  switch json->JSON.Decode.bool {
   | Some(x) => Ok(x)
   | None => Error(#UnexpectedJsonType([], "bool", json))
   }
@@ -152,28 +147,29 @@ let nullable = payloadCodec =>
     maybeValue =>
       switch maybeValue {
       | Some(value) => payloadCodec->encode(value)
-      | None => Js.Json.null
+      | None => JSON.Encode.null
       },
-    json => json == Js.Json.null ? Ok(None) : payloadCodec->decode(json)->Result.map(v => Some(v)),
+    json =>
+      json == JSON.Encode.null ? Ok(None) : payloadCodec->decode(json)->Result.map(v => Some(v)),
   )
 
 let nullAs = (payloadCodec, fallbackValue) =>
   Codec.make(
     value => payloadCodec->encode(value),
-    json => json == Js.Json.null ? Ok(fallbackValue) : payloadCodec->decode(json),
+    json => json == JSON.Encode.null ? Ok(fallbackValue) : payloadCodec->decode(json),
   )
 
 let array = elementCodec =>
   Codec.make(
-    xs => xs->Array.map(elementCodec->(encode(_)))->Js.Json.array,
+    xs => xs->Array.map(x => elementCodec->encode(x))->JSON.Encode.array,
     json =>
-      switch json->Js.Json.classify {
-      | JSONArray(elementJsons) =>
+      switch json->JSON.Classify.classify {
+      | Array(elementJsons) =>
         elementJsons
-        ->Array.mapWithIndex((i, elemJson) =>
+        ->Array.mapWithIndex((elemJson, i) =>
           elementCodec
           ->decode(elemJson)
-          ->ResultX.mapError(DecodingError.prependLocation(_, Index(i)))
+          ->Result.mapError(DecodingError.prependLocation(_, Index(i)))
         )
         ->ResultX.sequence
       | _ => Error(#UnexpectedJsonType([], "array", json))
@@ -181,30 +177,30 @@ let array = elementCodec =>
   )
 
 let asObject = json =>
-  switch json->Js.Json.classify {
-  | JSONObject(fieldset) => Ok(fieldset)
+  switch json->JSON.Classify.classify {
+  | Object(fieldset) => Ok(fieldset)
   | _ => Error(#UnexpectedJsonType([], "object", json))
   }
 
 let dict = valuesCodec =>
   Codec.make(
-    dict => dict->Js.Dict.map(val => valuesCodec->encode(val), _)->Js.Json.object_,
+    dict => dict->Dict.mapValues(val => valuesCodec->encode(val))->JSON.Encode.object,
     json =>
       json
       ->asObject
       ->Result.flatMap(obj => {
         let (keys, valResults) =
           obj
-          ->Js.Dict.entries
+          ->Dict.toArray
           ->Array.map(((key, val)) => (
             key,
             valuesCodec
             ->decode(val)
-            ->ResultX.mapError(DecodingError.prependLocation(_, Field(key))),
+            ->Result.mapError(DecodingError.prependLocation(_, Field(key))),
           ))
-          ->Array.unzip
+          ->Belt.Array.unzip
 
-        valResults->ResultX.sequence->Result.map(vals => Array.zip(keys, vals)->Js.Dict.fromArray)
+        valResults->ResultX.sequence->Result.map(vals => Belt.Array.zip(keys, vals)->Dict.fromArray)
       }),
   )
 
@@ -240,33 +236,32 @@ module Field = {
     switch field->path {
     | Key(key) =>
       let json = field->codec->Codec.encode(val)
-      json == Js.Json.null && field->claim == Optional ? [] : [(key, json)]
+      json == JSON.Encode.null && field->claim == Optional ? [] : [(key, json)]
     | Self =>
-      switch field->codec->Codec.encode(val)->Js.Json.classify {
-      | JSONObject(objDict) => objDict->Js.Dict.entries
-      | JSONFalse
-      | JSONTrue
-      | JSONNull
-      | JSONString(_)
-      | JSONNumber(_)
-      | JSONArray(_) =>
+      switch field->codec->Codec.encode(val)->JSON.Classify.classify {
+      | Object(objDict) => objDict->Dict.toArray
+      | Bool(_)
+      | Null
+      | String(_)
+      | Number(_)
+      | Array(_) =>
         failwith("Field `self` must be encoded as object")
       }
     }
 
   let decode = (field, fieldset) =>
     switch field->path {
-    | Self => field->codec->Codec.decode(Js.Json.object_(fieldset))
+    | Self => field->codec->Codec.decode(JSON.Encode.object(fieldset))
     | Key(key) =>
       let decodeChild = childJson =>
         field
         ->codec
         ->Codec.decode(childJson)
-        ->ResultX.mapError(DecodingError.prependLocation(_, Field(key)))
+        ->Result.mapError(DecodingError.prependLocation(_, Field(key)))
 
-      switch (fieldset->Js.Dict.get(key), field->claim) {
+      switch (fieldset->Dict.get(key), field->claim) {
       | (Some(childJson), _) => decodeChild(childJson)
-      | (None, Optional) => decodeChild(Js.Json.null)
+      | (None, Optional) => decodeChild(JSON.Encode.null)
       | (None, OptionalWithDefault(x)) => Ok(x)
       | (None, Required) => Error(#MissingField([], key))
       }
@@ -280,7 +275,7 @@ let self = Field.make(Self, Codec.identity)
 let optional = Field.makeOptional
 let default = Field.assignDefault
 
-let jsonObject = keyVals => Js.Json.object_(Js.Dict.fromArray(keyVals->Array.concatMany))
+let jsonObject = keyVals => JSON.Encode.object(Dict.fromArray([]->Array.concatMany(keyVals)))
 
 let object1 = (destruct, construct, field1) =>
   Codec.make(

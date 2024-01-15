@@ -11,13 +11,16 @@
   "devDependencies": {
     "ejs": "^3.1.6",
     "rescript": "^11.0.0",
-    "rescript-test": "^3.1.0",
-    "rescript-js": "1.0.0-beta.2"
+    "rescript-js": "1.0.0-beta.2",
+    "rescript-test": "^3.1.0"
   },
   "keywords": [
     "reason",
     "reasonml",
     "rescript",
     "json"
-  ]
+  ],
+  "dependencies": {
+    "@rescript/core": "^1.1.0"
+  }
 }
