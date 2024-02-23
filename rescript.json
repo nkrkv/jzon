@@ -1,6 +1,8 @@
 {
   "name": "rescript-jzon",
-  "bsc-flags": ["-bs-super-errors", "-open Belt"],
+  "bsc-flags": [
+    "-open RescriptCore"
+  ],
   "sources": [
     {
       "dir": "src",
@@ -20,10 +22,11 @@
   ],
   "suffix": ".bs.js",
   "namespace": false,
-  "bs-dependencies": [],
+  "bs-dependencies": [
+    "@rescript/core"
+  ],
   "bs-dev-dependencies": [
     "rescript-test"
-   ],
-  "ppx-flags": [],
-  "refmt": 3
+  ],
+  "ppx-flags": []
 }

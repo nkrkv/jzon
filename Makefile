@@ -9,11 +9,11 @@ ALL_RES=$(wildcard src/*.res*) $(wildcard tests/*.res*)
 
 .PHONY: build
 build:
-	$(RESCRIPT) build -with-deps
+	$(RESCRIPT)
 
 .PHONY: dev
 dev:
-	$(RESCRIPT) build -with-deps -w
+	$(RESCRIPT) -w
 
 .PHONY: dev_docs
 dev_docs:
@@ -24,13 +24,8 @@ test: build
 	$(RETEST) tests/*.bs.js
 
 .PHONY: prettify
-prettify: $(ALL_RES)
-	@echo "Prettifying..."
-	@for file in $^ ; do \
-	  $(BSC) -format $${file} > $${file}.fmt ; \
-	  mv $${file}.fmt $${file} ; \
-	  echo $${file} ; \
-	done
+prettify:
+	$(RESCRIPT) format -all
 
 .PHONY: bump_version
 bump_version: test prettify

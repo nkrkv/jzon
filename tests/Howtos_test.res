@@ -16,14 +16,14 @@ module Quickstart = {
   module Codecs = {
     let style = Jzon.object2(
       ({size, color}) => (size, color),
-      ((size, color)) => {size: size, color: color}->Ok,
+      ((size, color)) => {size, color}->Ok,
       Jzon.field("size", Jzon.float),
       Jzon.field("color", Jzon.string),
     )
 
     let point = Jzon.object4(
       ({x, y, z, style}) => (x, y, z, style),
-      ((x, y, z, style)) => {x: x, y: y, z: z, style: style}->Ok,
+      ((x, y, z, style)) => {x, y, z, style}->Ok,
       Jzon.field("x", Jzon.float),
       Jzon.field("y", Jzon.float),
       Jzon.field("z", Jzon.float)->Jzon.default(0.0),
@@ -59,7 +59,7 @@ module HowtoRecord = {
     // a good idea for code organization
     let point = Jzon.object4(
       ({x, y, z, color}) => (x, y, z, color),
-      ((x, y, z, color)) => {x: x, y: y, z: z, color: color}->Ok,
+      ((x, y, z, color)) => {x, y, z, color}->Ok,
       Jzon.field("x", Jzon.float),
       Jzon.field("y", Jzon.float),
       Jzon.field("z", Jzon.float),
@@ -96,7 +96,7 @@ module HowtoOptionalDefault = {
   module Codecs = {
     let point = Jzon.object4(
       ({x, y, z, color}) => (x, y, z, color),
-      ((x, y, z, color)) => {x: x, y: y, z: z, color: color}->Ok,
+      ((x, y, z, color)) => {x, y, z, color}->Ok,
       Jzon.field("x", Jzon.float),
       Jzon.field("y", Jzon.float),
       // Use Jzon.default adapter to provide a fallback value in case
@@ -174,14 +174,14 @@ module HowtoArrayOfRecords = {
   module Codecs = {
     let point = Jzon.object2(
       ({x, y}) => (x, y),
-      ((x, y)) => {x: x, y: y}->Ok,
+      ((x, y)) => {x, y}->Ok,
       Jzon.field("x", Jzon.float),
       Jzon.field("y", Jzon.float),
     )
 
     let plot = Jzon.object2(
       ({title, points}) => (title, points),
-      ((title, points)) => {title: title, points: points}->Ok,
+      ((title, points)) => {title, points}->Ok,
       Jzon.field("title", Jzon.string),
       // Use the Jzon.array adapter to lift another codec to
       // a codec of an array
@@ -251,14 +251,14 @@ module HowtoDependentSchemaNested = {
 
     let rectangle = Jzon.object2(
       ({width, height}) => (width, height),
-      ((width, height)) => {width: width, height: height}->Ok,
+      ((width, height)) => {width, height}->Ok,
       Jzon.field("width", Jzon.float),
       Jzon.field("height", Jzon.float),
     )
 
     let ellipse = Jzon.object2(
       ({rx, ry}) => (rx, ry),
-      ((rx, ry)) => {rx: rx, ry: ry}->Ok,
+      ((rx, ry)) => {rx, ry}->Ok,
       Jzon.field("rx", Jzon.float),
       Jzon.field("ry", Jzon.float),
     )

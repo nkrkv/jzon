@@ -20,14 +20,14 @@ type link = {
 module Codecs = {
   let look = Jzon.object2(
     ({color, size}) => (color, size),
-    ((color, size)) => {color: color, size: size}->Ok,
+    ((color, size)) => {color, size}->Ok,
     Jzon.field("color", Jzon.string),
     Jzon.field("size", Jzon.float),
   )
 
   let vertex = Jzon.object3(
     ({x, y, look}) => (x, y, look),
-    ((x, y, look)) => {x: x, y: y, look: look}->Ok,
+    ((x, y, look)) => {x, y, look}->Ok,
     Jzon.field("x", Jzon.float),
     Jzon.field("y", Jzon.float),
     Jzon.field("look", look)->Jzon.optional,
@@ -35,7 +35,7 @@ module Codecs = {
 
   let link = Jzon.object3(
     ({start, end, weight}) => (start, end, weight),
-    ((start, end, weight)) => {start: start, end: end, weight: weight}->Ok,
+    ((start, end, weight)) => {start, end, weight}->Ok,
     Jzon.field("start", Jzon.int),
     Jzon.field("end", Jzon.int),
     Jzon.field("weight", Jzon.float)->Jzon.default(1.0),
