@@ -1,5 +1,9 @@
 # Jzon Changelog
 
+## 2.0.0 (2024-06-03) <a name="2.0.0"></a>
+
+* [feat] Migrate to ReScript v11 (#19)
+
 ## 1.3.0 (2021-10-07) <a name="1.3.0"></a>
 
 * [feat] Add object codecs upto `object25` (#14)
