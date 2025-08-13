@@ -1,5 +1,9 @@
 # Jzon Changelog
 
+## 2.0.1 (2025-08-13) <a name="2.0.1"></a>
+
+* [fix] Make test of invalid syntax error pass
+
 ## 2.0.0 (2024-06-03) <a name="2.0.0"></a>
 
 * [feat] Migrate to ReScript v11 (#19)
