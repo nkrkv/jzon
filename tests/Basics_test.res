@@ -61,7 +61,7 @@ test("JSON with syntax error", () => {
   `{"color": "#09a", size: 5.0}`
   ->Jzon.decodeStringWith(Jzon.json)
   ->Assert.errorString(
-    "Expected double-quoted property name in JSON at position 18",
+    "Expected double-quoted property name in JSON at position 18 (line 1 column 19)",
     ~message="Errors",
   )
 })
