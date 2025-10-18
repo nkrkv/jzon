@@ -26,7 +26,7 @@ module Quickstart = {
       ((x, y, z, style)) => {x, y, z, style}->Ok,
       Jzon.field("x", Jzon.float),
       Jzon.field("y", Jzon.float),
-      Jzon.field("z", Jzon.float)->Jzon.default(0.0),
+      Jzon.field("z", Jzon.float)->Jzon.defaultTo(0.0),
       Jzon.field("style", style)->Jzon.optional,
     )
   }
@@ -99,9 +99,9 @@ module HowtoOptionalDefault = {
       ((x, y, z, color)) => {x, y, z, color}->Ok,
       Jzon.field("x", Jzon.float),
       Jzon.field("y", Jzon.float),
-      // Use Jzon.default adapter to provide a fallback value in case
+      // Use Jzon.defaultTo adapter to provide a fallback value in case
       // the field is missing
-      Jzon.field("z", Jzon.float)->Jzon.default(0.0),
+      Jzon.field("z", Jzon.float)->Jzon.defaultTo(0.0),
       // Use Jzon.optional adapter to make the value indeed option’al
       Jzon.field("color", Jzon.string)->Jzon.optional,
     )

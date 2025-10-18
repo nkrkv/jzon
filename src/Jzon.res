@@ -27,7 +27,7 @@ module DecodingError = {
       | Index(index) => `[` ++ index->Int.toString ++ `]`
       }
     )
-    ->Array.joinWith(".")
+    ->Array.join(".")
 
   let prependLocation = (err, loc) =>
     switch err {
@@ -273,7 +273,7 @@ type field<'v> = Field.t<'v>
 let field = (key, codec) => Field.make(Key(key), codec)
 let self = Field.make(Self, Codec.identity)
 let optional = Field.makeOptional
-let default = Field.assignDefault
+let defaultTo = Field.assignDefault
 
 let jsonObject = keyVals => JSON.Encode.object(Dict.fromArray([]->Array.concatMany(keyVals)))
 
