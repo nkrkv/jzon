@@ -131,7 +131,7 @@ let optional: field<'v> => field<option<'v>>
 Makes the given field optional. The field will be decoded to the `None` value if the given field key is missing in the JSON object _or_ if the key is there but its value is `null`. While encoding, if the ReScript value is `None` the given field key will be omitted from the resulting JSON.
 
 ```rescript
-let default: (field<'v>, 'v) => field<'v>
+let defaultTo: (field<'v>, 'v) => field<'v>
 ```
 
 Makes the given field optional. The field will be decoded to the default fallback value provided if the given field key is missing in the JSON object _or_ if the key is there but its value is `null`. While encoding, the resulting JSON always includes the key, even if the value is equal to the default.

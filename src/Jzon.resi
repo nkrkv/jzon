@@ -43,7 +43,7 @@ let dict: codec<'v> => codec<Js.Dict.t<'v>>
 let field: (string, codec<'v>) => field<'v>
 let self: field<Js.Json.t>
 let optional: field<'v> => field<option<'v>>
-let default: (field<'v>, 'v) => field<'v>
+let defaultTo: (field<'v>, 'v) => field<'v>
 
 let asObject: Js.Json.t => result<Js.Dict.t<Js.Json.t>, DecodingError.t>
 

@@ -64,9 +64,9 @@ module Codecs = {
     ((x, y, z, color)) => {x, y, z, color}->Ok,
     Jzon.field("x", Jzon.float),
     Jzon.field("y", Jzon.float),
-    // Use Jzon.default adapter to provide a fallback value in case
+    // Use Jzon.defaultTo adapter to provide a fallback value in case
     // the field is missing
-    Jzon.field("z", Jzon.float)->Jzon.default(0.0),
+    Jzon.field("z", Jzon.float)->Jzon.defaultTo(0.0),
     // Use Jzon.optional adapter to make the value indeed option’al
     Jzon.field("color", Jzon.string)->Jzon.optional,
   )
@@ -189,7 +189,7 @@ test("Array decoding", () => {
   )
 
   // Missing field does not mean an empty array by default. However, you may use
-  // the `default([])` field adaptor to express just that.
+  // the `defaultTo([])` field adaptor to express just that.
   `{"title": "My Plot"}`
   ->Jzon.decodeStringWith(Codecs.plot)
   ->Assert.equals(Error(#MissingField([], "points")))

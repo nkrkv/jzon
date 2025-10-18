@@ -48,7 +48,7 @@ module Codecs = {
     Jzon.field("x", Jzon.float),
     Jzon.field("y", Jzon.float),
     // ... supports default values
-    Jzon.field("z", Jzon.float)->Jzon.default(0.0),
+    Jzon.field("z", Jzon.float)->Jzon.defaultTo(0.0),
     // ... may refer your other codecs
     Jzon.field("style", style)->Jzon.optional,
   )

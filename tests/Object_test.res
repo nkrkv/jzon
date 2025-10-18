@@ -38,7 +38,7 @@ module Codecs = {
     ((start, end, weight)) => {start, end, weight}->Ok,
     Jzon.field("start", Jzon.int),
     Jzon.field("end", Jzon.int),
-    Jzon.field("weight", Jzon.float)->Jzon.default(1.0),
+    Jzon.field("weight", Jzon.float)->Jzon.defaultTo(1.0),
   )
 }
 
