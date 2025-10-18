@@ -1,5 +1,9 @@
 # Jzon Changelog
 
+## 3.0.0 (2025-10-18) <a name="3.0.0"></a>
+
+* [feat] BREAKING! Rename `Jzon.default` to `Jzon.defaultTo` (#21)
+
 ## 2.0.1 (2025-08-13) <a name="2.0.1"></a>
 
 * [fix] Make test of invalid syntax error pass
